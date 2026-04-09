@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesquisa de Desligamento Voluntário | RH</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root {
+      --primary: #6C5CE7;
+      --primary-light: #A29BFE;
+      --primary-dark: #5A4BD1;
+      --success: #00B894;
+      --warning: #FDCB6E;
+      --danger: #E17055;
+      --bg: #F8F9FE;
+      --card: #FFFFFF;
+      --text: #2D3436;
+      --text-light: #636E72;
+      --border: #DFE6E9;
+      --shadow: 0 2px 12px rgba(108, 92, 231, 0.08);
+      --radius: 16px;
+      --sidebar-bg: #2D3436;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
+    }
+
+    /* ===== LOGIN SCREEN ===== */
+    .login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #2D3436 0%, #636E72 100%);
+    }
+    .login-box {
+      background: white; border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
+    }
+    .login-box .logo { font-size: 48px; margin-bottom: 8px; }
+    .login-box h1 { font-size: 24px; color: var(--text); margin-bottom: 4px; }
+    .login-box .subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 32px; }
+    .login-box .form-group { margin-bottom: 16px; text-align: left; }
+    .login-box .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: var(--text); }
+    .login-box input {
+      width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 15px; font-family: inherit; transition: border-color 0.3s; background: white;
+    }
+    .login-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1); }
+    .btn-login {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.3s; margin-top: 8px;
+    }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4); }
+    .forgot-password-link {
+      display: block; margin-top: 16px; text-align: center; font-size: 13px;
+    }
+    .forgot-password-link a {
+      color: var(--primary); text-decoration: none; cursor: pointer; font-weight: 600;
+    }
+    .forgot-password-link a:hover { text-decoration: underline; }
+    .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+    .login-info { background: #F0EDFF; border-radius: 10px; padding: 14px; margin-top: 20px; font-size: 12px; color: var(--text-light); text-align: left; }
+    .login-info strong { color: var(--primary); }
+
+    /* ===== PASSWORD CHANGE MODAL ===== */
+    .password-change-modal {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 1001; justify-content: center; align-items: center;
+    }
+    .password-change-modal.active { display: flex; }
+    .password-change-box {
+      background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
+    }
+    .password-change-box h2 { font-size: 22px; margin-bottom: 8px; color: var(--text); }
+    .password-change-box .subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
+    .password-change-form { text-align: left; }
+    .btn-change-password {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.3s; margin-top: 8px;
+    }
+    .btn-change-password:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4); }
+    .password-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+
+    /* ===== TOP NAV ===== */
+    .topnav {
+      background: var(--sidebar-bg); color: white; padding: 0 24px;
+      display: flex; align-items: center; height: 56px; gap: 24px;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .topnav h1 { font-size: 18px; font-weight: 700; white-space: nowrap; }
+    .topnav-spacer { flex: 1; }
+    .user-info {
+      display: flex; align-items: center; gap: 12px; font-size: 13px;
+    }
+    .user-info .user-badge {
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    }
+    .user-badge.admin { background: var(--danger); }
+    .user-badge.usuario { background: var(--primary); }
+    .btn-back {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;
+      padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s; margin-right: 8px;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.2); }
+    .btn-logout {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;
+      padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+    /* ===== CONTAINERS ===== */
+    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+    .app-container { display: none; }
+
+    /* ===== FORM STYLES ===== */
+    .header {
+      text-align: center; padding: 48px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: var(--radius); color: white; margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(108, 92, 231, 0.25);
+    }
+    .header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 16px; }
+
+    .card {
+      background: var(--card); border-radius: var(--radius); padding: 32px;
+      margin-bottom: 24px; box-shadow: var(--shadow);
+    }
+    .card h2, .card h3 { color: var(--primary); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .card .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 24px; }
+
+    .categoria {
+      background: var(--card); border-radius: var(--radius); padding: 32px;
+      margin-bottom: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
+    }
+    .categoria h3 { font-size: 18px; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+    .form-group { margin-bottom: 24px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+    .form-group .required::after { content: ' *'; color: var(--danger); }
+
+    input[type="text"], input[type="email"], input[type="date"], input[type="password"], select, textarea {
+      width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 15px; font-family: inherit; transition: border-color 0.3s; background: white;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .scale-container { display: flex; gap: 8px; flex-wrap: wrap; }
+    .scale-btn {
+      width: 56px; height: 56px; border: 2px solid var(--border); border-radius: 12px;
+      background: white; font-size: 18px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center; color: var(--text-light);
+    }
+    .scale-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+    .scale-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+    .scale-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-top: 6px; }
+
+    .nps-container { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nps-btn {
+      width: 48px; height: 48px; border: 2px solid var(--border); border-radius: 10px;
+      background: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nps-btn:hover { transform: scale(1.05); }
+    .nps-btn.selected.detrator { background: #E17055; color: white; border-color: #E17055; }
+    .nps-btn.selected.neutro { background: #FDCB6E; color: #2D3436; border-color: #FDCB6E; }
+    .nps-btn.selected.promotor { background: #00B894; color: white; border-color: #00B894; }
+
+    .yesno-container { display: flex; gap: 12px; }
+    .yesno-btn {
+      flex: 1; padding: 14px; border: 2px solid var(--border); border-radius: 12px;
+      background: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .yesno-btn:hover { border-color: var(--primary-light); }
+    .yesno-btn.selected.yes { background: #D4EFDF; border-color: var(--success); color: #1B7A4A; }
+    .yesno-btn.selected.no { background: #FADBD8; border-color: var(--danger); color: #C0392B; }
+
+    .progress-bar {
+      position: sticky; top: 56px; z-index: 100; background: white;
+      padding: 12px 16px; border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 24px;
+    }
+    .progress-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.5s ease; }
+    .progress-text { font-size: 13px; color: var(--text-light); margin-top: 6px; text-align: center; }
+
+    .submit-section { text-align: center; margin-top: 32px; }
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none;
+      padding: 16px 48px; font-size: 18px; font-weight: 700; border-radius: 12px; cursor: pointer;
+      transition: all 0.3s; box-shadow: 0 4px 16px rgba(108, 92, 231, 0.3);
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(108, 92, 231, 0.4); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .success-screen { display: none; text-align: center; padding: 64px 32px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .success-screen .checkmark { font-size: 80px; margin-bottom: 16px; }
+    .success-screen h2 { font-size: 28px; color: var(--success); margin-bottom: 12px; }
+    .success-screen p { color: var(--text-light); font-size: 16px; margin-bottom: 24px; }
+    .btn-back-home { background: var(--primary); color: white; border: none; padding: 12px 32px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .btn-back-home:hover { background: var(--primary-dark); }
+
+    .condicional { display: none; }
+    .condicional.visible { display: block; }
+
+    .time-display { font-size: 13px; color: var(--text-light); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s ease; }
+
+    @media (max-width: 768px) {
+      .yesno-container { flex-direction: column; }
+    }
+    @media (max-width: 600px) {
+      .header h2 { font-size: 22px; }
+      .card, .categoria { padding: 20px; }
+      .nps-btn { width: 40px; height: 40px; font-size: 14px; }
+      .scale-btn { width: 48px; height: 48px; }
+      .topnav h1 { font-size: 14px; }
+      .login-box { padding: 32px 24px; margin: 16px; }
+      .btn-back { padding: 6px 10px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box fade-in">
+    <div class="logo">🏢</div>
+    <h1>Pesquisa de Desligamento</h1>
+    <div class="subtitle">Sistema de Gestão de RH</div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="loginSenha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="loginError">E-mail ou senha incorretos.</div>
+    <div class="forgot-password-link">
+      <a onclick="showForgotPassword()">Esqueceu sua senha?</a>
+    </div>
+    <div class="login-info">
+      <strong>Primeiro acesso?</strong><br>
+      Solicite seu cadastro ao administrador do sistema.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PASSWORD CHANGE MODAL ==================== -->
+<div class="password-change-modal" id="passwordChangeModal">
+  <div class="password-change-box fade-in">
+    <h2>Alterar Senha</h2>
+    <div class="subtitle">Crie uma nova senha para sua conta</div>
+    <div class="password-change-form">
+      <div class="form-group">
+        <label>Nova Senha</label>
+        <input type="password" id="newPasswordInput" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label>Confirmar Senha</label>
+        <input type="password" id="confirmPasswordInput" placeholder="Confirme a senha">
+      </div>
+      <button class="btn-change-password" onclick="submitPasswordChange()">Alterar Senha</button>
+      <div class="password-error" id="passwordError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP CONTAINER ==================== -->
+<div class="app-container" id="appContainer">
+
+<!-- TOP NAVIGATION -->
+<div class="topnav">
+  <h1>📋 Pesquisa de Desligamento Voluntário</h1>
+  <div class="topnav-spacer"></div>
+  <div class="user-info">
+    <span id="currentUserName"></span>
+    <span class="user-badge" id="currentUserBadge"></span>
+    <button class="btn-back" onclick="goBackToMain()">Voltar ao Sistema</button>
+    <button class="btn-logout" onclick="doLogout()">Sair</button>
+  </div>
+</div>
+
+<!-- ==================== FORM SECTION ==================== -->
+<div class="container">
+  <div class="header" id="mainHeader">
+    <h2>Pesquisa de Desligamento Voluntário</h2>
+    <p>Sua opinião é fundamental para nos ajudar a melhorar</p>
+  </div>
+
+  <div id="stepInfo" class="fade-in">
+    <div class="card">
+      <h2>Dados do Colaborador</h2>
+      <p class="subtitle">Preencha seus dados para iniciar</p>
+
+      <div class="form-group">
+        <label class="required">Nome completo</label>
+        <input type="text" id="inputNome" placeholder="Seu nome completo">
+      </div>
+      <div class="form-group">
+        <label class="required">E-mail corporativo</label>
+        <input type="email" id="inputEmail" placeholder="seu.email@empresa.com">
+      </div>
+      <div class="form-group">
+        <label>Cargo</label>
+        <input type="text" id="inputCargo" placeholder="Seu cargo">
+      </div>
+      <div class="form-group">
+        <label>Departamento</label>
+        <input type="text" id="inputDepartamento" placeholder="Seu departamento">
+      </div>
+      <div class="form-group">
+        <label>Data de admissão</label>
+        <input type="date" id="inputAdmissao" onchange="calculateTempoEmpresa()">
+      </div>
+      <div class="form-group">
+        <label>Data de desligamento</label>
+        <input type="date" id="inputDesligamento" onchange="calculateTempoEmpresa()">
+      </div>
+      <div class="form-group">
+        <label>Tempo de empresa</label>
+        <input type="text" id="tempoEmpresa" placeholder="Será calculado automaticamente" readonly>
+      </div>
+
+      <div class="submit-section">
+        <button class="btn-submit" onclick="startInterview()" style="font-size:16px;padding:14px 40px;">Iniciar Pesquisa</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="stepQuestions" style="display:none" class="fade-in">
+    <div class="progress-bar">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">0% concluído</div>
+    </div>
+    <div id="questionsContainer"></div>
+    <div class="submit-section">
+      <button class="btn-submit" id="btnSubmit" onclick="submitInterview()">Enviar Respostas</button>
+    </div>
+  </div>
+
+  <div class="success-screen" id="successScreen">
+    <div class="checkmark">✅</div>
+    <h2>Obrigado!</h2>
+    <p>Sua pesquisa foi registrada com sucesso.<br>Agradecemos pelo seu feedback!</p>
+    <button class="btn-back-home" onclick="resetForm()">Voltar ao Início</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ==================== CONFIGURATION ====================
+const DB_NAME = 'PlanoDesenvolvimentoDB';
+const DB_VERSION = 3;
+const EMAILJS_SERVICE_ID = 'service_7q0c1os';
+const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
+const EMAILJS_TEMPLATE_RECUPERACAO = 'template_2y018wf';
+
+let dbInstance = null;
+let currentUser = null;
+let currentColaborador = null;
+let currentRespostas = {};
+
+// ==================== INDEXED DB FUNCTIONS ====================
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (dbInstance) return resolve(dbInstance);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('colaboradores')) {
+        const cs = db.createObjectStore('colaboradores', { keyPath: 'id', autoIncrement: true });
+        cs.createIndex('email', 'email', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('entrevistas')) {
+        const es = db.createObjectStore('entrevistas', { keyPath: 'id', autoIncrement: true });
+        es.createIndex('colaborador_id', 'colaborador_id', { unique: false });
+        es.createIndex('tipo', 'tipo', { unique: false });
+        es.createIndex('data_resposta', 'data_resposta', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('respostas')) {
+        const rs = db.createObjectStore('respostas', { keyPath: 'id', autoIncrement: true });
+        rs.createIndex('entrevista_id', 'entrevista_id', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('usuarios')) {
+        const us = db.createObjectStore('usuarios', { keyPath: 'id', autoIncrement: true });
+        us.createIndex('email', 'email', { unique: true });
+      }
+    };
+    request.onsuccess = (e) => { dbInstance = e.target.result; resolve(dbInstance); };
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+function dbAdd(store, data) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const objectStore = tx.objectStore(store);
+    const request = objectStore.add(data);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+function dbPut(store, data) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const objectStore = tx.objectStore(store);
+    const request = objectStore.put(data);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+function dbGet(store, key) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const objectStore = tx.objectStore(store);
+    const request = objectStore.get(key);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+function dbGetIndex(store, indexName, value) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const objectStore = tx.objectStore(store);
+    const index = objectStore.index(indexName);
+    const request = index.get(value);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+function dbGetAll(store) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const objectStore = tx.objectStore(store);
+    const request = objectStore.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+function dbGetAllIndex(store, indexName, value) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const objectStore = tx.objectStore(store);
+    const index = objectStore.index(indexName);
+    const request = index.getAll(value);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+function dbDelete(store, key) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const objectStore = tx.objectStore(store);
+    const request = objectStore.delete(key);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  }));
+}
+
+// ==================== HASH PASSWORD ====================
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyPassword(password, hash) {
+  const newHash = await hashPassword(password);
+  return newHash === hash;
+}
+
+// ==================== GENERATE PASSWORD ====================
+function generatePassword(length = 8) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
+
+// ==================== INIT DATABASE ====================
+async function initDatabase() {
+  const allUsers = await dbGetAll('usuarios');
+  if (allUsers.length === 0) {
+    const adminHash = await hashPassword('admin123');
+    await dbAdd('usuarios', {
+      nome: 'Administrador',
+      email: 'admin@empresa.com',
+      senha: adminHash,
+      perfil: 'admin',
+      provisoria: false,
+      created_at: new Date().toISOString()
+    });
+  }
+}
+
+// ==================== LOGIN ====================
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+  const errorEl = document.getElementById('loginError');
+
+  if (!email || !senha) {
+    errorEl.textContent = 'Preencha e-mail e senha.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  try {
+    const user = await dbGetIndex('usuarios', 'email', email);
+    if (!user || !(await verifyPassword(senha, user.senha))) {
+      errorEl.textContent = 'E-mail ou senha incorretos.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    currentUser = user;
+    sessionStorage.setItem('currentUser', JSON.stringify(user));
+
+    if (user.provisoria) {
+      showPasswordChangeModal();
+    } else {
+      showApp();
+    }
+  } catch (err) {
+    console.error('Login error:', err);
+    errorEl.textContent = 'Erro ao fazer login.';
+    errorEl.style.display = 'block';
+  }
+}
+
+// ==================== PASSWORD CHANGE ====================
+function showPasswordChangeModal() {
+  document.getElementById('passwordChangeModal').classList.add('active');
+}
+
+async function submitPasswordChange() {
+  const newPassword = document.getElementById('newPasswordInput').value;
+  const confirmPassword = document.getElementById('confirmPasswordInput').value;
+  const errorEl = document.getElementById('passwordError');
+
+  if (newPassword.length < 6) {
+    errorEl.textContent = 'Senha deve ter no mínimo 6 caracteres.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    errorEl.textContent = 'As senhas não conferem.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  try {
+    const newHash = await hashPassword(newPassword);
+    currentUser.senha = newHash;
+    currentUser.provisoria = false;
+    await dbPut('usuarios', currentUser);
+    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    document.getElementById('passwordChangeModal').classList.remove('active');
+    showApp();
+  } catch (err) {
+    console.error('Error changing password:', err);
+    errorEl.textContent = 'Erro ao alterar senha.';
+    errorEl.style.display = 'block';
+  }
+}
+
+// ==================== FORGOT PASSWORD ====================
+function showForgotPassword() {
+  const email = prompt('Digite seu e-mail:');
+  if (!email) return;
+
+  dbGetIndex('usuarios', 'email', email).then(user => {
+    if (!user) {
+      alert('E-mail não encontrado no sistema.');
+      return;
+    }
+
+    const newPassword = generatePassword();
+    hashPassword(newPassword).then(hash => {
+      user.senha = hash;
+      user.provisoria = true;
+      dbPut('usuarios', user).then(() => {
+        sendPasswordEmail(email, newPassword);
+      });
+    });
+  });
+}
+
+function sendPasswordEmail(email, password) {
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_RECUPERACAO, {
+    subject: 'Plano de Desenvolvimento - Recuperacao de Senha',
+    to_email: email,
+    to_name: email.split('@')[0],
+    nova_senha: password
+  }, EMAILJS_PUBLIC_KEY).then(() => {
+    alert('Nova senha enviada para seu e-mail.');
+  }).catch(err => {
+    console.error('Email error:', err);
+    alert(`Senha: ${password}\n(Falha ao enviar email - copie esta senha)`);
+  });
+}
+
+// ==================== SHOW APP ====================
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appContainer').style.display = 'block';
+  document.getElementById('currentUserName').textContent = currentUser.nome;
+  document.getElementById('currentUserBadge').textContent = currentUser.perfil;
+  document.getElementById('currentUserBadge').className = 'user-badge ' + currentUser.perfil;
+}
+
+// ==================== LOGOUT ====================
+function doLogout() {
+  sessionStorage.removeItem('currentUser');
+  currentUser = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appContainer').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginSenha').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+// ==================== GO BACK TO MAIN ====================
+function goBackToMain() {
+  if (confirm('Você quer voltar ao sistema principal?')) {
+    window.location.href = 'index.html';
+  }
+}
+
+// ==================== CALCULATE TEMPO EMPRESA ====================
+function calculateTempoEmpresa() {
+  const admissao = document.getElementById('inputAdmissao').value;
+  const desligamento = document.getElementById('inputDesligamento').value;
+
+  if (!admissao || !desligamento) {
+    document.getElementById('tempoEmpresa').value = '';
+    return;
+  }
+
+  const dateAdmissao = new Date(admissao);
+  const dateDesligamento = new Date(desligamento);
+
+  if (dateDesligamento <= dateAdmissao) {
+    document.getElementById('tempoEmpresa').value = 'Data inválida';
+    return;
+  }
+
+  const diffMs = dateDesligamento - dateAdmissao;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const years = Math.floor(diffDays / 365);
+  const months = Math.floor((diffDays % 365) / 30);
+  const days = diffDays % 30;
+
+  let result = '';
+  if (years > 0) result += `${years} ano${years > 1 ? 's' : ''} `;
+  if (months > 0) result += `${months} mês${months > 1 ? 'es' : ''} `;
+  if (days > 0) result += `${days} dia${days > 1 ? 's' : ''}`;
+
+  document.getElementById('tempoEmpresa').value = result.trim() || '0 dias';
+}
+
+// ==================== QUESTIONNAIRE DATA ====================
+const questionnaireData = {
+  'desligamento_voluntario': {
+    titulo: 'Pesquisa de Desligamento Voluntário',
+    categorias: [
+      {
+        nome: 'Motivos da Saída',
+        emoji: '🚪',
+        perguntas: [
+          { tipo: 'texto', pergunta: 'Qual o principal motivo da sua decisão de sair?' },
+          { tipo: 'sim_nao', pergunta: 'Você recebeu uma proposta de outra empresa?' },
+          { tipo: 'texto', pergunta: 'Se sim, o que a proposta oferecia que influenciou sua decisão?', condicional: { perguntaIndex: 1, valor: 'Sim' } },
+          { tipo: 'texto', pergunta: 'Houve algum evento específico que motivou sua decisão?' },
+          { tipo: 'sim_nao', pergunta: 'Você comunicou seu descontentamento antes de decidir sair?' }
+        ]
+      },
+      {
+        nome: 'Ambiente e Cultura',
+        emoji: '🏢',
+        perguntas: [
+          { tipo: 'escala', pergunta: 'Como você avalia o ambiente de trabalho da empresa?' },
+          { tipo: 'escala', pergunta: 'Você se sentia valorizado(a) pela empresa?' },
+          { tipo: 'escala', pergunta: 'Como era seu relacionamento com seu gestor direto?' },
+          { tipo: 'escala', pergunta: 'Como era seu relacionamento com seus colegas de equipe?' },
+          { tipo: 'escala', pergunta: 'A cultura da empresa estava alinhada com seus valores?' }
+        ]
+      },
+      {
+        nome: 'Desenvolvimento e Carreira',
+        emoji: '📈',
+        perguntas: [
+          { tipo: 'escala', pergunta: 'Você tinha oportunidades de crescimento profissional?' },
+          { tipo: 'escala', pergunta: 'Recebia feedbacks construtivos sobre seu desempenho?' },
+          { tipo: 'escala', pergunta: 'Os treinamentos oferecidos eram adequados?' },
+          { tipo: 'sim_nao', pergunta: 'Seu plano de carreira estava claro?' }
+        ]
+      },
+      {
+        nome: 'Remuneração e Benefícios',
+        emoji: '💰',
+        perguntas: [
+          { tipo: 'escala', pergunta: 'Como você avalia sua remuneração em relação ao mercado?' },
+          { tipo: 'escala', pergunta: 'Os benefícios oferecidos atendiam suas necessidades?' },
+          { tipo: 'sim_nao', pergunta: 'A remuneração foi um fator na sua decisão de sair?' }
+        ]
+      },
+      {
+        nome: 'Avaliação Final',
+        emoji: '⭐',
+        perguntas: [
+          { tipo: 'nps', pergunta: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo trabalhar aqui?' },
+          { tipo: 'sim_nao', pergunta: 'Você consideraria voltar a trabalhar na empresa no futuro?' },
+          { tipo: 'texto', pergunta: 'O que a empresa poderia ter feito para você permanecer?' },
+          { tipo: 'texto', pergunta: 'Que conselho você daria para a empresa melhorar?' },
+          { tipo: 'texto', pergunta: 'Gostaria de compartilhar mais alguma coisa?' }
+        ]
+      }
+    ]
+  }
+};
+
+// ==================== START INTERVIEW ====================
+function startInterview() {
+  const nome = document.getElementById('inputNome').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
+  const cargo = document.getElementById('inputCargo').value.trim();
+  const departamento = document.getElementById('inputDepartamento').value.trim();
+  const admissao = document.getElementById('inputAdmissao').value;
+  const desligamento = document.getElementById('inputDesligamento').value;
+
+  if (!nome || !email) {
+    alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  currentColaborador = {
+    nome,
+    email,
+    cargo,
+    departamento,
+    admissao,
+    desligamento
+  };
+  currentRespostas = {};
+  renderQuestions();
+  document.getElementById('stepInfo').style.display = 'none';
+  document.getElementById('stepQuestions').style.display = 'block';
+}
+
+// ==================== RENDER QUESTIONS ====================
+function renderQuestions() {
+  const data = questionnaireData['desligamento_voluntario'];
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  let questionIndex = 0;
+
+  data.categorias.forEach(cat => {
+    const catDiv = document.createElement('div');
+    catDiv.className = 'categoria';
+    catDiv.innerHTML = `<h3>${cat.emoji} ${cat.nome}</h3>`;
+
+    cat.perguntas.forEach((q, idx) => {
+      const questionDiv = document.createElement('div');
+      questionDiv.className = 'form-group' + (q.condicional ? ` condicional condicional-${questionIndex}` : '');
+      questionDiv.id = `q-${questionIndex}`;
+
+      const label = document.createElement('label');
+      label.textContent = q.pergunta;
+      questionDiv.appendChild(label);
+
+      if (q.tipo === 'escala') {
+        const container = document.createElement('div');
+        container.className = 'scale-container';
+        for (let i = 1; i <= 5; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'scale-btn';
+          btn.textContent = i;
+          btn.type = 'button';
+          btn.onclick = () => selectScale(btn, questionIndex);
+          container.appendChild(btn);
+        }
+        const labels = document.createElement('div');
+        labels.className = 'scale-labels';
+        labels.innerHTML = '<span>Discordo</span><span>Concordo</span>';
+        questionDiv.appendChild(container);
+        questionDiv.appendChild(labels);
+      } else if (q.tipo === 'nps') {
+        const container = document.createElement('div');
+        container.className = 'nps-container';
+        for (let i = 0; i <= 10; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'nps-btn';
+          btn.textContent = i;
+          btn.type = 'button';
+          btn.onclick = () => selectNPS(btn, questionIndex, i);
+          container.appendChild(btn);
+        }
+        questionDiv.appendChild(container);
+      } else if (q.tipo === 'sim_nao') {
+        const container = document.createElement('div');
+        container.className = 'yesno-container';
+        const btnSim = document.createElement('button');
+        btnSim.className = 'yesno-btn';
+        btnSim.textContent = 'Sim';
+        btnSim.type = 'button';
+        btnSim.onclick = () => selectYesNo(btnSim, questionIndex, 'Sim');
+        const btnNao = document.createElement('button');
+        btnNao.className = 'yesno-btn';
+        btnNao.textContent = 'Não';
+        btnNao.type = 'button';
+        btnNao.onclick = () => selectYesNo(btnNao, questionIndex, 'Não');
+        container.appendChild(btnSim);
+        container.appendChild(btnNao);
+        questionDiv.appendChild(container);
+      } else if (q.tipo === 'texto') {
+        const input = document.createElement('textarea');
+        input.id = `text-${questionIndex}`;
+        input.placeholder = 'Digite sua resposta...';
+        input.onchange = () => { currentRespostas[questionIndex] = input.value; updateProgress(); };
+        questionDiv.appendChild(input);
+      }
+
+      catDiv.appendChild(questionDiv);
+      questionIndex++;
+    });
+
+    container.appendChild(catDiv);
+  });
+
+  updateProgress();
+}
+
+function selectScale(btn, idx) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  currentRespostas[idx] = parseInt(btn.textContent);
+  updateProgress();
+}
+
+function selectNPS(btn, idx, value) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.nps-btn').forEach(b => b.classList.remove('selected', 'detrator', 'neutro', 'promotor'));
+  btn.classList.add('selected');
+  if (value <= 6) btn.classList.add('detrator');
+  else if (value <= 8) btn.classList.add('neutro');
+  else btn.classList.add('promotor');
+  currentRespostas[idx] = value;
+  updateProgress();
+}
+
+function selectYesNo(btn, idx, value) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('selected', 'yes', 'no'));
+  btn.classList.add('selected', value === 'Sim' ? 'yes' : 'no');
+  currentRespostas[idx] = value;
+  checkConditionals(idx, value);
+  updateProgress();
+}
+
+function checkConditionals(idx, value) {
+  const data = questionnaireData['desligamento_voluntario'];
+  let questionIndex = 0;
+  data.categorias.forEach(cat => {
+    cat.perguntas.forEach(q => {
+      if (q.condicional && q.condicional.perguntaIndex === idx && q.condicional.valor === value) {
+        document.querySelector(`.condicional-${questionIndex}`).classList.add('visible');
+      } else if (q.condicional && q.condicional.perguntaIndex === idx) {
+        document.querySelector(`.condicional-${questionIndex}`).classList.remove('visible');
+      }
+      questionIndex++;
+    });
+  });
+}
+
+function updateProgress() {
+  const data = questionnaireData['desligamento_voluntario'];
+  let total = 0;
+  data.categorias.forEach(cat => { total += cat.perguntas.length; });
+
+  const answered = Object.keys(currentRespostas).length;
+  const percent = Math.round((answered / total) * 100);
+  document.getElementById('progressFill').style.width = percent + '%';
+  document.getElementById('progressText').textContent = percent + '% concluído';
+}
+
+// ==================== SUBMIT INTERVIEW ====================
+async function submitInterview() {
+  const data = questionnaireData['desligamento_voluntario'];
+  let total = 0;
+  data.categorias.forEach(cat => { total += cat.perguntas.length; });
+
+  if (Object.keys(currentRespostas).length < total) {
+    alert('Preencha todas as perguntas obrigatórias.');
+    return;
+  }
+
+  try {
+    let colaborador = await dbGetIndex('colaboradores', 'email', currentColaborador.email);
+    if (!colaborador) {
+      colaborador = currentColaborador;
+      const colabId = await dbAdd('colaboradores', colaborador);
+      colaborador.id = colabId;
+    }
+
+    const entrevista = {
+      colaborador_id: colaborador.id,
+      tipo: 'desligamento_voluntario',
+      data_resposta: new Date().toISOString()
+    };
+    const entrevistaId = await dbAdd('entrevistas', entrevista);
+
+    for (const [idx, resposta] of Object.entries(currentRespostas)) {
+      await dbAdd('respostas', {
+        entrevista_id: entrevistaId,
+        pergunta_index: parseInt(idx),
+        resposta: resposta
+      });
+    }
+
+    document.getElementById('stepQuestions').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+  } catch (err) {
+    console.error('Submit error:', err);
+    alert('Erro ao salvar pesquisa.');
+  }
+}
+
+// ==================== RESET FORM ====================
+function resetForm() {
+  document.getElementById('inputNome').value = '';
+  document.getElementById('inputEmail').value = '';
+  document.getElementById('inputCargo').value = '';
+  document.getElementById('inputDepartamento').value = '';
+  document.getElementById('inputAdmissao').value = '';
+  document.getElementById('inputDesligamento').value = '';
+  document.getElementById('tempoEmpresa').value = '';
+  currentColaborador = null;
+  currentRespostas = {};
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('stepInfo').style.display = 'block';
+}
+
+// ==================== INITIALIZATION ====================
+window.onload = async () => {
+  await openDB();
+  await initDatabase();
+
+  const savedUser = sessionStorage.getItem('currentUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    showApp();
+  }
+
+  document.getElementById('loginEmail').focus();
+};
+</script>
+
+</body>
+</html>
