@@ -459,29 +459,53 @@
             background: var(--light);
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 700px;
         }
 
         .table th {
             background: var(--light);
-            padding: 12px;
+            padding: 10px 8px;
             text-align: left;
             font-weight: 600;
             color: var(--dark);
             font-size: 13px;
             border-bottom: 2px solid var(--border);
+            white-space: nowrap;
         }
 
         .table td {
-            padding: 12px;
+            padding: 10px 8px;
             border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .table tr:hover {
             background: var(--light);
+        }
+
+        .table .actions-cell {
+            white-space: nowrap;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .btn-xs {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            white-space: nowrap;
         }
 
         .form-section {
@@ -1781,6 +1805,13 @@ async function loadLiberacoes() {
         let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Liberar Pesquisas para Colaboradores</h2></div>';
         html += '<div style="padding: 20px;">';
 
+        if (usuarios.empty) {
+            html += '<div class="alert alert-info">Nenhum colaborador cadastrado ainda. Vá em <strong>Usuários</strong> para cadastrar colaboradores e depois volte aqui para liberar as pesquisas.</div>';
+            html += '</div></div>';
+            container.innerHTML = html;
+            return;
+        }
+
         for (const doc of usuarios.docs) {
             const usuario = doc.data();
             const liberacoes = await db.collection('liberacoes')
@@ -1959,7 +1990,7 @@ async function loadUsuarios() {
         const perfilLabels = { admin: 'Administrador', gestor: 'Gestor', analista: 'Analista', diretoria: 'Diretoria', colaborador: 'Colaborador' };
 
         let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Usuários Cadastrados</h2></div>';
-        html += '<table class="table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Setor</th><th>Líder</th><th>Cargo</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
+        html += '<div class="table-wrapper"><table class="table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Setor</th><th>Líder</th><th>Cargo</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
 
         snapshot.forEach(doc => {
             const u = doc.data();
@@ -1976,14 +2007,15 @@ async function loadUsuarios() {
             html += '<td>' + (u.lider || 'N/A') + '</td>';
             html += '<td>' + (u.cargo || 'N/A') + '</td>';
             html += '<td>' + status + '</td>';
-            html += '<td style="white-space: nowrap;">';
-            html += '<button class="btn btn-sm ' + toggleClass + '" onclick="toggleUsuario(\'' + doc.id + '\', ' + u.ativo + ')" style="margin-right:4px;">' + toggleLabel + '</button>';
-            html += '<button class="btn btn-sm btn-danger" onclick="deleteUsuario(\'' + doc.id + '\', \'' + u.nome + '\')">Excluir</button>';
+            html += '<td class="actions-cell">';
+            html += '<button class="btn-xs" style="background:var(--info);" onclick="openEditUsuario(\'' + doc.id + '\')">Editar</button>';
+            html += '<button class="btn-xs" style="background:' + (u.ativo ? 'var(--warning);color:#333;' : 'var(--secondary);') + '" onclick="toggleUsuario(\'' + doc.id + '\', ' + u.ativo + ')">' + toggleLabel + '</button>';
+            html += '<button class="btn-xs" style="background:var(--danger);" onclick="deleteUsuario(\'' + doc.id + '\', \'' + u.nome + '\')">Excluir</button>';
             html += '</td>';
             html += '</tr>';
         });
 
-        html += '</tbody></table></div>';
+        html += '</tbody></table></div></div>';
         container.innerHTML = html;
     } catch (error) {
         console.error('Erro ao carregar usuários:', error);
@@ -2008,6 +2040,56 @@ window.deleteUsuario = async function(userId, nome) {
         loadUsuarios();
     } catch (error) {
         alert('Erro ao excluir usuário: ' + error.message);
+    }
+};
+
+window.openEditUsuario = async function(userId) {
+    try {
+        const doc = await db.collection('usuarios').doc(userId).get();
+        if (!doc.exists) { alert('Usuário não encontrado.'); return; }
+        const u = doc.data();
+
+        let formHtml = '<form id="editUserForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">';
+        formHtml += '<div class="form-group"><label>Nome Completo</label><input type="text" id="editNome" value="' + (u.nome || '') + '" required></div>';
+        formHtml += '<div class="form-group"><label>E-mail</label><input type="email" id="editEmail" value="' + (u.email || '') + '" required></div>';
+        formHtml += '<div class="form-group"><label>Perfil de Acesso</label><select id="editPerfil" required>';
+        formHtml += '<option value="admin"' + (u.perfil === 'admin' ? ' selected' : '') + '>Administrador</option>';
+        formHtml += '<option value="gestor"' + (u.perfil === 'gestor' ? ' selected' : '') + '>Gestor</option>';
+        formHtml += '<option value="analista"' + (u.perfil === 'analista' ? ' selected' : '') + '>Analista</option>';
+        formHtml += '<option value="diretoria"' + (u.perfil === 'diretoria' ? ' selected' : '') + '>Diretoria</option>';
+        formHtml += '<option value="colaborador"' + (u.perfil === 'colaborador' ? ' selected' : '') + '>Colaborador</option>';
+        formHtml += '</select></div>';
+        formHtml += '<div class="form-group"><label>Setor</label><input type="text" id="editSetor" value="' + (u.setor || '') + '"></div>';
+        formHtml += '<div class="form-group"><label>Líder / Gestor</label><input type="text" id="editLider" value="' + (u.lider || '') + '"></div>';
+        formHtml += '<div class="form-group"><label>Cargo</label><input type="text" id="editCargo" value="' + (u.cargo || '') + '"></div>';
+        formHtml += '</form>';
+
+        document.getElementById('modalTitle').textContent = 'Editar Usuário';
+        document.getElementById('modalBody').innerHTML = formHtml;
+        document.getElementById('modalButtons').innerHTML = '<button class="btn btn-primary" onclick="saveEditUsuario(\'' + userId + '\')" style="width:auto;padding:10px 24px;">Salvar</button> <button class="btn btn-secondary" onclick="closeModal()" style="width:auto;padding:10px 24px;">Cancelar</button>';
+        document.getElementById('modal').style.display = 'flex';
+    } catch (error) {
+        alert('Erro ao carregar dados do usuário: ' + error.message);
+    }
+};
+
+window.saveEditUsuario = async function(userId) {
+    try {
+        const dados = {
+            nome: document.getElementById('editNome').value,
+            email: document.getElementById('editEmail').value,
+            perfil: document.getElementById('editPerfil').value,
+            setor: document.getElementById('editSetor').value,
+            lider: document.getElementById('editLider').value,
+            cargo: document.getElementById('editCargo').value
+        };
+
+        await db.collection('usuarios').doc(userId).update(dados);
+        alert('Usuário atualizado com sucesso!');
+        closeModal();
+        loadUsuarios();
+    } catch (error) {
+        alert('Erro ao atualizar usuário: ' + error.message);
     }
 };
 
@@ -2527,120 +2609,4 @@ async function savePDI(pdiId = null) {
         loadPDI();
     } catch (error) {
         console.error('Erro ao salvar PDI:', error);
-        alert('Erro ao salvar PDI: ' + error.message);
-    }
-}
-
-async function deletePDI(pdiId, colaboradorNome) {
-    if (!confirm('Tem certeza que deseja excluir o PDI de "' + colaboradorNome + '"? Esta ação não pode ser desfeita.')) {
-        return;
-    }
-    
-    try {
-        await db.collection('pdis').doc(pdiId).delete();
-        alert('PDI excluído com sucesso.');
-        loadPDI();
-    } catch (error) {
-        console.error('Erro ao excluir PDI:', error);
-        alert('Erro ao excluir PDI: ' + error.message);
-    }
-}
-
-async function viewPDI(pdiId) {
-    try {
-        const doc = await db.collection('pdis').doc(pdiId).get();
-        const pdi = doc.data();
-        
-        const statusLabel = {
-            'pendente': 'Pendente',
-            'em_andamento': 'Em Andamento',
-            'concluido': 'Concluído',
-            'cancelado': 'Cancelado'
-        }[pdi.status] || pdi.status;
-        
-        const prazo = pdi.prazo ? new Date(pdi.prazo).toLocaleDateString('pt-BR') : 'N/A';
-        
-        let html = '<div>';
-        html += '<p><strong>Colaborador:</strong> ' + pdi.colaborador_nome + '</p>';
-        html += '<p><strong>Objetivo:</strong></p>';
-        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.objetivo + '</p>';
-        html += '<p><strong>Competências a Desenvolver:</strong></p>';
-        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.competencias + '</p>';
-        html += '<p><strong>Ações e Atividades:</strong></p>';
-        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.acoes + '</p>';
-        html += '<p><strong>Prazo:</strong> ' + prazo + '</p>';
-        html += '<p><strong>Responsável:</strong> ' + pdi.responsavel + '</p>';
-        html += '<p><strong>Status:</strong> <span class="badge badge-' + pdi.status + '">' + statusLabel + '</span></p>';
-        if (pdi.observacoes) {
-            html += '<p><strong>Observações:</strong></p>';
-            html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.observacoes + '</p>';
-        }
-        html += '</div>';
-        
-        openModal('PDI - ' + pdi.colaborador_nome, html, [
-            { text: 'Fechar', onclick: 'closeModal()', class: 'btn-primary' }
-        ]);
-    } catch (error) {
-        console.error('Erro ao visualizar PDI:', error);
-        alert('Erro ao visualizar PDI');
-    }
-}
-
-
-// Função auxiliar de hash (compatível com crypto.subtle e CryptoJS)
-async function hashSenha(senha) {
-    if (typeof CryptoJS !== 'undefined') {
-        return CryptoJS.SHA256(senha).toString();
-    }
-    // Fallback para crypto.subtle (Web Crypto API)
-    const encoder = new TextEncoder();
-    const data = encoder.encode(senha);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// Criar ou corrigir admin padrão
-async function criarAdminPadrao() {
-    try {
-        const senhaHash = await hashSenha('admin123');
-        const snapshot = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
-
-        if (snapshot.empty) {
-            await db.collection('usuarios').add({
-                nome: 'Administrador',
-                email: 'admin@empresa.com',
-                senha: senhaHash,
-                perfil: 'admin',
-                setor: 'Administrativo',
-                lider: '',
-                cargo: 'Administrador',
-                provisoria: false,
-                ativo: true,
-                created_at: new Date()
-            });
-            console.log('Admin padrão criado com sucesso');
-        } else {
-            // Garantir que a senha do admin esteja correta
-            const adminDoc = snapshot.docs[0];
-            if (adminDoc.data().senha !== senhaHash) {
-                await db.collection('usuarios').doc(adminDoc.id).update({ senha: senhaHash });
-                console.log('Senha do admin corrigida');
-            } else {
-                console.log('Admin OK');
-            }
-        }
-    } catch (error) {
-        console.error('Erro ao criar admin padrão:', error);
-    }
-}
-
-// Initialize app on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    await criarAdminPadrao();
-    initializeApp();
-});
-</script>
-
-</body>
-</html>
+        alert('Erro a
