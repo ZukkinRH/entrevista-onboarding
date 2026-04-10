@@ -1275,22 +1275,31 @@ async function initializeApp() {
 
 async function handleLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('emailInput').value;
+    const email = document.getElementById('emailInput').value.trim();
     const senha = document.getElementById('senhaInput').value;
 
     try {
+        console.log('Tentando login com:', email);
         const snapshot = await db.collection('usuarios').where('email', '==', email).get();
+
         if (snapshot.empty) {
-            alert('Usuário não encontrado');
+            alert('Usuário não encontrado. Verifique o e-mail digitado.');
             return;
         }
 
         const usuario = snapshot.docs[0].data();
         usuario.id = snapshot.docs[0].id;
 
-        const senhaHash = CryptoJS.SHA256(senha).toString();
+        const senhaHash = await hashSenha(senha);
+        console.log('Hash gerado para comparação');
+
         if (usuario.senha !== senhaHash) {
-            alert('Senha incorreta');
+            alert('Senha incorreta.');
+            return;
+        }
+
+        if (usuario.ativo === false) {
+            alert('Usuário inativo. Contate o administrador.');
             return;
         }
 
@@ -1299,15 +1308,16 @@ async function handleLogin(e) {
         showAppScreen();
     } catch (error) {
         console.error('Erro no login:', error);
-        alert('Erro ao fazer login: ' + error.message);
+        alert('Erro ao conectar com o servidor. Verifique sua conexão e tente novamente.\n\nDetalhes: ' + error.message);
     }
 }
 
-function showForgotPassword() {
+async function showForgotPassword() {
     const email = prompt('Digite seu email:');
     if (!email) return;
 
-    db.collection('usuarios').where('email', '==', email).get().then(snapshot => {
+    try {
+        const snapshot = await db.collection('usuarios').where('email', '==', email.trim()).get();
         if (snapshot.empty) {
             alert('Email não encontrado');
             return;
@@ -1316,21 +1326,17 @@ function showForgotPassword() {
         const docId = snapshot.docs[0].id;
         const usuario = snapshot.docs[0].data();
         const novaSenha = generatePassword();
-        const senhaHash = CryptoJS.SHA256(novaSenha).toString();
+        const senhaHash = await hashSenha(novaSenha);
 
-        db.collection('usuarios').doc(docId).update({
+        await db.collection('usuarios').doc(docId).update({
             senha: senhaHash,
             provisoria: true
-        }).then(() => {
-            enviarEmailSenha(usuario.nome, usuario.email, novaSenha);
-        }).catch(error => {
-            console.error('Erro ao atualizar senha:', error);
-            alert('Senha temporária: ' + novaSenha);
         });
-    }).catch(error => {
+        enviarEmailSenha(usuario.nome, usuario.email, novaSenha);
+    } catch (error) {
         console.error('Erro:', error);
-        alert('Erro ao processar recuperacao de senha');
-    });
+        alert('Erro ao processar recuperação de senha: ' + error.message);
+    }
 }
 
 function generatePassword(length = 8) {
@@ -1926,7 +1932,7 @@ async function loadUsuarios() {
             }
 
             const senhaTemp = 'senha123';
-            const senhaHash = CryptoJS.SHA256(senhaTemp).toString();
+            const senhaHash = await hashSenha(senhaTemp);
 
             await db.collection('usuarios').add({
                 nome, email, senha: senhaHash, perfil, setor, lider, cargo,
@@ -2358,10 +2364,10 @@ function renderPDITable(docs, showActions = true) {
         html += '<td><span class="badge ' + statusBadgeClass + '">' + statusLabel + '</span></td>';
         
         if (showActions && currentUser.perfil === 'admin') {
-            html += '<td><button class="btn btn-primary btn-small" onclick="openPDIForm('' + doc.id + '')" style="margin-right: 5px;">Editar</button>';
-            html += '<button class="btn btn-danger btn-small" onclick="deletePDI('' + doc.id + '', '' + pdi.colaborador_nome + '')">Excluir</button></td>';
+            html += '<td><button class="btn btn-primary btn-small" onclick="openPDIForm(\'' + doc.id + '\')" style="margin-right: 5px;">Editar</button>';
+            html += '<button class="btn btn-danger btn-small" onclick="deletePDI(\'' + doc.id + '\', \'' + pdi.colaborador_nome + '\')">Excluir</button></td>';
         } else {
-            html += '<td><button class="btn btn-primary btn-small" onclick="viewPDI('' + doc.id + '')">Ver</button></td>';
+            html += '<td><button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Ver</button></td>';
         }
         
         html += '</tr>';
@@ -2455,7 +2461,7 @@ async function openPDIForm(pdiId = null) {
     
     html += '<div class="pdi-form-buttons">';
     html += '<button class="btn btn-secondary" onclick="closePDIForm()" style="width: auto;">Cancelar</button>';
-    html += '<button class="btn btn-primary" onclick="savePDI(' + (pdiId ? ''' + pdiId + ''' : 'null') + ')" style="width: auto;">Salvar PDI</button>';
+    html += '<button class="btn btn-primary" onclick="savePDI(' + (pdiId ? '\'' + pdiId + '\'' : 'null') + ')" style="width: auto;">Salvar PDI</button>';
     html += '</div>';
     
     html += '</div>';
@@ -2581,30 +2587,58 @@ async function viewPDI(pdiId) {
 }
 
 
-// Initialize app on page load
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
+// Função auxiliar de hash (compatível com crypto.subtle e CryptoJS)
+async function hashSenha(senha) {
+    if (typeof CryptoJS !== 'undefined') {
+        return CryptoJS.SHA256(senha).toString();
+    }
+    // Fallback para crypto.subtle (Web Crypto API)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(senha);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-    // Criar admin padrão se não existir
-    setTimeout(() => {
-        db.collection('usuarios').where('email', '==', 'admin@empresa.com').get().then(snapshot => {
-            if (snapshot.empty) {
-                const senhaHash = CryptoJS.SHA256('admin123').toString();
-                db.collection('usuarios').add({
-                    nome: 'Administrador',
-                    email: 'admin@empresa.com',
-                    senha: senhaHash,
-                    perfil: 'admin',
-                    setor: 'Administrativo',
-                    lider: null,
-                    cargo: 'Administrador',
-                    provisoria: false,
-                    ativo: true,
-                    created_at: new Date()
-                });
+// Criar ou corrigir admin padrão
+async function criarAdminPadrao() {
+    try {
+        const senhaHash = await hashSenha('admin123');
+        const snapshot = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
+
+        if (snapshot.empty) {
+            await db.collection('usuarios').add({
+                nome: 'Administrador',
+                email: 'admin@empresa.com',
+                senha: senhaHash,
+                perfil: 'admin',
+                setor: 'Administrativo',
+                lider: '',
+                cargo: 'Administrador',
+                provisoria: false,
+                ativo: true,
+                created_at: new Date()
+            });
+            console.log('Admin padrão criado com sucesso');
+        } else {
+            // Garantir que a senha do admin esteja correta
+            const adminDoc = snapshot.docs[0];
+            if (adminDoc.data().senha !== senhaHash) {
+                await db.collection('usuarios').doc(adminDoc.id).update({ senha: senhaHash });
+                console.log('Senha do admin corrigida');
+            } else {
+                console.log('Admin OK');
             }
-        });
-    }, 1000);
+        }
+    } catch (error) {
+        console.error('Erro ao criar admin padrão:', error);
+    }
+}
+
+// Initialize app on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await criarAdminPadrao();
+    initializeApp();
 });
 </script>
 
