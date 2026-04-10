@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plano de Desenvolvimento - Onboarding</title>
+    <title>Plano de Desenvolvimento</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
-            --primary: #6C5CE7;
-            --primary-light: #A29BFE;
-            --primary-dark: #5A4BD1;
-            --secondary: #00B894;
+            --primary: #D42027;
+            --primary-light: #E85B5B;
+            --primary-dark: #B01A20;
+            --secondary: #333333;
             --danger: #D63031;
             --warning: #FDCB6E;
             --info: #0984E3;
-            --light: #F5F6FA;
-            --dark: #2D3436;
-            --border: #DFE6E9;
+            --light: #F8F8F8;
+            --dark: #2D2D2D;
+            --border: #E0E0E0;
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
@@ -92,7 +92,7 @@
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+            box-shadow: 0 0 0 3px rgba(212, 32, 39, 0.1);
         }
 
         .btn {
@@ -352,12 +352,12 @@
         }
 
         .badge-primary {
-            background: rgba(108, 92, 231, 0.2);
+            background: rgba(212, 32, 39, 0.2);
             color: var(--primary);
         }
 
         .badge-secondary {
-            background: rgba(0, 184, 148, 0.2);
+            background: rgba(51, 51, 51, 0.1);
             color: var(--secondary);
         }
 
@@ -369,6 +369,94 @@
         .badge-warning {
             background: rgba(253, 203, 110, 0.2);
             color: #D68910;
+        }
+
+        .badge-pendente {
+            background: rgba(253, 203, 110, 0.2);
+            color: #D68910;
+        }
+
+        .badge-em_andamento {
+            background: rgba(9, 132, 227, 0.2);
+            color: var(--info);
+        }
+
+        .badge-concluido {
+            background: rgba(0, 184, 148, 0.2);
+            color: #00B894;
+        }
+
+        .badge-cancelado {
+            background: rgba(214, 48, 49, 0.2);
+            color: var(--danger);
+        }
+
+        .pdi-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .pdi-form-section {
+            margin-bottom: 20px;
+        }
+
+        .pdi-form-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .pdi-form-section input,
+        .pdi-form-section textarea,
+        .pdi-form-section select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .pdi-form-section textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .pdi-form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pdi-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .pdi-table th {
+            background: var(--light);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 13px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .pdi-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .pdi-table tr:hover {
+            background: var(--light);
         }
 
         .table {
@@ -505,7 +593,7 @@
         .textárea-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+            box-shadow: 0 0 0 3px rgba(212, 32, 39, 0.1);
         }
 
         .checkbox-group {
@@ -693,7 +781,42 @@
             font-size: 14px;
         }
 
-        @media (max-width: 768px) {
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .sidebar-toggle:hover {
+            background: var(--light);
+        }
+        .sidebar.collapsed {
+            width: 60px;
+            padding: 20px 10px;
+        }
+        .sidebar.collapsed .sidebar-header h2,
+        .sidebar.collapsed .user-info,
+        .sidebar.collapsed .nav-menu a span,
+        .sidebar.collapsed .logout-btn span {
+            display: none;
+        }
+        .sidebar.collapsed .nav-menu a {
+            text-align: center;
+            padding: 12px 8px;
+            font-size: 18px;
+        }
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+        }
+        .sidebar {
+            transition: width 0.3s ease;
+        }
+
+@media (max-width: 768px) {
             .app-container {
                 flex-direction: column;
             }
@@ -706,6 +829,12 @@
                 align-items: center;
                 justify-content: space-between;
                 padding: 15px;
+            }
+
+            .sidebar.collapsed {
+                width: 0;
+                padding: 0;
+                overflow: hidden;
             }
 
             .user-info {
@@ -742,7 +871,7 @@
 <div id="loginScreen" class="login-container">
     <div class="login-box">
         <h1>Zukkin RH</h1>
-        <p>Plano de Desenvolvimento - Onboarding</p>
+        <p>Plano de Desenvolvimento</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label for="emailInput">Email</label>
@@ -764,6 +893,7 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>Menu</h2>
+            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Minimizar menu">☰</button>
         </div>
         <div class="user-info">
             <p><strong>Usuário:</strong></p>
@@ -776,7 +906,7 @@
 
     <div class="main-content">
         <div class="content-header">
-            <h1>Plano de Desenvolvimento - Onboarding</h1>
+            <h1>Plano de Desenvolvimento</h1>
         </div>
 
         <!-- Questionários do Colaborador Tab -->
@@ -831,8 +961,47 @@
         </div>
 
         <!-- Usuários Tab -->
-        <div id="usuáriosTab" class="tab-content">
-            <div id="usuáriosContainer"></div>
+        <div id="usuariosTab" class="tab-content">
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-header"><h2 style="color: var(--primary);">Novo Usuário</h2></div>
+                <form id="newUserForm" style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="newUserNome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="newUserEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Perfil de Acesso</label>
+                            <select id="newUserPerfil" required>
+                                <option value="">Selecione...</option>
+                                <option value="admin">Administrador</option>
+                                <option value="gestor">Gestor</option>
+                                <option value="analista">Analista</option>
+                                <option value="diretoria">Diretoria</option>
+                                <option value="colaborador">Colaborador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Setor</label>
+                            <input type="text" id="newUserSetor" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Líder / Gestor</label>
+                            <input type="text" id="newUserLider" placeholder="Nome do gestor direto">
+                        </div>
+                        <div class="form-group">
+                            <label>Cargo</label>
+                            <input type="text" id="newUserCargo" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Cadastrar Usuário</button>
+                </form>
+            </div>
+            <div id="usuariosContainer"></div>
         </div>
 
         <!-- Minhas Respostas Tab -->
@@ -848,6 +1017,10 @@
         <!-- Pesquisas dos Colaboradores Tab (Diretoria) -->
         <div id="pesquisasColabTab" class="tab-content">
             <div id="pesquisasColabContainer"></div>
+        </div>
+        <!-- PDI Tab -->
+        <div id="pdiTab" class="tab-content">
+            <div id="pdiContainer"></div>
         </div>
     </div>
 </div>
@@ -895,22 +1068,34 @@ const TABS = {
         { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
         { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
         { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
-        { id: 'usuáriosTab', label: 'Usuários', key: 'usuários' }
+        { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
+        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
     ],
     gestor: [
         { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
-        { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' }
+        { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
+        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
     ],
     diretoria: [
         { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
         { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
-        { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' }
+        { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
+        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
     ],
     colaborador: [
         { id: 'questionnairesTab', label: 'Questionários do Colaborador', key: 'questionarios' },
-        { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' }
+        { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
+        { id: 'pdiTab', label: 'Meu PDI', key: 'pdi' }
+    ],
+    analista: [
+        { id: 'questionnairesTab', label: 'Questionários do Colaborador', key: 'questionarios' },
+        { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
+        { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
+        { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
+        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
     ]
 };
+
 
 // Survey templates
 const SURVEY_TEMPLATES = {
@@ -1137,7 +1322,7 @@ function showForgotPassword() {
             senha: senhaHash,
             provisoria: true
         }).then(() => {
-            enviarEmailSenha(usuário.nome, usuário.email, novaSenha);
+            enviarEmailSenha(usuario.nome, usuario.email, novaSenha);
         }).catch(error => {
             console.error('Erro ao atualizar senha:', error);
             alert('Senha temporária: ' + novaSenha);
@@ -1188,6 +1373,22 @@ function showLoginScreen() {
     document.getElementById('appScreen').style.display = 'none';
 }
 
+
+const navIcons = {
+    questionarios: '📋',
+    avaliações: '✅',
+    dashboard: '📊',
+    liberacoes: '🔓',
+    pesquisas: '📝',
+    colaboradores: '👥',
+    usuarios: '⚙️',
+    subordinados: '👨‍💼',
+    avaliadores: '📈',
+    pesquisas_colab: '📄',
+    respostas: '📁',
+    pdi: '🎯'
+};
+
 function buildNavigation() {
     const navMenu = document.getElementById('navMenu');
     navMenu.innerHTML = '';
@@ -1196,7 +1397,11 @@ function buildNavigation() {
     tabs.forEach((tab, index) => {
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.textContent = tab.label;
+        const icon = navIcons[tab.key] || '•';
+        const span = document.createElement('span');
+        span.textContent = tab.label;
+        a.appendChild(document.createTextNode(icon + ' '));
+        a.appendChild(span);
         a.onclick = () => switchTab(tab.id, a);
         if (index === 0) a.classList.add('active');
         li.appendChild(a);
@@ -1204,6 +1409,10 @@ function buildNavigation() {
     });
 
     switchTab(tabs[0].id, navMenu.querySelector('a'));
+}
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('collapsed');
 }
 
 function switchTab(tabId, element) {
@@ -1222,10 +1431,11 @@ function switchTab(tabId, element) {
         else if (tabId === 'liberacoesTab') loadLiberacoes();
         else if (tabId === 'pesquisasTab') loadPesquisas();
         else if (tabId === 'colaboradoresTab') loadColaboradores();
-        else if (tabId === 'usuáriosTab') loadUsuarios();
+        else if (tabId === 'usuariosTab') loadUsuarios();
         else if (tabId === 'respostasTab') loadRespostas();
         else if (tabId === 'gestoresTab') loadAvaliadoresTab();
         else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
+        else if (tabId === 'pdiTab') loadPDI();
     }
 }
 
@@ -1281,10 +1491,13 @@ async function loadEvaluations() {
     const container = document.getElementById('evaluationsContainer');
 
     try {
-        const colaboradores = await db.collection('usuarios')
-            .where('lider', '==', currentUser.nome)
-            .where('perfil', '==', 'colaborador')
-            .get();
+        let query;
+        if (currentUser.perfil === 'admin') {
+            query = db.collection('usuarios').where('perfil', '==', 'colaborador');
+        } else {
+            query = db.collection('usuarios').where('lider', '==', currentUser.nome).where('perfil', '==', 'colaborador');
+        }
+        const colaboradores = await query.get();
 
         const select = document.getElementById('collaboratorSelect');
         select.innerHTML = '<option value="">-- Selecione um colaborador --</option>';
@@ -1476,8 +1689,8 @@ async function saveSurvey(tipo) {
 
     try {
         await db.collection('respostas').add({
-            usuário_id: currentUser.id,
-            usuário_nome: currentUser.nome,
+            usuario_id: currentUser.id,
+            usuario_nome: currentUser.nome,
             tipo_pesquisa: tipo,
             respostas: respostas,
             data_resposta: new Date(),
@@ -1562,7 +1775,7 @@ async function loadLiberacoes() {
         let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Liberar Pesquisas para Colaboradores</h2></div>';
         html += '<div style="padding: 20px;">';
 
-        for (const doc of usuários.docs) {
+        for (const doc of usuarios.docs) {
             const usuario = doc.data();
             const liberacoes = await db.collection('liberacoes')
                 .where('colaborador_id', '==', doc.id)
@@ -1574,7 +1787,7 @@ async function loadLiberacoes() {
             });
 
             html += '<div style="margin-bottom: 25px; padding: 15px; background: var(--light); border-radius: 8px;">';
-            html += '<h3 style="margin-bottom: 10px; color: var(--dark);">' + usuário.nome + '</h3>';
+            html += '<h3 style="margin-bottom: 10px; color: var(--dark);">' + usuario.nome + '</h3>';
             html += '<div class="checkbox-group" style="display: flex; flex-direction: column; gap: 8px;">';
             html += '<label style="display: flex; gap: 10px; align-items: center;">';
             html += '<input type="checkbox" ' + (liberadosTipos['experiencia_45_colab'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'experiencia_45_colab\', this.checked)">';
@@ -1667,7 +1880,7 @@ async function loadColaboradores() {
             .where('perfil', '==', 'colaborador')
             .get();
 
-        if (usuários.empty) {
+        if (usuarios.empty) {
             container.innerHTML = '<div class="alert alert-info">Nenhum colaborador registrado.</div>';
             return;
         }
@@ -1675,10 +1888,10 @@ async function loadColaboradores() {
         let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Colaboradores</h2></div>';
         html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Setor</th><th>Lider</th><th>Cargo</th><th>Status</th></tr></thead><tbody>';
 
-        usuários.forEach(doc => {
+        usuarios.forEach(doc => {
             const usuario = doc.data();
-            const status = usuário.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-            html += '<tr><td>' + usuário.nome + '</td><td>' + usuário.email + '</td><td>' + (usuário.setor || 'N/A') + '</td><td>' + (usuário.lider || 'N/A') + '</td><td>' + (usuário.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
+            const status = usuario.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+            html += '<tr><td>' + usuario.nome + '</td><td>' + usuario.email + '</td><td>' + (usuario.setor || 'N/A') + '</td><td>' + (usuario.lider || 'N/A') + '</td><td>' + (usuario.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
         });
 
         html += '</tbody></table></div>';
@@ -1690,24 +1903,78 @@ async function loadColaboradores() {
 }
 
 async function loadUsuarios() {
-    const container = document.getElementById('usuáriosContainer');
+    const container = document.getElementById('usuariosContainer');
     container.innerHTML = '<div class="loading"></div>';
 
-    try {
-        const usuarios = await db.collection('usuarios').get();
+    // Setup form handler
+    const form = document.getElementById('newUserForm');
+    form.onsubmit = async function(e) {
+        e.preventDefault();
+        try {
+            const nome = document.getElementById('newUserNome').value;
+            const email = document.getElementById('newUserEmail').value;
+            const perfil = document.getElementById('newUserPerfil').value;
+            const setor = document.getElementById('newUserSetor').value;
+            const lider = document.getElementById('newUserLider').value;
+            const cargo = document.getElementById('newUserCargo').value;
 
-        if (usuários.empty) {
+            // Verificar se email já existe
+            const existe = await db.collection('usuarios').where('email', '==', email).get();
+            if (!existe.empty) {
+                alert('Já existe um usuário com este e-mail.');
+                return;
+            }
+
+            const senhaTemp = 'senha123';
+            const senhaHash = CryptoJS.SHA256(senhaTemp).toString();
+
+            await db.collection('usuarios').add({
+                nome, email, senha: senhaHash, perfil, setor, lider, cargo,
+                provisoria: true, ativo: true, created_at: new Date()
+            });
+
+            alert('Usuário criado com sucesso!\nSenha temporária: ' + senhaTemp);
+            form.reset();
+            loadUsuarios();
+        } catch (error) {
+            console.error('Erro ao criar usuário:', error);
+            alert('Erro ao criar usuário: ' + error.message);
+        }
+    };
+
+    try {
+        const snapshot = await db.collection('usuarios').get();
+
+        if (snapshot.empty) {
             container.innerHTML = '<div class="alert alert-info">Nenhum usuário registrado.</div>';
             return;
         }
 
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Todos os Usuários</h2></div>';
-        html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Setor</th><th>Status</th></tr></thead><tbody>';
+        const perfilLabels = { admin: 'Administrador', gestor: 'Gestor', analista: 'Analista', diretoria: 'Diretoria', colaborador: 'Colaborador' };
 
-        usuários.forEach(doc => {
-            const usuario = doc.data();
-            const status = usuário.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-            html += '<tr><td>' + usuário.nome + '</td><td>' + usuário.email + '</td><td>' + usuario.perfil + '</td><td>' + (usuário.setor || 'N/A') + '</td><td>' + status + '</td></tr>';
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Usuários Cadastrados</h2></div>';
+        html += '<table class="table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Setor</th><th>Líder</th><th>Cargo</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
+
+        snapshot.forEach(doc => {
+            const u = doc.data();
+            const status = u.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+            const perfilLabel = perfilLabels[u.perfil] || u.perfil;
+            const toggleLabel = u.ativo ? 'Desativar' : 'Ativar';
+            const toggleClass = u.ativo ? 'btn-warning' : 'btn-secondary';
+
+            html += '<tr>';
+            html += '<td>' + u.nome + '</td>';
+            html += '<td>' + u.email + '</td>';
+            html += '<td><span class="badge badge-' + u.perfil + '">' + perfilLabel + '</span></td>';
+            html += '<td>' + (u.setor || 'N/A') + '</td>';
+            html += '<td>' + (u.lider || 'N/A') + '</td>';
+            html += '<td>' + (u.cargo || 'N/A') + '</td>';
+            html += '<td>' + status + '</td>';
+            html += '<td style="white-space: nowrap;">';
+            html += '<button class="btn btn-sm ' + toggleClass + '" onclick="toggleUsuario(\'' + doc.id + '\', ' + u.ativo + ')" style="margin-right:4px;">' + toggleLabel + '</button>';
+            html += '<button class="btn btn-sm btn-danger" onclick="deleteUsuario(\'' + doc.id + '\', \'' + u.nome + '\')">Excluir</button>';
+            html += '</td>';
+            html += '</tr>';
         });
 
         html += '</tbody></table></div>';
@@ -1718,13 +1985,33 @@ async function loadUsuarios() {
     }
 }
 
+window.toggleUsuario = async function(userId, isAtivo) {
+    try {
+        await db.collection('usuarios').doc(userId).update({ ativo: !isAtivo });
+        loadUsuarios();
+    } catch (error) {
+        alert('Erro ao atualizar usuário: ' + error.message);
+    }
+};
+
+window.deleteUsuario = async function(userId, nome) {
+    if (!confirm('Tem certeza que deseja excluir o usuário "' + nome + '"? Esta ação não pode ser desfeita.')) return;
+    try {
+        await db.collection('usuarios').doc(userId).delete();
+        alert('Usuário excluído com sucesso.');
+        loadUsuarios();
+    } catch (error) {
+        alert('Erro ao excluir usuário: ' + error.message);
+    }
+};
+
 async function loadRespostas() {
     const container = document.getElementById('respostasContainer');
     container.innerHTML = '<div class="loading"></div>';
 
     try {
         const respostas = await db.collection('respostas')
-            .where('usuário_id', '==', currentUser.id)
+            .where('usuario_id', '==', currentUser.id)
             .get();
 
         if (respostas.empty) {
@@ -1794,8 +2081,8 @@ async function loadSubordinates() {
 
         subordinados.forEach(doc => {
             const usuario = doc.data();
-            const status = usuário.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-            html += '<tr><td>' + usuário.nome + '</td><td>' + usuário.email + '</td><td>' + (usuário.setor || 'N/A') + '</td><td>' + (usuário.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
+            const status = usuario.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+            html += '<tr><td>' + usuario.nome + '</td><td>' + usuario.email + '</td><td>' + (usuario.setor || 'N/A') + '</td><td>' + (usuario.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
         });
 
         html += '</tbody></table></div>';
@@ -1815,7 +2102,7 @@ async function loadDashboard() {
         const pesquisas = await db.collection('pesquisas').get();
         const respostas = await db.collection('respostas').get();
 
-        const totalUsuarios = usuários.size;
+        const totalUsuarios = usuarios.size;
         const totalPesquisas = pesquisas.size;
         const totalRespostas = respostas.size;
 
@@ -1898,7 +2185,7 @@ async function loadPesquisasColabTab() {
         respostas.forEach(doc => {
             const resposta = doc.data();
             const data = resposta.data_resposta ? new Date(resposta.data_resposta.toDate()).toLocaleDateString('pt-BR') : 'N/A';
-            html += '<tr><td>' + resposta.usuário_nome + '</td><td>' + resposta.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
+            html += '<tr><td>' + resposta.usuario_nome + '</td><td>' + resposta.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
         });
 
         html += '</tbody></table></div>';
@@ -1932,6 +2219,367 @@ function handleLogout() {
     document.getElementById('emailInput').value = '';
     document.getElementById('senhaInput').value = '';
 }
+
+
+async function loadPDI() {
+    const container = document.getElementById('pdiContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        if (currentUser.perfil === 'admin') {
+            await loadPDIAdmin(container);
+        } else if (['gestor', 'analista'].includes(currentUser.perfil)) {
+            await loadPDIGestorAnalista(container);
+        } else if (currentUser.perfil === 'colaborador') {
+            await loadPDIColaborador(container);
+        } else if (currentUser.perfil === 'diretoria') {
+            await loadPDIDiretoria(container);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar PDI:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar PDI</div>';
+    }
+}
+
+async function loadPDIAdmin(container) {
+    let html = '<div class="card"><div class="card-header">';
+    html += '<h2 style="color: var(--primary);">Plano de Desenvolvimento Individual (PDI)</h2>';
+    html += '</div>';
+    html += '<button class="btn btn-primary" onclick="openPDIForm()" style="margin: 20px; width: auto;">Novo PDI</button>';
+    html += '<div id="pdiFormContainer"></div>';
+    html += '<div id="pdiListContainer"></div>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+    loadPDIList(container);
+}
+
+async function loadPDIGestorAnalista(container) {
+    let html = '<div class="card"><div class="card-header">';
+    html += '<h2 style="color: var(--primary);">Plano de Desenvolvimento Individual (PDI)</h2>';
+    html += '</div>';
+    
+    const pdis = await db.collection('pdis')
+        .where('colaborador_id', '==', currentUser.id)
+        .get();
+    
+    if (pdis.empty) {
+        // Try fetching subordinates' PDIs
+        const subordinados = await db.collection('usuarios')
+            .where('lider', '==', currentUser.nome)
+            .get();
+        
+        if (subordinados.empty) {
+            html += '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI disponível.</div>';
+            container.innerHTML = html + '</div>';
+            return;
+        }
+        
+        const subordinadoIds = subordinados.docs.map(doc => doc.id);
+        if (subordinadoIds.length > 0) {
+            const pdiSubordinados = await db.collection('pdis')
+                .where('colaborador_id', 'in', subordinadoIds)
+                .get();
+            
+            if (!pdiSubordinados.empty) {
+                html += renderPDITable(pdiSubordinados.docs, false);
+            } else {
+                html += '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI disponível para seus subordinados.</div>';
+            }
+        }
+    } else {
+        html += renderPDITable(pdis.docs, false);
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+async function loadPDIColaborador(container) {
+    let html = '<div class="card"><div class="card-header">';
+    html += '<h2 style="color: var(--primary);">Meu Plano de Desenvolvimento Individual</h2>';
+    html += '</div>';
+    
+    const pdis = await db.collection('pdis')
+        .where('colaborador_id', '==', currentUser.id)
+        .get();
+    
+    if (pdis.empty) {
+        html += '<div class="alert alert-info" style="margin: 20px;">Você não possui um PDI atribuído no momento.</div>';
+        container.innerHTML = html + '</div>';
+        return;
+    }
+    
+    html += renderPDITable(pdis.docs, false);
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+async function loadPDIDiretoria(container) {
+    let html = '<div class="card"><div class="card-header">';
+    html += '<h2 style="color: var(--primary);">Plano de Desenvolvimento Individual (PDI)</h2>';
+    html += '</div>';
+    
+    const pdis = await db.collection('pdis').get();
+    
+    if (pdis.empty) {
+        html += '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI registrado.</div>';
+        container.innerHTML = html + '</div>';
+        return;
+    }
+    
+    html += renderPDITable(pdis.docs, false);
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function renderPDITable(docs, showActions = true) {
+    let html = '<div style="overflow-x: auto; margin: 20px;"><table class="pdi-table"><thead><tr>';
+    html += '<th>Colaborador</th><th>Objetivo</th><th>Prazo</th><th>Status</th>';
+    if (showActions) html += '<th>Ações</th>';
+    html += '</tr></thead><tbody>';
+    
+    docs.forEach(doc => {
+        const pdi = doc.data();
+        const statusBadgeClass = 'badge-' + pdi.status;
+        const statusLabel = {
+            'pendente': 'Pendente',
+            'em_andamento': 'Em Andamento',
+            'concluido': 'Concluído',
+            'cancelado': 'Cancelado'
+        }[pdi.status] || pdi.status;
+        
+        const prazo = pdi.prazo ? new Date(pdi.prazo).toLocaleDateString('pt-BR') : 'N/A';
+        
+        html += '<tr>';
+        html += '<td>' + pdi.colaborador_nome + '</td>';
+        html += '<td>' + pdi.objetivo + '</td>';
+        html += '<td>' + prazo + '</td>';
+        html += '<td><span class="badge ' + statusBadgeClass + '">' + statusLabel + '</span></td>';
+        
+        if (showActions && currentUser.perfil === 'admin') {
+            html += '<td><button class="btn btn-primary btn-small" onclick="openPDIForm('' + doc.id + '')" style="margin-right: 5px;">Editar</button>';
+            html += '<button class="btn btn-danger btn-small" onclick="deletePDI('' + doc.id + '', '' + pdi.colaborador_nome + '')">Excluir</button></td>';
+        } else {
+            html += '<td><button class="btn btn-primary btn-small" onclick="viewPDI('' + doc.id + '')">Ver</button></td>';
+        }
+        
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    return html;
+}
+
+async function loadPDIList(container) {
+    const listContainer = document.getElementById('pdiListContainer') || container;
+    
+    try {
+        const pdis = await db.collection('pdis').orderBy('created_at', 'desc').get();
+        
+        if (pdis.empty) {
+            listContainer.innerHTML = '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI registrado.</div>';
+            return;
+        }
+        
+        let html = renderPDITable(pdis.docs, true);
+        if (document.getElementById('pdiListContainer')) {
+            document.getElementById('pdiListContainer').innerHTML = html;
+        } else {
+            listContainer.innerHTML += html;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar lista de PDI:', error);
+    }
+}
+
+async function openPDIForm(pdiId = null) {
+    const colaboradores = await db.collection('usuarios')
+        .where('perfil', '==', 'colaborador')
+        .get();
+    
+    let html = '<div class="pdi-form">';
+    html += '<h3 style="color: var(--primary); margin-bottom: 20px;">' + (pdiId ? 'Editar PDI' : 'Novo PDI') + '</h3>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Colaborador:</label>';
+    html += '<select id="pdiColaborador" required>';
+    html += '<option value="">Selecione um colaborador</option>';
+    
+    colaboradores.forEach(doc => {
+        html += '<option value="' + doc.id + '" data-nome="' + doc.data().nome + '">' + doc.data().nome + '</option>';
+    });
+    
+    html += '</select>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Objetivo:</label>';
+    html += '<textarea id="pdiObjetivo" placeholder="Descreva o objetivo do desenvolvimento" required></textarea>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Competências a Desenvolver:</label>';
+    html += '<textarea id="pdiCompetencias" placeholder="Liste as competências" required></textarea>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Ações e Atividades:</label>';
+    html += '<textarea id="pdiAcoes" placeholder="Descreva as ações e atividades" required></textarea>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Prazo:</label>';
+    html += '<input type="date" id="pdiPrazo" required>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Responsável:</label>';
+    html += '<input type="text" id="pdiResponsavel" placeholder="Nome do responsável" required>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Status:</label>';
+    html += '<select id="pdiStatus" required>';
+    html += '<option value="pendente">Pendente</option>';
+    html += '<option value="em_andamento">Em Andamento</option>';
+    html += '<option value="concluido">Concluído</option>';
+    html += '<option value="cancelado">Cancelado</option>';
+    html += '</select>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-section">';
+    html += '<label>Observações:</label>';
+    html += '<textarea id="pdiObservacoes" placeholder="Observações adicionais"></textarea>';
+    html += '</div>';
+    
+    html += '<div class="pdi-form-buttons">';
+    html += '<button class="btn btn-secondary" onclick="closePDIForm()" style="width: auto;">Cancelar</button>';
+    html += '<button class="btn btn-primary" onclick="savePDI(' + (pdiId ? ''' + pdiId + ''' : 'null') + ')" style="width: auto;">Salvar PDI</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    const formContainer = document.getElementById('pdiFormContainer');
+    if (formContainer) {
+        formContainer.innerHTML = html;
+        formContainer.scrollIntoView({ behavior: 'smooth' });
+        
+        // If editing, load existing data
+        if (pdiId) {
+            const doc = await db.collection('pdis').doc(pdiId).get();
+            const pdi = doc.data();
+            document.getElementById('pdiColaborador').value = pdi.colaborador_id;
+            document.getElementById('pdiObjetivo').value = pdi.objetivo;
+            document.getElementById('pdiCompetencias').value = pdi.competencias;
+            document.getElementById('pdiAcoes').value = pdi.acoes;
+            document.getElementById('pdiPrazo').value = pdi.prazo;
+            document.getElementById('pdiResponsavel').value = pdi.responsavel;
+            document.getElementById('pdiStatus').value = pdi.status;
+            document.getElementById('pdiObservacoes').value = pdi.observacoes || '';
+        }
+    }
+}
+
+function closePDIForm() {
+    const formContainer = document.getElementById('pdiFormContainer');
+    if (formContainer) {
+        formContainer.innerHTML = '';
+    }
+}
+
+async function savePDI(pdiId = null) {
+    const colaboradorSelect = document.getElementById('pdiColaborador');
+    const colaboradorId = colaboradorSelect.value;
+    const colaboradorNome = colaboradorSelect.options[colaboradorSelect.selectedIndex].dataset.nome;
+    
+    const pdiData = {
+        colaborador_id: colaboradorId,
+        colaborador_nome: colaboradorNome,
+        objetivo: document.getElementById('pdiObjetivo').value,
+        competencias: document.getElementById('pdiCompetencias').value,
+        acoes: document.getElementById('pdiAcoes').value,
+        prazo: document.getElementById('pdiPrazo').value,
+        responsavel: document.getElementById('pdiResponsavel').value,
+        status: document.getElementById('pdiStatus').value,
+        observacoes: document.getElementById('pdiObservacoes').value,
+        updated_at: new Date()
+    };
+    
+    try {
+        if (pdiId) {
+            await db.collection('pdis').doc(pdiId).update(pdiData);
+            alert('PDI atualizado com sucesso!');
+        } else {
+            pdiData.criado_por = currentUser.email;
+            pdiData.created_at = new Date();
+            await db.collection('pdis').add(pdiData);
+            alert('PDI criado com sucesso!');
+        }
+        
+        closePDIForm();
+        loadPDI();
+    } catch (error) {
+        console.error('Erro ao salvar PDI:', error);
+        alert('Erro ao salvar PDI: ' + error.message);
+    }
+}
+
+async function deletePDI(pdiId, colaboradorNome) {
+    if (!confirm('Tem certeza que deseja excluir o PDI de "' + colaboradorNome + '"? Esta ação não pode ser desfeita.')) {
+        return;
+    }
+    
+    try {
+        await db.collection('pdis').doc(pdiId).delete();
+        alert('PDI excluído com sucesso.');
+        loadPDI();
+    } catch (error) {
+        console.error('Erro ao excluir PDI:', error);
+        alert('Erro ao excluir PDI: ' + error.message);
+    }
+}
+
+async function viewPDI(pdiId) {
+    try {
+        const doc = await db.collection('pdis').doc(pdiId).get();
+        const pdi = doc.data();
+        
+        const statusLabel = {
+            'pendente': 'Pendente',
+            'em_andamento': 'Em Andamento',
+            'concluido': 'Concluído',
+            'cancelado': 'Cancelado'
+        }[pdi.status] || pdi.status;
+        
+        const prazo = pdi.prazo ? new Date(pdi.prazo).toLocaleDateString('pt-BR') : 'N/A';
+        
+        let html = '<div>';
+        html += '<p><strong>Colaborador:</strong> ' + pdi.colaborador_nome + '</p>';
+        html += '<p><strong>Objetivo:</strong></p>';
+        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.objetivo + '</p>';
+        html += '<p><strong>Competências a Desenvolver:</strong></p>';
+        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.competencias + '</p>';
+        html += '<p><strong>Ações e Atividades:</strong></p>';
+        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.acoes + '</p>';
+        html += '<p><strong>Prazo:</strong> ' + prazo + '</p>';
+        html += '<p><strong>Responsável:</strong> ' + pdi.responsavel + '</p>';
+        html += '<p><strong>Status:</strong> <span class="badge badge-' + pdi.status + '">' + statusLabel + '</span></p>';
+        if (pdi.observacoes) {
+            html += '<p><strong>Observações:</strong></p>';
+            html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.observacoes + '</p>';
+        }
+        html += '</div>';
+        
+        openModal('PDI - ' + pdi.colaborador_nome, html, [
+            { text: 'Fechar', onclick: 'closeModal()', class: 'btn-primary' }
+        ]);
+    } catch (error) {
+        console.error('Erro ao visualizar PDI:', error);
+        alert('Erro ao visualizar PDI');
+    }
+}
+
 
 // Initialize app on page load
 document.addEventListener('DOMContentLoaded', () => {
