@@ -1,1598 +1,2056 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plano de Desenvolvimento | RH</title>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <style>
-    :root {
-      --primary: #6C5CE7;
-      --primary-light: #A29BFE;
-      --primary-dark: #5A4BD1;
-      --success: #00B894;
-      --warning: #FDCB6E;
-      --danger: #E17055;
-      --bg: #F8F9FE;
-      --card: #FFFFFF;
-      --text: #2D3436;
-      --text-light: #636E72;
-      --border: #DFE6E9;
-      --shadow: 0 2px 12px rgba(108, 92, 231, 0.08);
-      --radius: 16px;
-      --sidebar-bg: #2D3436;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Desenvolvimento - Onboarding</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --primary-dark: #5A4BD1;
+            --secondary: #00B894;
+            --danger: #D63031;
+            --warning: #FDCB6E;
+            --info: #0984E3;
+            --light: #F5F6FA;
+            --dark: #2D3436;
+            --border: #DFE6E9;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
 
-    /* ===== LOGIN SCREEN ===== */
-    .login-screen {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #2D3436 0%, #636E72 100%);
-    }
-    .login-box {
-      background: white; border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
-    }
-    .login-box .logo { font-size: 48px; margin-bottom: 8px; }
-    .login-box h1 { font-size: 24px; color: var(--text); margin-bottom: 4px; }
-    .login-box .subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 32px; }
-    .login-box .form-group { margin-bottom: 16px; text-align: left; }
-    .login-box .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: var(--text); }
-    .login-box input {
-      width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
-      font-size: 15px; font-family: inherit; transition: border-color 0.3s; background: white;
-    }
-    .login-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1); }
-    .btn-login {
-      width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
-      cursor: pointer; transition: all 0.3s; margin-top: 8px;
-    }
-    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4); }
-    .forgot-password-link {
-      display: block; margin-top: 16px; text-align: center; font-size: 13px;
-    }
-    .forgot-password-link a {
-      color: var(--primary); text-decoration: none; cursor: pointer; font-weight: 600;
-    }
-    .forgot-password-link a:hover { text-decoration: underline; }
-    .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
-    .login-info { background: #F0EDFF; border-radius: 10px; padding: 14px; margin-top: 20px; font-size: 12px; color: var(--text-light); text-align: left; }
-    .login-info strong { color: var(--primary); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ===== PASSWORD CHANGE MODAL ===== */
-    .password-change-modal {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5); z-index: 1001; justify-content: center; align-items: center;
-    }
-    .password-change-modal.active { display: flex; }
-    .password-change-box {
-      background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
-    }
-    .password-change-box h2 { font-size: 22px; margin-bottom: 8px; color: var(--text); }
-    .password-change-box .subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
-    .password-change-form { text-align: left; }
-    .btn-change-password {
-      width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
-      cursor: pointer; transition: all 0.3s; margin-top: 8px;
-    }
-    .btn-change-password:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4); }
-    .password-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
 
-    /* ===== TOP NAV ===== */
-    .topnav {
-      background: var(--sidebar-bg); color: white; padding: 0 24px;
-      display: flex; align-items: center; height: 56px; gap: 24px;
-      position: sticky; top: 0; z-index: 200;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    .topnav h1 { font-size: 18px; font-weight: 700; white-space: nowrap; }
-    .topnav-tabs { display: flex; gap: 4px; margin-left: 32px; flex: 1; }
-    .topnav-tab {
-      padding: 8px 20px; border-radius: 8px 8px 0 0; cursor: pointer;
-      font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6);
-      transition: all 0.2s; border: none; background: none;
-    }
-    .topnav-tab:hover { color: white; background: rgba(255,255,255,0.08); }
-    .topnav-tab.active { color: white; background: var(--primary); }
-    .user-info {
-      display: flex; align-items: center; gap: 12px; margin-left: auto; font-size: 13px;
-    }
-    .user-info .user-badge {
-      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase;
-    }
-    .user-badge.admin { background: var(--danger); }
-    .user-badge.usuario { background: var(--primary); }
-    .btn-logout {
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;
-      padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s;
-    }
-    .btn-logout:hover { background: rgba(255,255,255,0.2); }
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    /* ===== CONTAINERS ===== */
-    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
-    .wide-container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-    .page-section { display: none; }
-    .page-section.active { display: block; }
-    .app-container { display: none; }
+        .login-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
 
-    /* ===== FORM STYLES ===== */
-    .header {
-      text-align: center; padding: 48px 24px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      border-radius: var(--radius); color: white; margin-bottom: 32px;
-      box-shadow: 0 8px 32px rgba(108, 92, 231, 0.25);
-    }
-    .header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .header p { opacity: 0.9; font-size: 16px; }
+        .login-box h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
 
-    .type-selection { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
-    .type-card {
-      background: var(--card); border: 2px solid var(--border); border-radius: var(--radius);
-      padding: 24px; text-align: center; cursor: pointer; transition: all 0.3s; box-shadow: var(--shadow);
-    }
-    .type-card:hover { border-color: var(--primary-light); transform: translateY(-2px); }
-    .type-card.active { border-color: var(--primary); background: #F3F0FF; }
-    .type-card .icon { font-size: 48px; margin-bottom: 12px; }
-    .type-card h3 { font-size: 18px; margin-bottom: 4px; }
-    .type-card p { font-size: 13px; color: var(--text-light); }
+        .login-box p {
+            color: #636E72;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
 
-    .card {
-      background: var(--card); border-radius: var(--radius); padding: 32px;
-      margin-bottom: 24px; box-shadow: var(--shadow);
-    }
-    .card h2, .card h3 { color: var(--primary); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-    .card .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 24px; }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .categoria {
-      background: var(--card); border-radius: var(--radius); padding: 32px;
-      margin-bottom: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
-    }
-    .categoria h3 { font-size: 18px; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
 
-    .form-group { margin-bottom: 24px; }
-    .form-group:last-child { margin-bottom: 0; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
-    .form-group .required::after { content: ' *'; color: var(--danger); }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
 
-    input[type="text"], input[type="email"], input[type="date"], input[type="password"], select, textarea {
-      width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
-      font-size: 15px; font-family: inherit; transition: border-color 0.3s; background: white;
-    }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1); }
-    textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
 
-    .scale-container { display: flex; gap: 8px; flex-wrap: wrap; }
-    .scale-btn {
-      width: 56px; height: 56px; border: 2px solid var(--border); border-radius: 12px;
-      background: white; font-size: 18px; font-weight: 700; cursor: pointer;
-      transition: all 0.2s; display: flex; align-items: center; justify-content: center; color: var(--text-light);
-    }
-    .scale-btn:hover { border-color: var(--primary-light); color: var(--primary); }
-    .scale-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
-    .scale-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-top: 6px; }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .nps-container { display: flex; gap: 6px; flex-wrap: wrap; }
-    .nps-btn {
-      width: 48px; height: 48px; border: 2px solid var(--border); border-radius: 10px;
-      background: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .nps-btn:hover { transform: scale(1.05); }
-    .nps-btn.selected.detrator { background: #E17055; color: white; border-color: #E17055; }
-    .nps-btn.selected.neutro { background: #FDCB6E; color: #2D3436; border-color: #FDCB6E; }
-    .nps-btn.selected.promotor { background: #00B894; color: white; border-color: #00B894; }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
 
-    .yesno-container { display: flex; gap: 12px; }
-    .yesno-btn {
-      flex: 1; padding: 14px; border: 2px solid var(--border); border-radius: 12px;
-      background: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;
-    }
-    .yesno-btn:hover { border-color: var(--primary-light); }
-    .yesno-btn.selected.yes { background: #D4EFDF; border-color: var(--success); color: #1B7A4A; }
-    .yesno-btn.selected.no { background: #FADBD8; border-color: var(--danger); color: #C0392B; }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .progress-bar {
-      position: sticky; top: 56px; z-index: 100; background: white;
-      padding: 12px 16px; border-radius: 0 0 var(--radius) var(--radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 24px;
-    }
-    .progress-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.5s ease; }
-    .progress-text { font-size: 13px; color: var(--text-light); margin-top: 6px; text-align: center; }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
-    .submit-section { text-align: center; margin-top: 32px; }
-    .btn-submit {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none;
-      padding: 16px 48px; font-size: 18px; font-weight: 700; border-radius: 12px; cursor: pointer;
-      transition: all 0.3s; box-shadow: 0 4px 16px rgba(108, 92, 231, 0.3);
-    }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(108, 92, 231, 0.4); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
 
-    .success-screen { display: none; text-align: center; padding: 64px 32px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
-    .success-screen .checkmark { font-size: 80px; margin-bottom: 16px; }
-    .success-screen h2 { font-size: 28px; color: var(--success); margin-bottom: 12px; }
-    .success-screen p { color: var(--text-light); font-size: 16px; margin-bottom: 24px; }
-    .btn-new { background: var(--primary); color: white; border: none; padding: 12px 32px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 600; }
+        .btn-secondary:hover {
+            background: #00a383;
+        }
 
-    .condicional { display: none; }
-    .condicional.visible { display: block; }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
 
-    /* ===== ADMIN STYLES ===== */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
-    .stat-card .stat-icon { font-size: 32px; margin-bottom: 8px; }
-    .stat-card .stat-value { font-size: 32px; font-weight: 800; color: var(--primary); }
-    .stat-card .stat-label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
-    .stat-card.enps .stat-value { color: var(--success); }
+        .btn-danger:hover {
+            background: #c71f1f;
+        }
 
-    .enps-detail { display: flex; gap: 12px; margin-top: 12px; }
-    .enps-bar { flex: 1; border-radius: 8px; padding: 8px 12px; text-align: center; font-size: 12px; font-weight: 600; }
-    .enps-bar.promotor { background: #D4EFDF; color: #1B7A4A; }
-    .enps-bar.neutro { background: #FEF9E7; color: #B7950B; }
-    .enps-bar.detrator { background: #FADBD8; color: #C0392B; }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            width: auto;
+        }
 
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 12px 16px; font-size: 13px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
-    td { padding: 14px 16px; border-bottom: 1px solid #F1F3F5; font-size: 14px; }
-    tr:hover td { background: #FAFBFE; }
+        .error-message {
+            background: #FADBD8;
+            color: #C0392B;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
 
-    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .badge.tipo-45dias_p1 { background: #E8F0FE; color: #1A73E8; }
-    .badge.tipo-45dias_p2 { background: #E6F7EE; color: #137333; }
-    .badge.tipo-desligamento_voluntario { background: #FADBD8; color: #C0392B; }
-    .badge.tipo-desligamento_involuntario { background: #F5EEF8; color: #7D3C98; }
-    .badge.perfil-admin { background: #FADBD8; color: #C0392B; }
-    .badge.perfil-usuario { background: #E8F0FE; color: #1A73E8; }
+        .success-message {
+            background: #D5F4E6;
+            color: #117A65;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
 
-    .btn-action {
-      padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px;
-      background: white; cursor: pointer; font-size: 13px; transition: all 0.2s; margin-right: 4px;
-    }
-    .btn-action:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-action.btn-delete { color: var(--danger); }
-    .btn-action.btn-delete:hover { border-color: var(--danger); }
-    .btn-export {
-      background: var(--primary); color: white; border: none; padding: 10px 24px;
-      border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600;
-    }
-    .btn-export:hover { background: var(--primary-dark); }
+        .app-container {
+            display: none;
+            min-height: 100vh;
+            background: var(--light);
+        }
 
-    .filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-    .filters select { padding: 8px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 14px; background: white; }
+        .app-container.active {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .cat-chart { display: flex; flex-direction: column; gap: 12px; }
-    .cat-row { display: flex; align-items: center; gap: 12px; }
-    .cat-row .cat-name { width: 220px; font-size: 13px; font-weight: 600; text-align: right; flex-shrink: 0; }
-    .cat-row .bar-track { flex: 1; height: 28px; background: #F1F3F5; border-radius: 8px; overflow: hidden; }
-    .cat-row .bar-fill {
-      height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--primary), var(--primary-light));
-      display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
-      font-size: 12px; font-weight: 700; color: white; min-width: 40px;
-    }
+        .topnav {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    /* Modal */
-    .modal-overlay {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 32px;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: white; border-radius: 16px; max-width: 720px; width: 100%;
-      max-height: 85vh; overflow-y: auto; padding: 32px;
-    }
-    .modal h2 { font-size: 22px; margin-bottom: 4px; }
-    .modal .meta { font-size: 13px; color: var(--text-light); margin-bottom: 24px; }
-    .modal .answer-group { margin-bottom: 16px; padding: 16px; background: #F8F9FE; border-radius: 12px; }
-    .modal .answer-group .q { font-weight: 600; margin-bottom: 6px; font-size: 14px; }
-    .modal .answer-group .a { font-size: 15px; }
-    .modal .answer-group .a.nota { color: var(--primary); font-weight: 700; font-size: 20px; }
-    .modal .cat-header { font-size: 16px; font-weight: 700; color: var(--primary-dark); margin: 20px 0 12px; }
-    .btn-close { float: right; background: var(--border); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+        .topnav h1 {
+            color: var(--primary);
+            font-size: 22px;
+        }
 
-    /* User management form */
-    .user-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto auto; gap: 12px; align-items: end; margin-bottom: 24px; padding: 20px; background: #F8F9FE; border-radius: 12px; }
-    .user-form .form-group { margin-bottom: 0; }
-    .user-form label { font-size: 13px; }
-    .user-form input, .user-form select { padding: 10px 14px; font-size: 14px; }
-    .btn-add-user {
-      background: var(--success); color: white; border: none; padding: 10px 20px;
-      border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; white-space: nowrap; height: 42px;
-    }
-    .btn-add-user:hover { opacity: 0.9; }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-    .empty-state { text-align: center; padding: 48px; color: var(--text-light); }
-    .empty-state .empty-icon { font-size: 64px; margin-bottom: 16px; }
+        .user-info span {
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.4s ease; }
+        .btn-logout {
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
 
-    @media (max-width: 768px) {
-      .user-form { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 600px) {
-      .type-selection { grid-template-columns: 1fr; }
-      .header h2 { font-size: 22px; }
-      .card, .categoria { padding: 20px; }
-      .nps-btn { width: 40px; height: 40px; font-size: 14px; }
-      .scale-btn { width: 48px; height: 48px; }
-      .topnav h1 { font-size: 14px; }
-      .topnav-tab { padding: 6px 12px; font-size: 12px; }
-      .cat-row .cat-name { width: 120px; font-size: 11px; }
-      .user-info span { display: none; }
-      .login-box { padding: 32px 24px; margin: 16px; }
-    }
-  </style>
+        .btn-logout:hover {
+            background: #c71f1f;
+        }
+
+        .tabs {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 16px;
+            background: none;
+            border: none;
+            color: #636E72;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .card h3 {
+            color: var(--dark);
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .question-group {
+            margin-bottom: 24px;
+        }
+
+        .question-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .scale-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .scale-btn {
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .scale-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .scale-btn.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .nps-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .nps-btn {
+            padding: 8px 12px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .nps-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .nps-btn.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .yes-no-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .yes-no-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .yes-no-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .yes-no-btn.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            min-height: 100px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .conditional-field {
+            display: none;
+            padding: 15px;
+            background: #F9F9F9;
+            border-left: 3px solid var(--primary);
+            margin-top: 10px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .conditional-field.show {
+            display: block;
+        }
+
+        .submit-section {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #636E72;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: #F5F6FA;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #F9F9F9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #636E72;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .dropdown {
+            margin-bottom: 20px;
+        }
+
+        .dropdown select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #636E72;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-admin {
+            background: #D4EFDF;
+            color: #117A65;
+        }
+
+        .badge-gestor {
+            background: #FCF3CF;
+            color: #9A6B2E;
+        }
+
+        .badge-diretoria {
+            background: #D6EAF8;
+            color: #154360;
+        }
+
+        .badge-colaborador {
+            background: #FADBD8;
+            color: #78281F;
+        }
+
+        @media (max-width: 768px) {
+            .topnav {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .tabs {
+                padding: 0 20px;
+            }
+
+            .tab-btn {
+                padding: 12px;
+                flex: 0 0 auto;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scale-buttons {
+                gap: 4px;
+            }
+
+            .scale-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!-- ==================== LOGIN SCREEN ==================== -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-box fade-in">
-    <div class="logo">🏢</div>
-    <h1>RH | Plano de Desenvolvimento</h1>
-    <div class="subtitle">Sistema de Plano de Desenvolvimento</div>
-    <div class="form-group">
-      <label>E-mail</label>
-      <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div class="form-group">
-      <label>Senha</label>
-      <input type="password" id="loginSenha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="btn-login" onclick="doLogin()">Entrar</button>
-    <div class="login-error" id="loginError">E-mail ou senha incorretos.</div>
-    <div class="forgot-password-link">
-      <a onclick="showForgotPassword()">Esqueceu sua senha?</a>
-    </div>
-    <div class="login-info">
-      <strong>Primeiro acesso?</strong><br>
-      Solicite seu cadastro ao administrador do sistema.
-    </div>
-  </div>
-</div>
-
-<!-- ==================== PASSWORD CHANGE MODAL ==================== -->
-<div class="password-change-modal" id="passwordChangeModal">
-  <div class="password-change-box fade-in">
-    <h2>Alterar Senha</h2>
-    <div class="subtitle">Crie uma nova senha para sua conta</div>
-    <div class="password-change-form">
-      <div class="form-group">
-        <label>Nova Senha</label>
-        <input type="password" id="newPasswordInput" placeholder="Mínimo 6 caracteres">
-      </div>
-      <div class="form-group">
-        <label>Confirmar Senha</label>
-        <input type="password" id="confirmPasswordInput" placeholder="Confirme a senha">
-      </div>
-      <button class="btn-change-password" onclick="submitPasswordChange()">Alterar Senha</button>
-      <div class="password-error" id="passwordError"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== APP CONTAINER ==================== -->
-<div class="app-container" id="appContainer">
-
-<!-- TOP NAVIGATION -->
-<div class="topnav">
-  <h1>RH | Plano de Desenvolvimento</h1>
-  <div class="topnav-tabs" id="navTabs">
-    <button class="topnav-tab active" data-section="form" onclick="showSection('form', this)">Formulario</button>
-    <button class="topnav-tab" data-section="minhas" onclick="showSection('minhas', this)">Minhas Pesquisas</button>
-    <button class="topnav-tab admin-only" data-section="dashboard" onclick="showSection('dashboard', this)">Dashboard</button>
-    <button class="topnav-tab admin-only" data-section="pesquisas" onclick="showSection('pesquisas', this)">Pesquisas</button>
-    <button class="topnav-tab admin-only" data-section="colaboradores" onclick="showSection('colaboradores', this)">Colaboradores</button>
-    <button class="topnav-tab admin-only" data-section="usuarios" onclick="showSection('usuarios', this)">Usuarios</button>
-  </div>
-  <div class="user-info">
-    <span id="currentUserName"></span>
-    <span class="user-badge" id="currentUserBadge"></span>
-    <button class="btn-logout" onclick="doLogout()">Sair</button>
-  </div>
-</div>
-
-<!-- ==================== FORM SECTION ==================== -->
-<div class="page-section active" id="sectionForm">
-  <div class="container">
-    <div class="header" id="mainHeader">
-      <h2>Plano de Desenvolvimento</h2>
-      <p>Sua opiniao e fundamental para construirmos um ambiente cada vez melhor</p>
-    </div>
-
-    <div id="stepType">
-      <div class="card">
-        <h2>Qual tipo de pesquisa voce ira responder?</h2>
-        <p class="subtitle">Selecione o periodo correspondente</p>
-        <div class="type-selection">
-          <div class="type-card" data-tipo="45dias_p1" onclick="selectType(this)">
-            <div class="icon">📋</div>
-            <h3>45 Dias - Parte 1</h3>
-            <p>Primeira avaliacao de adaptacao, acolhimento e aprendizado</p>
-          </div>
-          <div class="type-card" data-tipo="45dias_p2" onclick="selectType(this)">
-            <div class="icon">📝</div>
-            <h3>45 Dias - Parte 2</h3>
-            <p>Avaliacao de evolucao e aprofundamento</p>
-          </div>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>Plano de Desenvolvimento</h1>
+            <p>Onboarding & Entrevistas</p>
+            <div id="loginError" class="error-message hidden"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">E-mail</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
         </div>
-        <div style="margin-top:24px;">
-          <h3 style="color:var(--text-light);font-size:14px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Pesquisas de Desligamento</h3>
-          <div class="type-selection">
-            <div class="type-card" onclick="window.location.href='desligamento-voluntario.html'" style="border-color:#E17055;">
-              <div class="icon">🚪</div>
-              <h3>Desligamento Voluntário</h3>
-              <p>Pesquisa para colaboradores que solicitaram desligamento</p>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container">
+        <div class="topnav">
+            <h1>Plano de Desenvolvimento</h1>
+            <div class="user-info">
+                <span id="currentUserName"></span>
+                <span id="currentUserRole" class="badge"></span>
+                <button id="logoutBtn" class="btn-logout">Sair</button>
             </div>
-            <div class="type-card" onclick="window.location.href='desligamento-involuntario.html'" style="border-color:#E17055;">
-              <div class="icon">📋</div>
-              <h3>Desligamento Involuntário</h3>
-              <p>Pesquisa preenchida pelo gestor/RH sobre o desligamento</p>
+        </div>
+
+        <div class="tabs" id="tabsContainer"></div>
+
+        <div class="content">
+            <!-- Formulário Tab -->
+            <div id="tabFormulario" class="tab-content">
+                <div class="card">
+                    <h2>Formulário de Onboarding - 45 Dias</h2>
+                    <div id="surveyFormContainer"></div>
+                </div>
             </div>
-          </div>
+
+            <!-- Avaliação do Gestor Tab -->
+            <div id="tabAvaliacao" class="tab-content">
+                <div class="card">
+                    <h2>Avaliação do Gestor - 45 Dias</h2>
+                    <div class="dropdown" id="collaboratorDropdown" style="display: none;">
+                        <label>Selecione um colaborador para avaliar:</label>
+                        <select id="collaboratorSelect"></select>
+                    </div>
+                    <div id="managerEvaluationForm"></div>
+                </div>
+            </div>
+
+            <!-- Meus Subordinados Tab (Gestor) -->
+            <div id="tabMeusSubordinados" class="tab-content">
+                <div class="card">
+                    <h2>Meus Subordinados</h2>
+                    <div id="subordinatesContainer"></div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="tabDashboard" class="tab-content">
+                <div class="card">
+                    <h2>Dashboard</h2>
+                    <div class="dashboard-grid" id="dashboardStats"></div>
+                    <h3>Respostas Recentes</h3>
+                    <div id="recentResponses"></div>
+                </div>
+            </div>
+
+            <!-- Pesquisas Tab -->
+            <div id="tabPesquisas" class="tab-content">
+                <div class="card">
+                    <h2>Pesquisas Realizadas</h2>
+                    <div id="surveysContainer"></div>
+                </div>
+            </div>
+
+            <!-- Avaliações dos Gestores Tab (Diretoria) -->
+            <div id="tabAvaliacoesDosGestores" class="tab-content">
+                <div class="card">
+                    <h2>Avaliações dos Gestores</h2>
+                    <div id="managerEvaluationsContainer"></div>
+                </div>
+            </div>
+
+            <!-- Pesquisas dos Colaboradores Tab (Diretoria) -->
+            <div id="tabPesquisasDosColaboradores" class="tab-content">
+                <div class="card">
+                    <h2>Respostas dos Colaboradores</h2>
+                    <div id="collaboratorSurveysContainer"></div>
+                </div>
+            </div>
+
+            <!-- Colaboradores Tab -->
+            <div id="tabColaboradores" class="tab-content">
+                <div class="card">
+                    <h2>Colaboradores</h2>
+                    <div id="collaboratorsTableContainer"></div>
+                </div>
+            </div>
+
+            <!-- Usuários Tab -->
+            <div id="tabUsuarios" class="tab-content">
+                <div class="card">
+                    <h2>Gerenciar Usuários</h2>
+                    <h3>Criar Novo Usuário</h3>
+                    <form id="newUserForm" style="background: #F9F9F9; padding: 20px; border-radius: 6px; margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label for="newUserNome">Nome Completo</label>
+                            <input type="text" id="newUserNome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserEmail">E-mail</label>
+                            <input type="email" id="newUserEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserPerfil">Perfil</label>
+                            <select id="newUserPerfil" required>
+                                <option value="">Selecione um perfil</option>
+                                <option value="admin">Admin (RH)</option>
+                                <option value="gestor">Gestor</option>
+                                <option value="diretoria">Diretoria</option>
+                                <option value="colaborador">Colaborador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserSetor">Setor</label>
+                            <input type="text" id="newUserSetor">
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserLider">Líder</label>
+                            <input type="text" id="newUserLider">
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserCargo">Cargo</label>
+                            <input type="text" id="newUserCargo">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Criar Usuário</button>
+                    </form>
+                    <h3>Usuários do Sistema</h3>
+                    <div id="usersTableContainer"></div>
+                </div>
+            </div>
+
+            <!-- Desligamento Tab -->
+            <div id="tabDesligamento" class="tab-content">
+                <div class="card">
+                    <h2>Desligamento</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="background: #D5F4E6; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h3 style="color: #117A65; margin-bottom: 15px;">Desligamento Voluntário</h3>
+                            <a href="desligamento-voluntario.html" class="btn btn-secondary">Acessar Formulário</a>
+                        </div>
+                        <div style="background: #FADBD8; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h3 style="color: #78281F; margin-bottom: 15px;">Desligamento Involuntário</h3>
+                            <a href="desligamento-involuntario.html" class="btn btn-danger">Acessar Formulário</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minhas Pesquisas Tab (Colaborador) -->
+            <div id="tabMinhasPesquisas" class="tab-content">
+                <div class="card">
+                    <h2>Minhas Pesquisas</h2>
+                    <div id="mySubmissionsContainer"></div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
-    <div id="stepInfo" style="display:none" class="fade-in">
-      <div class="card">
-        <h2>Seus Dados</h2>
-        <p class="subtitle">Preencha seus dados para iniciar</p>
-        <div class="form-group">
-          <label class="required">Nome completo</label>
-          <input type="text" id="inputNome" placeholder="Seu nome completo">
+    <!-- Modal for viewing survey details -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div id="modalBody"></div>
         </div>
-        <div class="form-group">
-          <label class="required">E-mail corporativo</label>
-          <input type="email" id="inputEmail" placeholder="seu.email@empresa.com">
-        </div>
-        <div class="form-group">
-          <label>Cargo</label>
-          <input type="text" id="inputCargo" placeholder="Seu cargo">
-        </div>
-        <div class="form-group">
-          <label>Departamento</label>
-          <input type="text" id="inputDepartamento" placeholder="Seu departamento">
-        </div>
-        <div class="form-group">
-          <label>Data de admissao</label>
-          <input type="date" id="inputAdmissao">
-        </div>
-        <div class="submit-section">
-          <button class="btn-submit" onclick="startInterview()" style="font-size:16px;padding:14px 40px;">Iniciar Pesquisa</button>
-        </div>
-      </div>
     </div>
 
-    <div id="stepQuestions" style="display:none" class="fade-in">
-      <div class="progress-bar">
-        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-        <div class="progress-text" id="progressText">0% concluido</div>
-      </div>
-      <div id="questionsContainer"></div>
-      <div class="submit-section">
-        <button class="btn-submit" id="btnSubmit" onclick="submitInterview()">Enviar Respostas</button>
-      </div>
-    </div>
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAydCEQFyCmvcb-iTxovo6Pzpwp-8vraYM",
+            authDomain: "zukkin-rh.firebaseapp.com",
+            projectId: "zukkin-rh",
+            storageBucket: "zukkin-rh.firebasestorage.app",
+            messagingSenderId: "194398411433",
+            appId: "1:194398411433:web:a72e99b0ec8a0693d127b8"
+        };
 
-    <div class="success-screen" id="successScreen">
-      <div class="checkmark">✅</div>
-      <h2>Obrigado!</h2>
-      <p>Sua pesquisa foi registrada com sucesso.<br>Agradecemos pelo seu feedback!</p>
-      <button class="btn-new" onclick="resetForm()">Nova Pesquisa</button>
-    </div>
-  </div>
-</div>
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-<!-- ==================== MINHAS PESQUISAS (USER) ==================== -->
-<div class="page-section" id="sectionMinhas">
-  <div class="wide-container">
-    <h1 style="font-size:26px;margin-bottom:24px;">Minhas Pesquisas</h1>
-    <div class="card">
-      <table>
-        <thead><tr><th>Tipo</th><th>Data</th><th>Respostas</th><th></th></tr></thead>
-        <tbody id="minhasTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        // EmailJS Configuration
+        const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
+        const EMAILJS_SERVICE_ID = 'service_7q0c1os';
+        const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
+        emailjs.init(EMAILJS_PUBLIC_KEY);
 
-<!-- ==================== DASHBOARD SECTION (ADMIN) ==================== -->
-<div class="page-section" id="sectionDashboard">
-  <div class="wide-container">
-    <h1 style="font-size:26px;margin-bottom:24px;">Dashboard</h1>
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="card">
-      <h3>Media por Categoria</h3>
-      <div class="cat-chart" id="catChart" style="margin-top:16px;"></div>
-    </div>
-    <div class="card" style="margin-top:24px;">
-      <h3>Ultimas Pesquisas</h3>
-      <table style="margin-top:12px;">
-        <thead><tr><th>Colaborador</th><th>Departamento</th><th>Tipo</th><th>Data</th><th></th></tr></thead>
-        <tbody id="recentTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        // State
+        let currentUser = null;
+        let currentUserDoc = null;
 
-<!-- ==================== PESQUISAS SECTION (ADMIN) ==================== -->
-<div class="page-section" id="sectionPesquisas">
-  <div class="wide-container">
-    <h1 style="font-size:26px;margin-bottom:24px;">Pesquisas</h1>
-    <div class="card">
-      <div class="filters">
-        <select id="filterTipo" onchange="loadPesquisas()">
-          <option value="">Todos os tipos</option>
-          <option value="45dias_p1">45 Dias - Parte 1</option>
-          <option value="45dias_p2">45 Dias - Parte 2</option>
-          <option value="desligamento_voluntario">Desligamento Voluntário</option>
-          <option value="desligamento_involuntario">Desligamento Involuntário</option>
-        </select>
-        <button class="btn-export" onclick="exportCSV()">Exportar CSV</button>
-      </div>
-      <table>
-        <thead><tr><th>Colaborador</th><th>E-mail</th><th>Dept.</th><th>Tipo</th><th>Data</th><th></th></tr></thead>
-        <tbody id="pesquisasTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        // Questionnaire Structure
+        const questionnaires = {
+            parte1: {
+                tipo: '45_dias_parte_1',
+                titulo: '45 Dias - Parte 1',
+                secoes: [
+                    {
+                        titulo: 'Acolhimento e Recepção 🤝',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como você avalia o processo de recepção e acolhimento no seu primeiro dia?' },
+                            { tipo: 'escala', texto: 'Você foi apresentado(a) adequadamente à equipe e aos colegas de trabalho?' },
+                            { tipo: 'sim_nao', texto: 'Recebeu todas as ferramentas e acessos necessários para iniciar seu trabalho?' },
+                            { tipo: 'texto', texto: 'Se não recebeu algo, o que ficou faltando?', condicional: { pergunta_index: 2, valor: 'Não' } },
+                            { tipo: 'sim_nao', texto: 'Alguém foi designado para te acompanhar nos primeiros dias?' },
+                            { tipo: 'texto', texto: 'Como foi essa experiência de acompanhamento?', condicional: { pergunta_index: 4, valor: 'Sim' } }
+                        ]
+                    },
+                    {
+                        titulo: 'Adaptação ao Ambiente 🏢',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como você avalia sua adaptação ao ambiente de trabalho até o momento?' },
+                            { tipo: 'escala', texto: 'As atividades do dia a dia estão alinhadas com o que foi apresentado no processo seletivo?' },
+                            { tipo: 'escala', texto: 'Você está conseguindo compreender suas responsabilidades e entregas esperadas?' },
+                            { tipo: 'texto', texto: 'Houve algo que te surpreendeu positivamente até agora?' },
+                            { tipo: 'texto', texto: 'Houve algo que te surpreendeu negativamente?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Aprendizado e Desenvolvimento 📚',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Os treinamentos oferecidos até agora foram suficientes para suas atividades?' },
+                            { tipo: 'escala', texto: 'Você sente que está aprendendo e se desenvolvendo profissionalmente?' },
+                            { tipo: 'texto', texto: 'Há algum treinamento adicional que você sente necessidade?' },
+                            { tipo: 'escala', texto: 'Você tem clareza sobre o que é esperado de você nos próximos meses?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Avaliação Geral ⭐',
+                        perguntas: [
+                            { tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo trabalhar aqui?' },
+                            { tipo: 'escala', texto: 'Qual seu nível geral de satisfação até o momento?' },
+                            { tipo: 'texto', texto: 'O que poderíamos melhorar no processo de integração?' },
+                            { tipo: 'texto', texto: 'Gostaria de compartilhar mais alguma coisa?' }
+                        ]
+                    }
+                ]
+            },
+            parte2: {
+                tipo: '45_dias_parte_2',
+                titulo: '45 Dias - Parte 2',
+                secoes: [
+                    {
+                        titulo: 'Evolução da Adaptação 🔄',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como você avalia sua evolução na adaptação desde a Parte 1?' },
+                            { tipo: 'sim_nao', texto: 'Você se sente parte do time?' },
+                            { tipo: 'texto', texto: 'O que mais contribuiu para sua adaptação?' },
+                            { tipo: 'texto', texto: 'Existe algo que ainda dificulta sua adaptação?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Relacionamento e Comunicação 💬',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como está o relacionamento com seu gestor direto?' },
+                            { tipo: 'escala', texto: 'Você sente que pode tirar dúvidas e pedir ajuda quando necessário?' },
+                            { tipo: 'sim_nao', texto: 'Recebe feedbacks frequentes sobre seu trabalho?' },
+                            { tipo: 'escala', texto: 'A comunicação dentro da equipe está fluindo bem?' },
+                            { tipo: 'texto', texto: 'Há algo que gostaria de dizer ao seu gestor mas ainda não disse?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Crescimento Profissional 🚀',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Você vê oportunidades de crescimento na empresa?' },
+                            { tipo: 'escala', texto: 'Está aprendendo coisas novas no seu trabalho?' },
+                            { tipo: 'texto', texto: 'Que tipo de desenvolvimento profissional você gostaria de ter?' },
+                            { tipo: 'escala', texto: 'Você sente que suas habilidades estão sendo bem aproveitadas?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Avaliação Geral - Parte 2 ⭐',
+                        perguntas: [
+                            { tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo?' },
+                            { tipo: 'escala', texto: 'Qual seu nível geral de satisfação neste momento?' },
+                            { tipo: 'escala', texto: 'Comparando com seus primeiros dias, sua satisfação melhorou, piorou ou se manteve?' },
+                            { tipo: 'texto', texto: 'O que a empresa poderia fazer para melhorar sua experiência?' },
+                            { tipo: 'texto', texto: 'Algum comentário adicional?' }
+                        ]
+                    }
+                ]
+            },
+            avaliacao_gestor: {
+                tipo: 'avaliacao_gestor',
+                titulo: 'Avaliação do Gestor - 45 Dias',
+                secoes: [
+                    {
+                        titulo: 'Desempenho Técnico 💼',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como você avalia o desempenho técnico do colaborador nas atividades do dia a dia?' },
+                            { tipo: 'escala', texto: 'O colaborador demonstra conhecimento adequado para a função?' },
+                            { tipo: 'escala', texto: 'O colaborador entrega as tarefas dentro do prazo esperado?' },
+                            { tipo: 'sim_nao', texto: 'Há necessidade de treinamento técnico adicional?' },
+                            { tipo: 'texto', texto: 'Se sim, quais treinamentos são recomendados?', condicional: { pergunta_index: 3, valor: 'Sim' } }
+                        ]
+                    },
+                    {
+                        titulo: 'Comportamento e Atitudes 🤝',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como você avalia o comportamento profissional do colaborador?' },
+                            { tipo: 'escala', texto: 'O colaborador demonstra comprometimento com o trabalho?' },
+                            { tipo: 'escala', texto: 'O colaborador respeita as normas e políticas da empresa?' },
+                            { tipo: 'escala', texto: 'O colaborador demonstra boa comunicação com a equipe?' },
+                            { tipo: 'texto', texto: 'Comentários sobre comportamento e atitudes:' }
+                        ]
+                    },
+                    {
+                        titulo: 'Integração ao Time 👥',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'Como você avalia a integração do colaborador com a equipe?' },
+                            { tipo: 'escala', texto: 'O colaborador participa ativamente das atividades em grupo?' },
+                            { tipo: 'escala', texto: 'O colaborador se relaciona bem com os colegas?' },
+                            { tipo: 'sim_nao', texto: 'O colaborador busca ajuda quando necessário?' },
+                            { tipo: 'texto', texto: 'Comentários sobre integração:' }
+                        ]
+                    },
+                    {
+                        titulo: 'Proatividade e Iniciativa 🚀',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'O colaborador demonstra iniciativa no trabalho?' },
+                            { tipo: 'escala', texto: 'O colaborador sugere melhorias nos processos?' },
+                            { tipo: 'escala', texto: 'O colaborador busca aprender além do que é solicitado?' },
+                            { tipo: 'texto', texto: 'Comentários sobre proatividade:' }
+                        ]
+                    },
+                    {
+                        titulo: 'Alcance de Objetivos 🎯',
+                        perguntas: [
+                            { tipo: 'escala', texto: 'O colaborador está atingindo os objetivos definidos?' },
+                            { tipo: 'sim_nao', texto: 'As metas iniciais foram claramente comunicadas ao colaborador?' },
+                            { tipo: 'nps', texto: 'De 0 a 10, qual sua avaliação geral deste colaborador?' },
+                            { tipo: 'texto', texto: 'Recomendações e plano de ação para os próximos meses:' }
+                        ]
+                    }
+                ]
+            }
+        };
 
-<!-- ==================== COLABORADORES SECTION (ADMIN) ==================== -->
-<div class="page-section" id="sectionColaboradores">
-  <div class="wide-container">
-    <h1 style="font-size:26px;margin-bottom:24px;">Colaboradores</h1>
-    <div class="card">
-      <table>
-        <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Departamento</th><th>Admissao</th><th>Pesquisas</th></tr></thead>
-        <tbody id="colaboradoresTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== USUARIOS SECTION (ADMIN) ==================== -->
-<div class="page-section" id="sectionUsuarios">
-  <div class="wide-container">
-    <h1 style="font-size:26px;margin-bottom:24px;">Gestao de Usuarios</h1>
-    <div class="card">
-      <h3 style="margin-bottom:16px;">Novo Usuario</h3>
-      <div class="user-form" id="userForm">
-        <div class="form-group">
-          <label>Nome</label>
-          <input type="text" id="newUserNome" placeholder="Nome completo">
-        </div>
-        <div class="form-group">
-          <label>E-mail</label>
-          <input type="email" id="newUserEmail" placeholder="email@empresa.com">
-        </div>
-        <div class="form-group">
-          <label>Perfil</label>
-          <select id="newUserPerfil">
-            <option value="usuario">Usuario</option>
-            <option value="admin">Administrador</option>
-          </select>
-        </div>
-        <button class="btn-add-user" onclick="addUser()">+ Adicionar</button>
-      </div>
-      <table>
-        <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Criado em</th><th></th></tr></thead>
-        <tbody id="usuariosTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- DETAIL MODAL -->
-<div class="modal-overlay" id="detailModal">
-  <div class="modal">
-    <button class="btn-close" onclick="closeModal()">✕</button>
-    <div id="modalContent"></div>
-  </div>
-</div>
-
-</div><!-- end app-container -->
-
-<script>
-// ==================== EmailJS CONFIG ====================
-const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
-const EMAILJS_SERVICE_ID = 'service_7q0c1os';
-const EMAILJS_TEMPLATE_SENHA = 'template_2y018wf';
-const EMAILJS_TEMPLATE_RECUPERACAO = 'template_2y018wf';
-
-// ==================== IndexedDB DATABASE ====================
-const DB_NAME = 'PlanoDesenvolvimentoDB';
-const DB_VERSION = 3;
-let dbInstance = null;
-let currentUser = null;
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if (dbInstance) return resolve(dbInstance);
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('colaboradores')) {
-        const cs = db.createObjectStore('colaboradores', { keyPath: 'id', autoIncrement: true });
-        cs.createIndex('email', 'email', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('entrevistas')) {
-        const es = db.createObjectStore('entrevistas', { keyPath: 'id', autoIncrement: true });
-        es.createIndex('colaborador_id', 'colaborador_id', { unique: false });
-        es.createIndex('tipo', 'tipo', { unique: false });
-        es.createIndex('data_resposta', 'data_resposta', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('respostas')) {
-        const rs = db.createObjectStore('respostas', { keyPath: 'id', autoIncrement: true });
-        rs.createIndex('entrevista_id', 'entrevista_id', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('usuarios')) {
-        const us = db.createObjectStore('usuarios', { keyPath: 'id', autoIncrement: true });
-        us.createIndex('email', 'email', { unique: true });
-      }
-    };
-    request.onsuccess = (e) => { dbInstance = e.target.result; resolve(dbInstance); };
-    request.onerror = (e) => reject(e.target.error);
-  });
-}
-
-function dbAdd(store, data) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.add(data);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbPut(store, data) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.put(data);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbGet(store, key) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.get(key);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbGetIndex(store, indexName, value) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const objectStore = tx.objectStore(store);
-    const index = objectStore.index(indexName);
-    const request = index.get(value);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbGetAll(store) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbGetAllIndex(store, indexName, value) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const objectStore = tx.objectStore(store);
-    const index = objectStore.index(indexName);
-    const request = index.getAll(value);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbDelete(store, key) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.delete(key);
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-// ==================== HASH PASSWORD ====================
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function verifyPassword(password, hash) {
-  const newHash = await hashPassword(password);
-  return newHash === hash;
-}
-
-// ==================== GENERATE PASSWORD ====================
-function generatePassword(length = 8) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-}
-
-// ==================== INIT DATABASE ====================
-async function initDatabase() {
-  const allUsers = await dbGetAll('usuarios');
-  if (allUsers.length === 0) {
-    const adminHash = await hashPassword('admin123');
-    await dbAdd('usuarios', {
-      nome: 'Administrador',
-      email: 'admin@empresa.com',
-      senha: adminHash,
-      perfil: 'admin',
-      provisoria: false,
-      created_at: new Date().toISOString()
-    });
-  }
-}
-
-// ==================== LOGIN ====================
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const senha = document.getElementById('loginSenha').value;
-  const errorEl = document.getElementById('loginError');
-
-  if (!email || !senha) {
-    errorEl.textContent = 'Preencha e-mail e senha.';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  try {
-    const user = await dbGetIndex('usuarios', 'email', email);
-    if (!user || !(await verifyPassword(senha, user.senha))) {
-      errorEl.textContent = 'E-mail ou senha incorretos.';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    currentUser = user;
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
-
-    if (user.provisoria) {
-      showPasswordChangeModal();
-    } else {
-      showApp();
-    }
-  } catch (err) {
-    console.error('Login error:', err);
-    errorEl.textContent = 'Erro ao fazer login.';
-    errorEl.style.display = 'block';
-  }
-}
-
-// ==================== PASSWORD CHANGE ====================
-function showPasswordChangeModal() {
-  document.getElementById('passwordChangeModal').classList.add('active');
-}
-
-async function submitPasswordChange() {
-  const newPassword = document.getElementById('newPasswordInput').value;
-  const confirmPassword = document.getElementById('confirmPasswordInput').value;
-  const errorEl = document.getElementById('passwordError');
-
-  if (newPassword.length < 6) {
-    errorEl.textContent = 'Senha deve ter no minimo 6 caracteres.';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  if (newPassword !== confirmPassword) {
-    errorEl.textContent = 'As senhas nao conferem.';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  try {
-    const newHash = await hashPassword(newPassword);
-    currentUser.senha = newHash;
-    currentUser.provisoria = false;
-    await dbPut('usuarios', currentUser);
-    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-    document.getElementById('passwordChangeModal').classList.remove('active');
-    showApp();
-  } catch (err) {
-    console.error('Error changing password:', err);
-    errorEl.textContent = 'Erro ao alterar senha.';
-    errorEl.style.display = 'block';
-  }
-}
-
-// ==================== FORGOT PASSWORD ====================
-function showForgotPassword() {
-  const email = prompt('Digite seu e-mail:');
-  if (!email) return;
-
-  dbGetIndex('usuarios', 'email', email).then(user => {
-    if (!user) {
-      alert('E-mail nao encontrado no sistema.');
-      return;
-    }
-
-    const newPassword = generatePassword();
-    hashPassword(newPassword).then(hash => {
-      user.senha = hash;
-      user.provisoria = true;
-      dbPut('usuarios', user).then(() => {
-        sendPasswordEmail(email, newPassword, true);
-      });
-    });
-  });
-}
-
-function sendPasswordEmail(email, password, isRecovery) {
-  const templateId = isRecovery ? EMAILJS_TEMPLATE_RECUPERACAO : EMAILJS_TEMPLATE_SENHA;
-  const subject = isRecovery
-    ? 'Plano de Desenvolvimento - Recuperacao de Senha'
-    : 'Plano de Desenvolvimento - Sua Senha Provisoria';
-
-  emailjs.send(EMAILJS_SERVICE_ID, templateId, {
-    subject: subject,
-    to_email: email,
-    to_name: email.split('@')[0],
-    nova_senha: password
-  }, EMAILJS_PUBLIC_KEY).then(() => {
-    alert(isRecovery ? 'Nova senha enviada para seu e-mail.' : 'Senha provisoria enviada por e-mail.');
-  }).catch(err => {
-    console.error('Email error:', err);
-    alert(`Senha: ${password}\n(Falha ao enviar email - copie esta senha)`);
-  });
-}
-
-// ==================== SHOW APP ====================
-function showApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appContainer').style.display = 'block';
-  document.getElementById('currentUserName').textContent = currentUser.nome;
-  document.getElementById('currentUserBadge').textContent = currentUser.perfil;
-  document.getElementById('currentUserBadge').className = 'user-badge ' + currentUser.perfil;
-
-  if (currentUser.perfil !== 'admin') {
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-  }
-
-  showSection('form');
-}
-
-// ==================== LOGOUT ====================
-function doLogout() {
-  sessionStorage.removeItem('currentUser');
-  currentUser = null;
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('appContainer').style.display = 'none';
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginSenha').value = '';
-  document.getElementById('loginError').style.display = 'none';
-}
-
-// ==================== QUESTIONNAIRE DATA ====================
-const questionnaireData = {
-  '45dias_p1': {
-    titulo: '45 Dias - Parte 1',
-    categorias: [
-      {
-        nome: 'Acolhimento e Recepcao',
-        emoji: '🤝',
-        perguntas: [
-          { tipo: 'escala', pergunta: 'Como voce avalia o processo de recepcao e acolhimento no seu primeiro dia?' },
-          { tipo: 'escala', pergunta: 'Voce foi apresentado(a) adequadamente a equipe e aos colegas de trabalho?' },
-          { tipo: 'sim_nao', pergunta: 'Recebeu todas as ferramentas e acessos necessarios para iniciar seu trabalho?' },
-          { tipo: 'texto', pergunta: 'Se nao recebeu algo, o que ficou faltando?', condicional: { perguntaIndex: 2, valor: 'Nao' } },
-          { tipo: 'sim_nao', pergunta: 'Alguem foi designado para te acompanhar nos primeiros dias?' },
-          { tipo: 'texto', pergunta: 'Como foi essa experiencia de acompanhamento?', condicional: { perguntaIndex: 4, valor: 'Sim' } }
-        ]
-      },
-      {
-        nome: 'Adaptacao ao Ambiente',
-        emoji: '🏢',
-        perguntas: [
-          { tipo: 'escala', pergunta: 'Como voce avalia sua adaptacao ao ambiente de trabalho ate o momento?' },
-          { tipo: 'escala', pergunta: 'As atividades do dia a dia estao alinhadas com o que foi apresentado no processo seletivo?' },
-          { tipo: 'escala', pergunta: 'Voce esta conseguindo compreender suas responsabilidades e entregas esperadas?' },
-          { tipo: 'texto', pergunta: 'Houve algo que te surpreendeu positivamente ate agora?' },
-          { tipo: 'texto', pergunta: 'Houve algo que te surpreendeu negativamente?' }
-        ]
-      },
-      {
-        nome: 'Aprendizado e Desenvolvimento',
-        emoji: '📚',
-        perguntas: [
-          { tipo: 'escala', pergunta: 'Os treinamentos oferecidos ate agora foram suficientes para suas atividades?' },
-          { tipo: 'escala', pergunta: 'Voce sente que esta aprendendo e se desenvolvendo profissionalmente?' },
-          { tipo: 'texto', pergunta: 'Ha algum treinamento adicional que voce sente necessidade?' },
-          { tipo: 'escala', pergunta: 'Voce tem clareza sobre o que e esperado de voce nos proximos meses?' }
-        ]
-      },
-      {
-        nome: 'Avaliacao Geral',
-        emoji: '⭐',
-        perguntas: [
-          { tipo: 'nps', pergunta: 'De 0 a 10, qual a probabilidade de voce recomendar a empresa para um amigo trabalhar aqui? (eNPS)' },
-          { tipo: 'escala', pergunta: 'Qual seu nivel geral de satisfacao ate o momento?' },
-          { tipo: 'texto', pergunta: 'O que poderiamos melhorar no processo de integracao?' },
-          { tipo: 'texto', pergunta: 'Gostaria de compartilhar mais alguma coisa?' }
-        ]
-      }
-    ]
-  },
-  '45dias_p2': {
-    titulo: '45 Dias - Parte 2',
-    categorias: [
-      {
-        nome: 'Evolucao da Adaptacao',
-        emoji: '🔄',
-        perguntas: [
-          { tipo: 'escala', pergunta: 'Como voce avalia sua evolucao na adaptacao desde a Parte 1?' },
-          { tipo: 'sim_nao', pergunta: 'Voce se sente parte do time?' },
-          { tipo: 'texto', pergunta: 'O que mais contribuiu para sua adaptacao?' },
-          { tipo: 'texto', pergunta: 'Existe algo que ainda dificulta sua adaptacao?' }
-        ]
-      },
-      {
-        nome: 'Relacionamento e Comunicacao',
-        emoji: '💬',
-        perguntas: [
-          { tipo: 'escala', pergunta: 'Como esta o relacionamento com seu gestor direto?' },
-          { tipo: 'escala', pergunta: 'Voce sente que pode tirar duvidas e pedir ajuda quando necessario?' },
-          { tipo: 'sim_nao', pergunta: 'Recebe feedbacks frequentes sobre seu trabalho?' },
-          { tipo: 'escala', pergunta: 'A comunicacao dentro da equipe esta fluindo bem?' },
-          { tipo: 'texto', pergunta: 'Ha algo que gostaria de dizer ao seu gestor mas ainda nao disse?' }
-        ]
-      },
-      {
-        nome: 'Crescimento Profissional',
-        emoji: '🚀',
-        perguntas: [
-          { tipo: 'escala', pergunta: 'Voce ve oportunidades de crescimento na empresa?' },
-          { tipo: 'escala', pergunta: 'Esta aprendendo coisas novas no seu trabalho?' },
-          { tipo: 'texto', pergunta: 'Que tipo de desenvolvimento profissional voce gostaria de ter?' },
-          { tipo: 'escala', pergunta: 'Voce sente que suas habilidades estao sendo bem aproveitadas?' }
-        ]
-      },
-      {
-        nome: 'Avaliacao Geral - Parte 2',
-        emoji: '⭐',
-        perguntas: [
-          { tipo: 'nps', pergunta: 'De 0 a 10, qual a probabilidade de voce recomendar a empresa para um amigo? (eNPS)' },
-          { tipo: 'escala', pergunta: 'Qual seu nivel geral de satisfacao neste momento?' },
-          { tipo: 'escala', pergunta: 'Comparando com seus primeiros dias, sua satisfacao melhorou, piorou ou se manteve?' },
-          { tipo: 'texto', pergunta: 'O que a empresa poderia fazer para melhorar sua experiencia?' },
-          { tipo: 'texto', pergunta: 'Algum comentario adicional?' }
-        ]
-      }
-    ]
-  }
-};
-
-let currentTipo = null;
-let currentColaborador = null;
-let currentRespostas = {};
-
-// ==================== SELECT TYPE ====================
-function selectType(card) {
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
-  currentTipo = card.dataset.tipo;
-  document.getElementById('stepType').style.display = 'none';
-  document.getElementById('stepInfo').style.display = 'block';
-}
-
-// ==================== START INTERVIEW ====================
-function startInterview() {
-  const nome = document.getElementById('inputNome').value.trim();
-  const email = document.getElementById('inputEmail').value.trim();
-
-  if (!nome || !email || !currentTipo) {
-    alert('Preencha todos os campos obrigatorios.');
-    return;
-  }
-
-  currentColaborador = { nome, email, cargo: document.getElementById('inputCargo').value, departamento: document.getElementById('inputDepartamento').value, admissao: document.getElementById('inputAdmissao').value };
-  renderQuestions();
-  document.getElementById('stepInfo').style.display = 'none';
-  document.getElementById('stepQuestions').style.display = 'block';
-}
-
-// ==================== RENDER QUESTIONS ====================
-function renderQuestions() {
-  const data = questionnaireData[currentTipo];
-  const container = document.getElementById('questionsContainer');
-  container.innerHTML = '';
-  let questionIndex = 0;
-
-  data.categorias.forEach(cat => {
-    const catDiv = document.createElement('div');
-    catDiv.className = 'categoria';
-    catDiv.innerHTML = `<h3>${cat.emoji} ${cat.nome}</h3>`;
-
-    cat.perguntas.forEach((q, idx) => {
-      const questionDiv = document.createElement('div');
-      questionDiv.className = 'form-group' + (q.condicional ? ` condicional condicional-${questionIndex}` : '');
-      questionDiv.id = `q-${questionIndex}`;
-
-      const label = document.createElement('label');
-      label.textContent = q.pergunta;
-      questionDiv.appendChild(label);
-
-      if (q.tipo === 'escala') {
-        const container = document.createElement('div');
-        container.className = 'scale-container';
-        for (let i = 1; i <= 5; i++) {
-          const btn = document.createElement('button');
-          btn.className = 'scale-btn';
-          btn.textContent = i;
-          btn.type = 'button';
-          btn.onclick = () => selectScale(btn, questionIndex);
-          container.appendChild(btn);
+        // Utility Functions
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-        const labels = document.createElement('div');
-        labels.className = 'scale-labels';
-        labels.innerHTML = '<span>Discordo</span><span>Concordo</span>';
-        questionDiv.appendChild(container);
-        questionDiv.appendChild(labels);
-      } else if (q.tipo === 'nps') {
-        const container = document.createElement('div');
-        container.className = 'nps-container';
-        for (let i = 0; i <= 10; i++) {
-          const btn = document.createElement('button');
-          btn.className = 'nps-btn';
-          btn.textContent = i;
-          btn.type = 'button';
-          btn.onclick = () => selectNPS(btn, questionIndex, i);
-          container.appendChild(btn);
+
+        function showError(message) {
+            const errorEl = document.getElementById('loginError');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            setTimeout(() => errorEl.classList.add('hidden'), 5000);
         }
-        questionDiv.appendChild(container);
-      } else if (q.tipo === 'sim_nao') {
-        const container = document.createElement('div');
-        container.className = 'yesno-container';
-        const btnSim = document.createElement('button');
-        btnSim.className = 'yesno-btn';
-        btnSim.textContent = 'Sim';
-        btnSim.type = 'button';
-        btnSim.onclick = () => selectYesNo(btnSim, questionIndex, 'Sim');
-        const btnNao = document.createElement('button');
-        btnNao.className = 'yesno-btn';
-        btnNao.textContent = 'Nao';
-        btnNao.type = 'button';
-        btnNao.onclick = () => selectYesNo(btnNao, questionIndex, 'Nao');
-        container.appendChild(btnSim);
-        container.appendChild(btnNao);
-        questionDiv.appendChild(container);
-      } else if (q.tipo === 'texto') {
-        const input = document.createElement('textarea');
-        input.id = `text-${questionIndex}`;
-        input.placeholder = 'Digite sua resposta...';
-        input.onchange = () => { currentRespostas[questionIndex] = input.value; updateProgress(); };
-        questionDiv.appendChild(input);
-      }
 
-      catDiv.appendChild(questionDiv);
-      questionIndex++;
-    });
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-    container.appendChild(catDiv);
-  });
+            const tab = document.getElementById(`tab${tabName}`);
+            if (tab) tab.classList.add('active');
 
-  updateProgress();
-}
-
-function selectScale(btn, idx) {
-  const parent = btn.parentElement;
-  parent.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  currentRespostas[idx] = parseInt(btn.textContent);
-  updateProgress();
-}
-
-function selectNPS(btn, idx, value) {
-  const parent = btn.parentElement;
-  parent.querySelectorAll('.nps-btn').forEach(b => b.classList.remove('selected', 'detrator', 'neutro', 'promotor'));
-  btn.classList.add('selected');
-  if (value <= 6) btn.classList.add('detrator');
-  else if (value <= 8) btn.classList.add('neutro');
-  else btn.classList.add('promotor');
-  currentRespostas[idx] = value;
-  updateProgress();
-}
-
-function selectYesNo(btn, idx, value) {
-  const parent = btn.parentElement;
-  parent.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('selected', 'yes', 'no'));
-  btn.classList.add('selected', value === 'Sim' ? 'yes' : 'no');
-  currentRespostas[idx] = value;
-  checkConditionals(idx, value);
-  updateProgress();
-}
-
-function checkConditionals(idx, value) {
-  const data = questionnaireData[currentTipo];
-  let questionIndex = 0;
-  data.categorias.forEach(cat => {
-    cat.perguntas.forEach(q => {
-      if (q.condicional && q.condicional.perguntaIndex === idx && q.condicional.valor === value) {
-        document.querySelector(`.condicional-${questionIndex}`).classList.add('visible');
-      } else if (q.condicional && q.condicional.perguntaIndex === idx) {
-        document.querySelector(`.condicional-${questionIndex}`).classList.remove('visible');
-      }
-      questionIndex++;
-    });
-  });
-}
-
-function updateProgress() {
-  const data = questionnaireData[currentTipo];
-  let total = 0;
-  data.categorias.forEach(cat => { total += cat.perguntas.length; });
-
-  const answered = Object.keys(currentRespostas).length;
-  const percent = Math.round((answered / total) * 100);
-  document.getElementById('progressFill').style.width = percent + '%';
-  document.getElementById('progressText').textContent = percent + '% concluido';
-}
-
-// ==================== SUBMIT INTERVIEW ====================
-async function submitInterview() {
-  const data = questionnaireData[currentTipo];
-  let total = 0;
-  data.categorias.forEach(cat => { total += cat.perguntas.length; });
-
-  if (Object.keys(currentRespostas).length < total) {
-    alert('Preencha todas as perguntas obrigatorias.');
-    return;
-  }
-
-  try {
-    let colaborador = await dbGetIndex('colaboradores', 'email', currentColaborador.email);
-    if (!colaborador) {
-      colaborador = currentColaborador;
-      const colabId = await dbAdd('colaboradores', colaborador);
-      colaborador.id = colabId;
-    }
-
-    const entrevista = {
-      colaborador_id: colaborador.id,
-      tipo: currentTipo,
-      data_resposta: new Date().toISOString()
-    };
-    const entrevistaId = await dbAdd('entrevistas', entrevista);
-
-    for (const [idx, resposta] of Object.entries(currentRespostas)) {
-      await dbAdd('respostas', {
-        entrevista_id: entrevistaId,
-        pergunta_index: parseInt(idx),
-        resposta: resposta
-      });
-    }
-
-    document.getElementById('stepQuestions').style.display = 'none';
-    document.getElementById('successScreen').style.display = 'block';
-  } catch (err) {
-    console.error('Submit error:', err);
-    alert('Erro ao salvar pesquisa.');
-  }
-}
-
-// ==================== RESET FORM ====================
-function resetForm() {
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginSenha').value = '';
-  document.getElementById('inputNome').value = '';
-  document.getElementById('inputEmail').value = '';
-  document.getElementById('inputCargo').value = '';
-  document.getElementById('inputDepartamento').value = '';
-  document.getElementById('inputAdmissao').value = '';
-  currentTipo = null;
-  currentColaborador = null;
-  currentRespostas = {};
-  document.getElementById('successScreen').style.display = 'none';
-  document.getElementById('stepType').style.display = 'block';
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
-}
-
-// ==================== SECTION NAVIGATION ====================
-function showSection(section, btn) {
-  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('section' + section.charAt(0).toUpperCase() + section.slice(1)).classList.add('active');
-  document.querySelectorAll('.topnav-tab').forEach(t => t.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-
-  if (section === 'minhas') loadMinhasPesquisas();
-  else if (section === 'dashboard') loadDashboard();
-  else if (section === 'pesquisas') loadPesquisas();
-  else if (section === 'colaboradores') loadColaboradores();
-  else if (section === 'usuarios') loadUsuarios();
-}
-
-// ==================== LOAD MINHAS PESQUISAS ====================
-async function loadMinhasPesquisas() {
-  if (!currentUser) return;
-  const colaborador = await dbGetIndex('colaboradores', 'email', currentUser.email);
-  const tbody = document.getElementById('minhasTable');
-  tbody.innerHTML = '';
-
-  if (!colaborador) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhuma pesquisa respondida.</td></tr>';
-    return;
-  }
-
-  const pesquisas = await dbGetAllIndex('entrevistas', 'colaborador_id', colaborador.id);
-  if (pesquisas.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhuma pesquisa respondida.</td></tr>';
-    return;
-  }
-
-  pesquisas.forEach(p => {
-    const tr = document.createElement('tr');
-    const data = new Date(p.data_resposta).toLocaleDateString('pt-BR');
-    tr.innerHTML = `
-      <td><span class="badge tipo-${p.tipo}">${formatTipo(p.tipo)}</span></td>
-      <td>${data}</td>
-      <td><button class="btn-action" onclick="viewDetail(${p.id}, 'pesquisa')">Ver Detalhes</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-// ==================== FORMAT TIPO ====================
-function formatTipo(tipo) {
-  const map = { '45dias_p1': '45 Dias - Parte 1', '45dias_p2': '45 Dias - Parte 2', 'desligamento_voluntario': 'Deslig. Voluntário', 'desligamento_involuntario': 'Deslig. Involuntário' };
-  return map[tipo] || tipo;
-}
-
-// ==================== LOAD PESQUISAS (ADMIN) ====================
-async function loadPesquisas() {
-  const filterTipo = document.getElementById('filterTipo').value;
-  const tbody = document.getElementById('pesquisasTable');
-  tbody.innerHTML = '';
-
-  let pesquisas = await dbGetAll('entrevistas');
-  if (filterTipo) {
-    pesquisas = pesquisas.filter(p => p.tipo === filterTipo);
-  }
-
-  if (pesquisas.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhuma pesquisa encontrada.</td></tr>';
-    return;
-  }
-
-  for (const p of pesquisas) {
-    const colab = await dbGet('colaboradores', p.colaborador_id);
-    const tr = document.createElement('tr');
-    const data = new Date(p.data_resposta).toLocaleDateString('pt-BR');
-    tr.innerHTML = `
-      <td>${colab.nome}</td>
-      <td>${colab.email}</td>
-      <td>${colab.departamento || '-'}</td>
-      <td><span class="badge tipo-${p.tipo}">${formatTipo(p.tipo)}</span></td>
-      <td>${data}</td>
-      <td>
-        <button class="btn-action" onclick="viewDetail(${p.id}, 'pesquisa')">Ver</button>
-        <button class="btn-action btn-delete" onclick="deletePesquisa(${p.id})">Deletar</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  }
-}
-
-// ==================== DELETE PESQUISA ====================
-async function deletePesquisa(pesquisaId) {
-  if (!confirm('Tem certeza que deseja deletar esta pesquisa?')) return;
-  try {
-    const respostas = await dbGetAllIndex('respostas', 'entrevista_id', pesquisaId);
-    for (const r of respostas) {
-      await dbDelete('respostas', r.id);
-    }
-    await dbDelete('entrevistas', pesquisaId);
-    loadPesquisas();
-  } catch (err) {
-    console.error('Delete error:', err);
-    alert('Erro ao deletar pesquisa.');
-  }
-}
-
-// ==================== LOAD DASHBOARD ====================
-async function loadDashboard() {
-  const pesquisas = await dbGetAll('entrevistas');
-  const statsGrid = document.getElementById('statsGrid');
-  statsGrid.innerHTML = '';
-
-  const totalPesquisas = pesquisas.length;
-  const estatCard = document.createElement('div');
-  estatCard.className = 'stat-card';
-  estatCard.innerHTML = `<div class="stat-icon">📋</div><div class="stat-value">${totalPesquisas}</div><div class="stat-label">Total de Pesquisas</div>`;
-  statsGrid.appendChild(estatCard);
-
-  const enpsCard = document.createElement('div');
-  enpsCard.className = 'stat-card enps';
-  let enpsScore = 0;
-  let promotores = 0, neutros = 0, detratores = 0;
-  for (const p of pesquisas) {
-    const respostas = await dbGetAllIndex('respostas', 'entrevista_id', p.id);
-    const data = questionnaireData[p.tipo];
-    let npsCount = 0;
-    data.categorias.forEach(cat => {
-      cat.perguntas.forEach((q, idx) => {
-        if (q.tipo === 'nps') {
-          const resp = respostas.find(r => r.pergunta_index == npsCount);
-          if (resp) {
-            const score = resp.resposta;
-            if (score <= 6) detratores++;
-            else if (score <= 8) neutros++;
-            else promotores++;
-            enpsScore += score;
-          }
+            const btn = document.querySelector(`[data-tab="${tabName}"]`);
+            if (btn) btn.classList.add('active');
         }
-        npsCount++;
-      });
-    });
-  }
-  const totalNPS = promotores + neutros + detratores;
-  const enps = totalNPS > 0 ? ((promotores - detratores) / totalNPS * 100).toFixed(0) : 0;
-  enpsCard.innerHTML = `<div class="stat-icon">⭐</div><div class="stat-value">${enps}</div><div class="stat-label">eNPS Score</div><div class="enps-detail"><div class="enps-bar promotor">${promotores} Promotores</div><div class="enps-bar neutro">${neutros} Neutros</div><div class="enps-bar detrator">${detratores} Detratores</div></div>`;
-  statsGrid.appendChild(enpsCard);
 
-  loadRecentPesquisas();
-  loadCategoryChart();
-}
-
-async function loadRecentPesquisas() {
-  const pesquisas = await dbGetAll('entrevistas');
-  pesquisas.sort((a, b) => new Date(b.data_resposta) - new Date(a.data_resposta));
-  const recent = pesquisas.slice(0, 5);
-
-  const tbody = document.getElementById('recentTable');
-  tbody.innerHTML = '';
-  for (const p of recent) {
-    const colab = await dbGet('colaboradores', p.colaborador_id);
-    const tr = document.createElement('tr');
-    const data = new Date(p.data_resposta).toLocaleDateString('pt-BR');
-    tr.innerHTML = `
-      <td>${colab.nome}</td>
-      <td>${colab.departamento || '-'}</td>
-      <td><span class="badge tipo-${p.tipo}">${formatTipo(p.tipo)}</span></td>
-      <td>${data}</td>
-      <td><button class="btn-action" onclick="viewDetail(${p.id}, 'pesquisa')">Ver</button></td>
-    `;
-    tbody.appendChild(tr);
-  }
-}
-
-async function loadCategoryChart() {
-  const catChart = document.getElementById('catChart');
-  catChart.innerHTML = '';
-
-  const pesquisas = await dbGetAll('entrevistas');
-  const categoryScores = {};
-
-  for (const p of pesquisas) {
-    const respostas = await dbGetAllIndex('respostas', 'entrevista_id', p.id);
-    const data = questionnaireData[p.tipo];
-    let perguntaIdx = 0;
-    data.categorias.forEach(cat => {
-      if (!categoryScores[cat.nome]) categoryScores[cat.nome] = { total: 0, count: 0 };
-      cat.perguntas.forEach(q => {
-        if (q.tipo === 'escala') {
-          const resp = respostas.find(r => r.pergunta_index == perguntaIdx);
-          if (resp) {
-            categoryScores[cat.nome].total += resp.resposta;
-            categoryScores[cat.nome].count++;
-          }
+        async function initDefaultAdmin() {
+            try {
+                const usersSnapshot = await db.collection('usuarios').get();
+                if (usersSnapshot.empty) {
+                    const password = await hashPassword('admin123');
+                    await db.collection('usuarios').add({
+                        nome: 'Administrador',
+                        email: 'admin@empresa.com',
+                        senha: password,
+                        perfil: 'admin',
+                        setor: 'RH',
+                        lider: '',
+                        cargo: 'Administrador',
+                        provisoria: false,
+                        ativo: true,
+                        created_at: new Date()
+                    });
+                    console.log('Admin padrão criado');
+                }
+            } catch (error) {
+                console.error('Erro ao criar admin padrão:', error);
+            }
         }
-        perguntaIdx++;
-      });
-    });
-  }
 
-  Object.entries(categoryScores).forEach(([catName, data]) => {
-    const avg = data.count > 0 ? (data.total / data.count).toFixed(1) : 0;
-    const percent = (avg / 5) * 100;
-    const row = document.createElement('div');
-    row.className = 'cat-row';
-    row.innerHTML = `
-      <div class="cat-name">${catName}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${percent}%">${avg}/5</div></div>
-    `;
-    catChart.appendChild(row);
-  });
-}
+        async function login(email, password) {
+            try {
+                const passwordHash = await hashPassword(password);
+                const usersSnapshot = await db.collection('usuarios').where('email', '==', email).get();
 
-// ==================== LOAD COLABORADORES ====================
-async function loadColaboradores() {
-  const colaboradores = await dbGetAll('colaboradores');
-  const tbody = document.getElementById('colaboradoresTable');
-  tbody.innerHTML = '';
+                if (usersSnapshot.empty) {
+                    showError('Usuário ou senha incorretos');
+                    return;
+                }
 
-  if (colaboradores.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum colaborador cadastrado.</td></tr>';
-    return;
-  }
+                const userDoc = usersSnapshot.docs[0];
+                const userData = userDoc.data();
 
-  for (const c of colaboradores) {
-    const pesquisas = await dbGetAllIndex('entrevistas', 'colaborador_id', c.id);
-    const tr = document.createElement('tr');
-    const dataAdmissao = c.admissao ? new Date(c.admissao).toLocaleDateString('pt-BR') : '-';
-    tr.innerHTML = `
-      <td>${c.nome}</td>
-      <td>${c.email}</td>
-      <td>${c.cargo || '-'}</td>
-      <td>${c.departamento || '-'}</td>
-      <td>${dataAdmissao}</td>
-      <td>${pesquisas.length}</td>
-    `;
-    tbody.appendChild(tr);
-  }
-}
+                if (userData.senha !== passwordHash) {
+                    showError('Usuário ou senha incorretos');
+                    return;
+                }
 
-// ==================== LOAD USUARIOS ====================
-async function loadUsuarios() {
-  const usuarios = await dbGetAll('usuarios');
-  const tbody = document.getElementById('usuariosTable');
-  tbody.innerHTML = '';
+                if (!userData.ativo) {
+                    showError('Usuário inativo');
+                    return;
+                }
 
-  usuarios.forEach(u => {
-    const tr = document.createElement('tr');
-    const dataCriacao = new Date(u.created_at).toLocaleDateString('pt-BR');
-    tr.innerHTML = `
-      <td>${u.nome}</td>
-      <td>${u.email}</td>
-      <td><span class="badge perfil-${u.perfil}">${u.perfil}</span></td>
-      <td>${dataCriacao}</td>
-      <td><button class="btn-action btn-delete" onclick="deleteUsuario(${u.id})">Deletar</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+                currentUser = { ...userData, id: userDoc.id };
+                currentUserDoc = userDoc;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-// ==================== ADD USER ====================
-async function addUser() {
-  const nome = document.getElementById('newUserNome').value.trim();
-  const email = document.getElementById('newUserEmail').value.trim();
-  const perfil = document.getElementById('newUserPerfil').value;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').classList.add('active');
 
-  if (!nome || !email) {
-    alert('Preencha nome e e-mail.');
-    return;
-  }
+                document.getElementById('currentUserName').textContent = currentUser.nome;
+                const roleEl = document.getElementById('currentUserRole');
+                const roleMap = { admin: 'Admin', gestor: 'Gestor', diretoria: 'Diretoria', colaborador: 'Colaborador' };
+                const badgeMap = { admin: 'badge-admin', gestor: 'badge-gestor', diretoria: 'badge-diretoria', colaborador: 'badge-colaborador' };
+                roleEl.textContent = roleMap[currentUser.perfil];
+                roleEl.className = `badge ${badgeMap[currentUser.perfil]}`;
 
-  const existingUser = await dbGetIndex('usuarios', 'email', email);
-  if (existingUser) {
-    alert('E-mail ja cadastrado.');
-    return;
-  }
+                setupTabs();
+                showTab('Formulario');
 
-  const senha = generatePassword();
-  const hash = await hashPassword(senha);
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showError('Erro ao fazer login');
+            }
+        }
 
-  try {
-    await dbAdd('usuarios', {
-      nome,
-      email,
-      senha: hash,
-      perfil,
-      provisoria: true,
-      created_at: new Date().toISOString()
-    });
+        function setupTabs() {
+            const tabsContainer = document.getElementById('tabsContainer');
+            tabsContainer.innerHTML = '';
 
-    sendPasswordEmail(email, senha);
-    document.getElementById('newUserNome').value = '';
-    document.getElementById('newUserEmail').value = '';
-    loadUsuarios();
-    alert('Usuario criado! Senha provisoria enviada para ' + email);
-  } catch (err) {
-    console.error('Add user error:', err);
-    alert('Erro ao criar usuario.');
-  }
-}
+            const allTabs = {
+                admin: ['Formulario', 'Avaliacao', 'Dashboard', 'Pesquisas', 'Colaboradores', 'Usuarios', 'Desligamento'],
+                gestor: ['Formulario', 'Avaliacao', 'MeusSubordinados', 'Desligamento'],
+                diretoria: ['Dashboard', 'AvaliacoesDosGestores', 'PesquisasDosColaboradores'],
+                colaborador: ['Formulario', 'MinhasPesquisas']
+            };
 
-// ==================== DELETE USUARIO ====================
-async function deleteUsuario(usuarioId) {
-  if (!confirm('Tem certeza que deseja deletar este usuario?')) return;
-  try {
-    await dbDelete('usuarios', usuarioId);
-    loadUsuarios();
-  } catch (err) {
-    console.error('Delete error:', err);
-    alert('Erro ao deletar usuario.');
-  }
-}
+            const tabLabels = {
+                Formulario: 'Formulário',
+                Avaliacao: 'Avaliar Colaborador',
+                Dashboard: 'Dashboard',
+                Pesquisas: 'Pesquisas',
+                Colaboradores: 'Colaboradores',
+                Usuarios: 'Usuários',
+                Desligamento: 'Desligamento',
+                MeusSubordinados: 'Meus Subordinados',
+                AvaliacoesDosGestores: 'Avaliações dos Gestores',
+                PesquisasDosColaboradores: 'Pesquisas dos Colaboradores',
+                MinhasPesquisas: 'Minhas Pesquisas'
+            };
 
-// ==================== VIEW DETAIL ====================
-async function viewDetail(pesquisaId, type) {
-  const pesquisa = await dbGet('entrevistas', pesquisaId);
-  const colaborador = await dbGet('colaboradores', pesquisa.colaborador_id);
-  const respostas = await dbGetAllIndex('respostas', 'entrevista_id', pesquisaId);
+            const tabs = allTabs[currentUser.perfil] || [];
+            tabs.forEach(tab => {
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn';
+                btn.textContent = tabLabels[tab];
+                btn.dataset.tab = tab;
+                btn.onclick = () => showTab(tab);
+                tabsContainer.appendChild(btn);
+            });
+        }
 
-  const data = questionnaireData[pesquisa.tipo];
-  let modalHtml = `<h2>${colaborador.nome}</h2><div class="meta">${formatTipo(pesquisa.tipo)} - ${new Date(pesquisa.data_resposta).toLocaleDateString('pt-BR')}</div>`;
+        function renderScaleButtons(questionIndex, sectionIndex) {
+            let html = '<div class="scale-buttons">';
+            for (let i = 1; i <= 5; i++) {
+                html += `<button type="button" class="scale-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="${i}">${i}</button>`;
+            }
+            html += '</div>';
+            return html;
+        }
 
-  let perguntaIdx = 0;
-  data.categorias.forEach(cat => {
-    modalHtml += `<div class="cat-header">${cat.emoji} ${cat.nome}</div>`;
-    cat.perguntas.forEach(q => {
-      const resp = respostas.find(r => r.pergunta_index == perguntaIdx);
-      const answer = resp ? resp.resposta : 'Nao respondido';
-      const answerClass = q.tipo === 'nps' ? 'nota' : '';
-      modalHtml += `<div class="answer-group"><div class="q">${q.pergunta}</div><div class="a ${answerClass}">${answer}</div></div>`;
-      perguntaIdx++;
-    });
-  });
+        function renderNPSButtons(questionIndex, sectionIndex) {
+            let html = '<div class="nps-buttons">';
+            for (let i = 0; i <= 10; i++) {
+                html += `<button type="button" class="nps-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="${i}">${i}</button>`;
+            }
+            html += '</div>';
+            return html;
+        }
 
-  document.getElementById('modalContent').innerHTML = modalHtml;
-  document.getElementById('detailModal').classList.add('active');
-}
+        function renderYesNoButtons(questionIndex, sectionIndex) {
+            return `<div class="yes-no-buttons">
+                <button type="button" class="yes-no-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="Sim">Sim</button>
+                <button type="button" class="yes-no-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="Não">Não</button>
+            </div>`;
+        }
 
-// ==================== CLOSE MODAL ====================
-function closeModal() {
-  document.getElementById('detailModal').classList.remove('active');
-}
+        function renderTextarea(questionIndex, sectionIndex) {
+            return `<textarea data-section="${sectionIndex}" data-question="${questionIndex}" placeholder="Digite sua resposta aqui..."></textarea>`;
+        }
 
-// ==================== EXPORT CSV ====================
-async function exportCSV() {
-  const filterTipo = document.getElementById('filterTipo').value;
-  let pesquisas = await dbGetAll('entrevistas');
-  if (filterTipo) {
-    pesquisas = pesquisas.filter(p => p.tipo === filterTipo);
-  }
+        function renderSurveyForm(questionnaireKey) {
+            const questionnaire = questionnaires[questionnaireKey];
+            if (!questionnaire) return '';
 
-  let csv = 'Colaborador,Email,Departamento,Tipo,Data\n';
-  for (const p of pesquisas) {
-    const colab = await dbGet('colaboradores', p.colaborador_id);
-    const data = new Date(p.data_resposta).toLocaleDateString('pt-BR');
-    csv += `${colab.nome},${colab.email},${colab.departamento || '-'},${formatTipo(p.tipo)},${data}\n`;
-  }
+            let html = `<div class="survey-form" data-type="${questionnaire.tipo}">`;
 
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'pesquisas_' + new Date().toISOString().split('T')[0] + '.csv';
-  link.click();
-}
+            questionnaire.secoes.forEach((section, sectionIndex) => {
+                html += `<div class="form-section">`;
+                html += `<h3>${section.titulo}</h3>`;
 
-// ==================== INITIALIZATION ====================
-window.onload = async () => {
-  await openDB();
-  await initDatabase();
+                section.perguntas.forEach((pergunta, questionIndex) => {
+                    const fieldId = `q_${sectionIndex}_${questionIndex}`;
+                    html += `<div class="question-group" id="qg_${sectionIndex}_${questionIndex}">`;
+                    html += `<label class="question-label">${pergunta.texto}</label>`;
 
-  const savedUser = sessionStorage.getItem('currentUser');
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    showApp();
-  }
+                    switch (pergunta.tipo) {
+                        case 'escala':
+                            html += renderScaleButtons(questionIndex, sectionIndex);
+                            break;
+                        case 'nps':
+                            html += renderNPSButtons(questionIndex, sectionIndex);
+                            break;
+                        case 'sim_nao':
+                            html += renderYesNoButtons(questionIndex, sectionIndex);
+                            break;
+                        case 'texto':
+                            html += renderTextarea(questionIndex, sectionIndex);
+                            break;
+                    }
 
-  document.getElementById('loginEmail').focus();
-};
-</script>
+                    if (pergunta.condicional) {
+                        const conditionalId = `conditional_${sectionIndex}_${questionIndex}`;
+                        html += `<div id="${conditionalId}" class="conditional-field">`;
+                        const conditionalPergunta = section.perguntas[pergunta.condicional.pergunta_index];
+                        html += `<label class="question-label">${conditionalPergunta.texto}</label>`;
 
+                        switch (conditionalPergunta.tipo) {
+                            case 'escala':
+                                html += renderScaleButtons(pergunta.condicional.pergunta_index, sectionIndex);
+                                break;
+                            case 'nps':
+                                html += renderNPSButtons(pergunta.condicional.pergunta_index, sectionIndex);
+                                break;
+                            case 'sim_nao':
+                                html += renderYesNoButtons(pergunta.condicional.pergunta_index, sectionIndex);
+                                break;
+                            case 'texto':
+                                html += renderTextarea(pergunta.condicional.pergunta_index, sectionIndex);
+                                break;
+                        }
+
+                        html += `</div>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                html += `</div>`;
+            });
+
+            html += `<div class="submit-section">
+                <button type="button" class="btn btn-primary btn-submit" data-type="${questionnaire.tipo}">Enviar Formulário</button>
+            </div></div>`;
+
+            return html;
+        }
+
+        async function setupFormularioTab() {
+            const container = document.getElementById('surveyFormContainer');
+            let html = '';
+
+            if (currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'colaborador') {
+                html += '<div style="margin-bottom: 30px;">';
+                html += '<h3>Selecione qual formulário você deseja preencher:</h3>';
+                html += '<div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">';
+                html += `<button class="btn btn-secondary" onclick="showSurveyForm('parte1')">Parte 1 - 45 Dias</button>`;
+                html += `<button class="btn btn-secondary" onclick="showSurveyForm('parte2')">Parte 2 - 45 Dias</button>`;
+                html += '</div></div>';
+                html += '<div id="formContainer"></div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        window.showSurveyForm = function(questionnaireKey) {
+            const formContainer = document.getElementById('formContainer');
+            formContainer.innerHTML = renderSurveyForm(questionnaireKey);
+            setupFormListeners(questionnaireKey);
+        };
+
+        function setupFormListeners(questionnaireKey) {
+            const questionnaire = questionnaires[questionnaireKey];
+
+            document.querySelectorAll('.scale-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = btn.dataset.section;
+                    const question = btn.dataset.question;
+                    document.querySelectorAll(`.scale-btn[data-section="${section}"][data-question="${question}"]`)
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('.nps-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = btn.dataset.section;
+                    const question = btn.dataset.question;
+                    document.querySelectorAll(`.nps-btn[data-section="${section}"][data-question="${question}"]`)
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('.yes-no-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = btn.dataset.section;
+                    const question = btn.dataset.question;
+                    document.querySelectorAll(`.yes-no-btn[data-section="${section}"][data-question="${question}"]`)
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+
+                    const pergunta = questionnaire.secoes[section].perguntas[question];
+                    if (pergunta.condicional) {
+                        const conditionalId = `conditional_${section}_${question}`;
+                        const conditionalField = document.getElementById(conditionalId);
+                        if (conditionalField) {
+                            if (btn.dataset.value === pergunta.condicional.valor) {
+                                conditionalField.classList.add('show');
+                            } else {
+                                conditionalField.classList.remove('show');
+                            }
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-submit').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await submitSurvey(questionnaireKey);
+                });
+            });
+        }
+
+        async function submitSurvey(questionnaireKey) {
+            try {
+                const questionnaire = questionnaires[questionnaireKey];
+                const respostas = [];
+
+                questionnaire.secoes.forEach((section, sectionIndex) => {
+                    section.perguntas.forEach((pergunta, questionIndex) => {
+                        let resposta = null;
+
+                        const scaleBtns = document.querySelectorAll(`.scale-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
+                        const npsBtns = document.querySelectorAll(`.nps-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
+                        const ynBtns = document.querySelectorAll(`.yes-no-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
+                        const textareas = document.querySelectorAll(`textarea[data-section="${sectionIndex}"][data-question="${questionIndex}"]`);
+
+                        if (scaleBtns.length > 0) {
+                            resposta = scaleBtns[0].dataset.value;
+                        } else if (npsBtns.length > 0) {
+                            resposta = npsBtns[0].dataset.value;
+                        } else if (ynBtns.length > 0) {
+                            resposta = ynBtns[0].dataset.value;
+                        } else if (textareas.length > 0) {
+                            resposta = textareas[0].value;
+                        }
+
+                        if (resposta !== null && resposta !== '') {
+                            respostas.push({ pergunta_index: questionIndex, resposta: resposta });
+                        }
+                    });
+                });
+
+                const pesquisaRef = await db.collection('pesquisas').add({
+                    colaborador_id: currentUser.id,
+                    tipo: questionnaire.tipo,
+                    data_resposta: new Date(),
+                    respondente_email: currentUser.email
+                });
+
+                for (const resposta of respostas) {
+                    await db.collection('respostas').add({
+                        pesquisa_id: pesquisaRef.id,
+                        pergunta_index: resposta.pergunta_index,
+                        resposta: resposta.resposta
+                    });
+                }
+
+                alert('Formulário enviado com sucesso!');
+                document.getElementById('formContainer').innerHTML = '';
+
+            } catch (error) {
+                console.error('Erro ao enviar formulário:', error);
+                alert('Erro ao enviar formulário');
+            }
+        }
+
+        async function setupAvaliacaoTab() {
+            const container = document.getElementById('managerEvaluationForm');
+            const dropdown = document.getElementById('collaboratorDropdown');
+            const select = document.getElementById('collaboratorSelect');
+
+            if (currentUser.perfil === 'admin') {
+                dropdown.style.display = 'block';
+                const usersSnapshot = await db.collection('usuarios').get();
+                select.innerHTML = '<option value="">Selecione um colaborador</option>';
+                usersSnapshot.forEach(doc => {
+                    const user = doc.data();
+                    select.innerHTML += `<option value="${doc.id}">${user.nome}</option>`;
+                });
+
+                select.addEventListener('change', async (e) => {
+                    if (e.target.value) {
+                        container.innerHTML = renderSurveyForm('avaliacao_gestor');
+                        setupManagerEvaluationListeners(e.target.value);
+                    }
+                });
+            } else if (currentUser.perfil === 'gestor') {
+                dropdown.style.display = 'block';
+                const usersSnapshot = await db.collection('usuarios').where('lider', '==', currentUser.nome).get();
+                select.innerHTML = '<option value="">Selecione um subordinado</option>';
+                usersSnapshot.forEach(doc => {
+                    const user = doc.data();
+                    select.innerHTML += `<option value="${doc.id}">${user.nome}</option>`;
+                });
+
+                select.addEventListener('change', async (e) => {
+                    if (e.target.value) {
+                        container.innerHTML = renderSurveyForm('avaliacao_gestor');
+                        setupManagerEvaluationListeners(e.target.value);
+                    }
+                });
+            }
+        }
+
+        function setupManagerEvaluationListeners(selectedUserId) {
+            document.querySelectorAll('.scale-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = btn.dataset.section;
+                    const question = btn.dataset.question;
+                    document.querySelectorAll(`.scale-btn[data-section="${section}"][data-question="${question}"]`)
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('.nps-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = btn.dataset.section;
+                    const question = btn.dataset.question;
+                    document.querySelectorAll(`.nps-btn[data-section="${section}"][data-question="${question}"]`)
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('.yes-no-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = btn.dataset.section;
+                    const question = btn.dataset.question;
+                    document.querySelectorAll(`.yes-no-btn[data-section="${section}"][data-question="${question}"]`)
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+
+                    const questionnaire = questionnaires['avaliacao_gestor'];
+                    const pergunta = questionnaire.secoes[section].perguntas[question];
+                    if (pergunta.condicional) {
+                        const conditionalId = `conditional_${section}_${question}`;
+                        const conditionalField = document.getElementById(conditionalId);
+                        if (conditionalField) {
+                            if (btn.dataset.value === pergunta.condicional.valor) {
+                                conditionalField.classList.add('show');
+                            } else {
+                                conditionalField.classList.remove('show');
+                            }
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-submit').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await submitManagerEvaluation('avaliacao_gestor', selectedUserId);
+                });
+            });
+        }
+
+        async function submitManagerEvaluation(questionnaireKey, selectedUserId) {
+            try {
+                const questionnaire = questionnaires[questionnaireKey];
+                const respostas = [];
+
+                questionnaire.secoes.forEach((section, sectionIndex) => {
+                    section.perguntas.forEach((pergunta, questionIndex) => {
+                        let resposta = null;
+
+                        const scaleBtns = document.querySelectorAll(`.scale-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
+                        const npsBtns = document.querySelectorAll(`.nps-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
+                        const ynBtns = document.querySelectorAll(`.yes-no-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
+                        const textareas = document.querySelectorAll(`textarea[data-section="${sectionIndex}"][data-question="${questionIndex}"]`);
+
+                        if (scaleBtns.length > 0) {
+                            resposta = scaleBtns[0].dataset.value;
+                        } else if (npsBtns.length > 0) {
+                            resposta = npsBtns[0].dataset.value;
+                        } else if (ynBtns.length > 0) {
+                            resposta = ynBtns[0].dataset.value;
+                        } else if (textareas.length > 0) {
+                            resposta = textareas[0].value;
+                        }
+
+                        if (resposta !== null && resposta !== '') {
+                            respostas.push({ pergunta_index: questionIndex, resposta: resposta });
+                        }
+                    });
+                });
+
+                const pesquisaRef = await db.collection('pesquisas').add({
+                    colaborador_id: selectedUserId,
+                    tipo: questionnaire.tipo,
+                    data_resposta: new Date(),
+                    respondente_email: currentUser.email,
+                    gestor_avaliador: currentUser.nome
+                });
+
+                for (const resposta of respostas) {
+                    await db.collection('respostas').add({
+                        pesquisa_id: pesquisaRef.id,
+                        pergunta_index: resposta.pergunta_index,
+                        resposta: resposta.resposta
+                    });
+                }
+
+                alert('Avaliação enviada com sucesso!');
+                document.getElementById('managerEvaluationForm').innerHTML = '';
+                document.getElementById('collaboratorSelect').value = '';
+
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                alert('Erro ao enviar avaliação');
+            }
+        }
+
+        async function setupMeusSubordinadosTab() {
+            const container = document.getElementById('subordinatesContainer');
+            container.innerHTML = '<p class="loading">Carregando...</p>';
+
+            try {
+                const subordinatesSnapshot = await db.collection('usuarios').where('lider', '==', currentUser.nome).get();
+                let html = '';
+
+                if (subordinatesSnapshot.empty) {
+                    html = '<p>Você não tem subordinados registrados.</p>';
+                } else {
+                    html = '<table><thead><tr><th>Nome</th><th>Cargo</th><th>Setor</th><th>Ações</th></tr></thead><tbody>';
+
+                    for (const doc of subordinatesSnapshot.docs) {
+                        const subordinado = doc.data();
+
+                        html += `<tr>
+                            <td>${subordinado.nome}</td>
+                            <td>${subordinado.cargo}</td>
+                            <td>${subordinado.setor}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="viewSubordinateResults('${doc.id}', '${subordinado.nome}')">Ver Resultados</button>
+                            </td>
+                        </tr>`;
+                    }
+
+                    html += '</tbody></table>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar subordinados:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        window.viewSubordinateResults = async function(userId, userName) {
+            const modal = document.getElementById('detailsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = `Resultados de ${userName}`;
+            modalBody.innerHTML = '<p class="loading">Carregando...</p>';
+            modal.classList.add('active');
+
+            try {
+                const pesquisasSnapshot = await db.collection('pesquisas').where('colaborador_id', '==', userId).get();
+                let html = '';
+
+                if (pesquisasSnapshot.empty) {
+                    html = '<p>Nenhuma pesquisa respondida ainda.</p>';
+                } else {
+                    for (const pesquisaDoc of pesquisasSnapshot.docs) {
+                        const pesquisa = pesquisaDoc.data();
+                        html += `<div style="margin-bottom: 20px; padding: 15px; background: #F9F9F9; border-radius: 6px;">`;
+                        html += `<h3>${pesquisa.tipo === '45_dias_parte_1' ? '45 Dias - Parte 1' : pesquisa.tipo === '45_dias_parte_2' ? '45 Dias - Parte 2' : 'Avaliação do Gestor'}</h3>`;
+                        html += `<p><small>Respondida em: ${pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A'}</small></p>`;
+
+                        const respostasSnapshot = await db.collection('respostas').where('pesquisa_id', '==', pesquisaDoc.id).get();
+                        if (!respostasSnapshot.empty) {
+                            html += '<ul style="margin-top: 10px;">';
+                            respostasSnapshot.forEach(respostaDoc => {
+                                const resposta = respostaDoc.data();
+                                html += `<li>${resposta.resposta}</li>`;
+                            });
+                            html += '</ul>';
+                        }
+
+                        html += `</div>`;
+                    }
+                }
+
+                modalBody.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar resultados:', error);
+                modalBody.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        };
+
+        async function setupDashboardTab() {
+            const container = document.getElementById('dashboardStats');
+
+            try {
+                let totalSurveys = 0;
+                let totalUsers = 0;
+
+                if (currentUser.perfil === 'admin') {
+                    const pesquisasSnapshot = await db.collection('pesquisas').get();
+                    const usersSnapshot = await db.collection('usuarios').get();
+                    totalSurveys = pesquisasSnapshot.size;
+                    totalUsers = usersSnapshot.size;
+
+                } else if (currentUser.perfil === 'gestor') {
+                    const subordinatesSnapshot = await db.collection('usuarios').where('lider', '==', currentUser.nome).get();
+                    totalUsers = subordinatesSnapshot.size;
+
+                } else if (currentUser.perfil === 'diretoria') {
+                    const pesquisasSnapshot = await db.collection('pesquisas').where('tipo', '==', 'avaliacao_gestor').get();
+                    totalSurveys = pesquisasSnapshot.size;
+                }
+
+                container.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">Total de Pesquisas</div>
+                        <div class="stat-number">${totalSurveys}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total de Usuários</div>
+                        <div class="stat-number">${totalUsers}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Taxa de Conclusão</div>
+                        <div class="stat-number">${totalUsers > 0 ? Math.round((totalSurveys / totalUsers) * 100) : 0}%</div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        async function setupPesquisasTab() {
+            const container = document.getElementById('surveysContainer');
+            container.innerHTML = '<p class="loading">Carregando...</p>';
+
+            try {
+                const pesquisasSnapshot = await db.collection('pesquisas').get();
+
+                if (pesquisasSnapshot.empty) {
+                    container.innerHTML = '<p>Nenhuma pesquisa realizada ainda.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th><th>Respondente</th><th>Ações</th></tr></thead><tbody>';
+
+                for (const pesquisaDoc of pesquisasSnapshot.docs) {
+                    const pesquisa = pesquisaDoc.data();
+                    const userDoc = await db.collection('usuarios').doc(pesquisa.colaborador_id).get();
+                    const user = userDoc.data();
+
+                    const tipoLabel = pesquisa.tipo === '45_dias_parte_1' ? '45D - P1' : pesquisa.tipo === '45_dias_parte_2' ? '45D - P2' : 'Avaliação';
+                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
+
+                    html += `<tr>
+                        <td>${user.nome}</td>
+                        <td>${tipoLabel}</td>
+                        <td>${data}</td>
+                        <td>${pesquisa.respondente_email}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${pesquisaDoc.id}')">Ver</button>
+                        </td>
+                    </tr>`;
+                }
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar pesquisas:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        window.viewSurveyDetails = async function(pesquisaId) {
+            const modal = document.getElementById('detailsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = 'Detalhes da Pesquisa';
+            modalBody.innerHTML = '<p class="loading">Carregando...</p>';
+            modal.classList.add('active');
+
+            try {
+                const pesquisaDoc = await db.collection('pesquisas').doc(pesquisaId).get();
+                const pesquisa = pesquisaDoc.data();
+                const respostasSnapshot = await db.collection('respostas').where('pesquisa_id', '==', pesquisaId).get();
+
+                let html = '<div>';
+                html += `<p><strong>Tipo:</strong> ${pesquisa.tipo}</p>`;
+                html += `<p><strong>Data:</strong> ${pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A'}</p>`;
+                html += `<h3>Respostas:</h3><ul>`;
+
+                respostasSnapshot.forEach(respostaDoc => {
+                    const resposta = respostaDoc.data();
+                    html += `<li><strong>Pergunta ${resposta.pergunta_index}:</strong> ${resposta.resposta}</li>`;
+                });
+
+                html += '</ul></div>';
+                modalBody.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar detalhes:', error);
+                modalBody.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        };
+
+        async function setupColaboradoresTab() {
+            const container = document.getElementById('collaboratorsTableContainer');
+            container.innerHTML = '<p class="loading">Carregando...</p>';
+
+            try {
+                const colaboradoresSnapshot = await db.collection('usuarios').where('perfil', '==', 'colaborador').get();
+
+                if (colaboradoresSnapshot.empty) {
+                    container.innerHTML = '<p>Nenhum colaborador registrado.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Setor</th><th>Líder</th><th>Criado em</th></tr></thead><tbody>';
+
+                colaboradoresSnapshot.forEach(doc => {
+                    const collab = doc.data();
+                    const dataCriacao = collab.created_at ? new Date(collab.created_at.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
+
+                    html += `<tr>
+                        <td>${collab.nome}</td>
+                        <td>${collab.email}</td>
+                        <td>${collab.cargo}</td>
+                        <td>${collab.setor}</td>
+                        <td>${collab.lider}</td>
+                        <td>${dataCriacao}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar colaboradores:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        async function setupUsuariosTab() {
+            const form = document.getElementById('newUserForm');
+            const container = document.getElementById('usersTableContainer');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                    const nome = document.getElementById('newUserNome').value;
+                    const email = document.getElementById('newUserEmail').value;
+                    const perfil = document.getElementById('newUserPerfil').value;
+                    const setor = document.getElementById('newUserSetor').value;
+                    const lider = document.getElementById('newUserLider').value;
+                    const cargo = document.getElementById('newUserCargo').value;
+
+                    const senha = 'senha123';
+                    const senhaHash = await hashPassword(senha);
+
+                    await db.collection('usuarios').add({
+                        nome,
+                        email,
+                        senha: senhaHash,
+                        perfil,
+                        setor,
+                        lider,
+                        cargo,
+                        provisoria: true,
+                        ativo: true,
+                        created_at: new Date()
+                    });
+
+                    alert(`Usuário criado com sucesso! Senha temporária: ${senha}`);
+                    form.reset();
+                    loadUsersTable();
+
+                } catch (error) {
+                    console.error('Erro ao criar usuário:', error);
+                    alert('Erro ao criar usuário');
+                }
+            });
+
+            await loadUsersTable();
+
+            async function loadUsersTable() {
+                container.innerHTML = '<p class="loading">Carregando...</p>';
+
+                try {
+                    const usersSnapshot = await db.collection('usuarios').get();
+
+                    if (usersSnapshot.empty) {
+                        container.innerHTML = '<p>Nenhum usuário registrado.</p>';
+                        return;
+                    }
+
+                    let html = '<table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Setor</th><th>Líder</th><th>Cargo</th><th>Criado em</th><th>Ações</th></tr></thead><tbody>';
+
+                    usersSnapshot.forEach(doc => {
+                        const user = doc.data();
+                        const dataCriacao = user.created_at ? new Date(user.created_at.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
+                        const perfil = { admin: 'Admin', gestor: 'Gestor', diretoria: 'Diretoria', colaborador: 'Colaborador' }[user.perfil] || user.perfil;
+
+                        html += `<tr>
+                            <td>${user.nome}</td>
+                            <td>${user.email}</td>
+                            <td><span class="badge badge-${user.perfil}">${perfil}</span></td>
+                            <td>${user.setor}</td>
+                            <td>${user.lider}</td>
+                            <td>${user.cargo}</td>
+                            <td>${dataCriacao}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser('${doc.id}')">Deletar</button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+
+                } catch (error) {
+                    console.error('Erro ao carregar usuários:', error);
+                    container.innerHTML = '<p>Erro ao carregar dados</p>';
+                }
+            }
+        }
+
+        window.deleteUser = async function(userId) {
+            if (confirm('Tem certeza que deseja deletar este usuário?')) {
+                try {
+                    await db.collection('usuarios').doc(userId).delete();
+                    alert('Usuário deletado com sucesso');
+                    setupUsuariosTab();
+                } catch (error) {
+                    console.error('Erro ao deletar usuário:', error);
+                    alert('Erro ao deletar usuário');
+                }
+            }
+        };
+
+        async function setupAvaliacoesDosGestoresTab() {
+            const container = document.getElementById('managerEvaluationsContainer');
+            container.innerHTML = '<p class="loading">Carregando...</p>';
+
+            try {
+                const pesquisasSnapshot = await db.collection('pesquisas').where('tipo', '==', 'avaliacao_gestor').get();
+
+                if (pesquisasSnapshot.empty) {
+                    container.innerHTML = '<p>Nenhuma avaliação de gestor realizada ainda.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Colaborador</th><th>Gestor Avaliador</th><th>Data</th><th>Ações</th></tr></thead><tbody>';
+
+                for (const pesquisaDoc of pesquisasSnapshot.docs) {
+                    const pesquisa = pesquisaDoc.data();
+                    const userDoc = await db.collection('usuarios').doc(pesquisa.colaborador_id).get();
+                    const user = userDoc.data();
+                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
+
+                    html += `<tr>
+                        <td>${user.nome}</td>
+                        <td>${pesquisa.gestor_avaliador}</td>
+                        <td>${data}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${pesquisaDoc.id}')">Ver</button>
+                        </td>
+                    </tr>`;
+                }
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar avaliações:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        async function setupPesquisasDosColaboradoresTab() {
+            const container = document.getElementById('collaboratorSurveysContainer');
+            container.innerHTML = '<p class="loading">Carregando...</p>';
+
+            try {
+                const pesquisasSnapshot = await db.collection('pesquisas').where('tipo', 'in', ['45_dias_parte_1', '45_dias_parte_2']).get();
+
+                if (pesquisasSnapshot.empty) {
+                    container.innerHTML = '<p>Nenhuma pesquisa de colaborador realizada ainda.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th><th>Ações</th></tr></thead><tbody>';
+                let anonIndex = 1;
+
+                for (const pesquisaDoc of pesquisasSnapshot.docs) {
+                    const pesquisa = pesquisaDoc.data();
+                    const tipoLabel = pesquisa.tipo === '45_dias_parte_1' ? '45D - P1' : '45D - P2';
+                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
+
+                    html += `<tr>
+                        <td>Colaborador Anônimo ${anonIndex}</td>
+                        <td>${tipoLabel}</td>
+                        <td>${data}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${pesquisaDoc.id}')">Ver</button>
+                        </td>
+                    </tr>`;
+
+                    anonIndex++;
+                }
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar pesquisas:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        async function setupMinhasPesquisasTab() {
+            const container = document.getElementById('mySubmissionsContainer');
+            container.innerHTML = '<p class="loading">Carregando...</p>';
+
+            try {
+                const pesquisasSnapshot = await db.collection('pesquisas').where('colaborador_id', '==', currentUser.id).get();
+
+                if (pesquisasSnapshot.empty) {
+                    container.innerHTML = '<p>Você ainda não respondeu nenhuma pesquisa.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Tipo</th><th>Data</th><th>Ações</th></tr></thead><tbody>';
+
+                pesquisasSnapshot.forEach(doc => {
+                    const pesquisa = doc.data();
+                    const tipoLabel = pesquisa.tipo === '45_dias_parte_1' ? '45 Dias - Parte 1' : pesquisa.tipo === '45_dias_parte_2' ? '45 Dias - Parte 2' : 'Avaliação do Gestor';
+                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
+
+                    html += `<tr>
+                        <td>${tipoLabel}</td>
+                        <td>${data}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${doc.id}')">Ver</button>
+                        </td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar minhas pesquisas:', error);
+                container.innerHTML = '<p>Erro ao carregar dados</p>';
+            }
+        }
+
+        // Initialize
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            await login(email, password);
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            sessionStorage.removeItem('currentUser');
+            window.location.reload();
+        });
+
+        document.getElementById('modalClose').addEventListener('click', () => {
+            document.getElementById('detailsModal').classList.remove('active');
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initDefaultAdmin();
+
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').classList.add('active');
+                document.getElementById('currentUserName').textContent = currentUser.nome;
+                const roleEl = document.getElementById('currentUserRole');
+                const roleMap = { admin: 'Admin', gestor: 'Gestor', diretoria: 'Diretoria', colaborador: 'Colaborador' };
+                const badgeMap = { admin: 'badge-admin', gestor: 'badge-gestor', diretoria: 'badge-diretoria', colaborador: 'badge-colaborador' };
+                roleEl.textContent = roleMap[currentUser.perfil];
+                roleEl.className = `badge ${badgeMap[currentUser.perfil]}`;
+                setupTabs();
+                showTab('Formulario');
+            }
+        });
+
+        const originalShowTab = showTab;
+        window.showTab = function(tabName) {
+            originalShowTab(tabName);
+
+            if (tabName === 'Formulario') {
+                setupFormularioTab();
+            } else if (tabName === 'Avaliacao') {
+                setupAvaliacaoTab();
+            } else if (tabName === 'MeusSubordinados') {
+                setupMeusSubordinadosTab();
+            } else if (tabName === 'Dashboard') {
+                setupDashboardTab();
+            } else if (tabName === 'Pesquisas') {
+                setupPesquisasTab();
+            } else if (tabName === 'Colaboradores') {
+                setupColaboradoresTab();
+            } else if (tabName === 'Usuarios') {
+                setupUsuariosTab();
+            } else if (tabName === 'AvaliacoesDosGestores') {
+                setupAvaliacoesDosGestoresTab();
+            } else if (tabName === 'PesquisasDosColaboradores') {
+                setupPesquisasDosColaboradoresTab();
+            } else if (tabName === 'MinhasPesquisas') {
+                setupMinhasPesquisasTab();
+            }
+        };
+    </script>
 </body>
 </html>
