@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pesquisa de Desligamento Involuntário | RH</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     :root {
       --primary: #6C5CE7;
@@ -26,8 +29,6 @@
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
     }
-
-    /* ===== LOGIN SCREEN ===== */
     .login-screen {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #2D3436 0%, #636E72 100%);
@@ -40,7 +41,7 @@
     .login-box h1 { font-size: 24px; color: var(--text); margin-bottom: 4px; }
     .login-box .subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 32px; }
     .login-box .form-group { margin-bottom: 16px; text-align: left; }
-    .login-box .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: var(--text); }
+    .login-box .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
     .login-box input {
       width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
       font-size: 15px; font-family: inherit; transition: border-color 0.3s; background: white;
@@ -52,18 +53,12 @@
       cursor: pointer; transition: all 0.3s; margin-top: 8px;
     }
     .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4); }
-    .forgot-password-link {
-      display: block; margin-top: 16px; text-align: center; font-size: 13px;
-    }
-    .forgot-password-link a {
-      color: var(--primary); text-decoration: none; cursor: pointer; font-weight: 600;
-    }
+    .forgot-password-link { display: block; margin-top: 16px; text-align: center; font-size: 13px; }
+    .forgot-password-link a { color: var(--primary); text-decoration: none; cursor: pointer; font-weight: 600; }
     .forgot-password-link a:hover { text-decoration: underline; }
     .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
     .login-info { background: #F0EDFF; border-radius: 10px; padding: 14px; margin-top: 20px; font-size: 12px; color: var(--text-light); text-align: left; }
     .login-info strong { color: var(--primary); }
-
-    /* ===== PASSWORD CHANGE MODAL ===== */
     .password-change-modal {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5); z-index: 1001; justify-content: center; align-items: center;
@@ -83,19 +78,21 @@
     }
     .btn-change-password:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4); }
     .password-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
-
-    /* ===== TOP NAV ===== */
     .topnav {
       background: var(--sidebar-bg); color: white; padding: 0 24px;
       display: flex; align-items: center; height: 56px; gap: 24px;
-      position: sticky; top: 0; z-index: 200;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     .topnav h1 { font-size: 18px; font-weight: 700; white-space: nowrap; }
     .topnav-spacer { flex: 1; }
-    .user-info {
-      display: flex; align-items: center; gap: 12px; margin-left: auto; font-size: 13px;
+    .user-info { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+    .user-info .user-badge {
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase;
     }
+    .user-badge.admin { background: var(--danger); }
+    .user-badge.gestor { background: var(--warning); color: #2D3436; }
+    .user-badge.diretoria { background: var(--primary); }
+    .user-badge.colaborador { background: var(--success); }
     .btn-back {
       background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;
       padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s;
@@ -107,13 +104,8 @@
       padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s;
     }
     .btn-logout:hover { background: rgba(255,255,255,0.2); }
-
-    /* ===== CONTAINERS ===== */
     .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
     .app-container { display: none; }
-    .app-container.active { display: block; }
-
-    /* ===== FORM STYLES ===== */
     .header {
       text-align: center; padding: 48px 24px;
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -122,32 +114,25 @@
     }
     .header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
     .header p { opacity: 0.9; font-size: 16px; }
-
     .card {
       background: var(--card); border-radius: var(--radius); padding: 32px;
       margin-bottom: 24px; box-shadow: var(--shadow);
     }
-    .card h2, .card h3 { color: var(--primary); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-    .card .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 24px; }
-
     .categoria {
       background: var(--card); border-radius: var(--radius); padding: 32px;
       margin-bottom: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary);
     }
     .categoria h3 { font-size: 18px; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-
     .form-group { margin-bottom: 24px; }
     .form-group:last-child { margin-bottom: 0; }
     .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
     .form-group .required::after { content: ' *'; color: var(--danger); }
-
     input[type="text"], input[type="email"], input[type="date"], input[type="password"], select, textarea {
       width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
       font-size: 15px; font-family: inherit; transition: border-color 0.3s; background: white;
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1); }
     textarea { resize: vertical; min-height: 100px; }
-
     .scale-container { display: flex; gap: 8px; flex-wrap: wrap; }
     .scale-btn {
       width: 56px; height: 56px; border: 2px solid var(--border); border-radius: 12px;
@@ -157,7 +142,6 @@
     .scale-btn:hover { border-color: var(--primary-light); color: var(--primary); }
     .scale-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
     .scale-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-top: 6px; }
-
     .yesno-container { display: flex; gap: 12px; }
     .yesno-btn {
       flex: 1; padding: 14px; border: 2px solid var(--border); border-radius: 12px;
@@ -166,7 +150,6 @@
     .yesno-btn:hover { border-color: var(--primary-light); }
     .yesno-btn.selected.yes { background: #D4EFDF; border-color: var(--success); color: #1B7A4A; }
     .yesno-btn.selected.no { background: #FADBD8; border-color: var(--danger); color: #C0392B; }
-
     .progress-bar {
       position: sticky; top: 56px; z-index: 100; background: white;
       padding: 12px 16px; border-radius: 0 0 var(--radius) var(--radius);
@@ -175,7 +158,6 @@
     .progress-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.5s ease; }
     .progress-text { font-size: 13px; color: var(--text-light); margin-top: 6px; text-align: center; }
-
     .submit-section { text-align: center; margin-top: 32px; }
     .btn-submit {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none;
@@ -183,20 +165,17 @@
       transition: all 0.3s; box-shadow: 0 4px 16px rgba(108, 92, 231, 0.3);
     }
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(108, 92, 231, 0.4); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
     .success-screen { display: none; text-align: center; padding: 64px 32px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
     .success-screen .checkmark { font-size: 80px; margin-bottom: 16px; }
     .success-screen h2 { font-size: 28px; color: var(--success); margin-bottom: 12px; }
     .success-screen p { color: var(--text-light); font-size: 16px; margin-bottom: 24px; }
     .btn-new { background: var(--primary); color: white; border: none; padding: 12px 32px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 600; }
-
+    .btn-new:hover { background: var(--primary-dark); }
     .condicional { display: none; }
     .condicional.visible { display: block; }
-
+    .role-warning { background: #FFF3CD; border: 1px solid #FDCB6E; border-radius: 10px; padding: 16px; margin-bottom: 24px; font-size: 14px; color: #856404; text-align: center; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 0.4s ease; }
-
     @media (max-width: 600px) {
       .header h2 { font-size: 22px; }
       .card, .categoria { padding: 20px; }
@@ -205,16 +184,15 @@
       .login-box { padding: 32px 24px; margin: 16px; }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
-<!-- ==================== LOGIN SCREEN ==================== -->
+<!-- LOGIN SCREEN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box fade-in">
-    <div class="logo">🏢</div>
-    <h1>RH | Desligamento</h1>
-    <div class="subtitle">Pesquisa de Desligamento Involuntário</div>
+    <div class="logo">📋</div>
+    <h1>Desligamento Involuntário</h1>
+    <div class="subtitle">Formulário preenchido pelo Gestor/RH</div>
     <div class="form-group">
       <label>E-mail</label>
       <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" onkeydown="if(event.key==='Enter')doLogin()">
@@ -229,13 +207,13 @@
       <a onclick="showForgotPassword()">Esqueceu sua senha?</a>
     </div>
     <div class="login-info">
-      <strong>Admin padrão:</strong><br>
-      admin@empresa.com / admin123
+      <strong>Primeiro acesso?</strong><br>
+      Solicite seu cadastro ao administrador do sistema.
     </div>
   </div>
 </div>
 
-<!-- ==================== PASSWORD CHANGE MODAL ==================== -->
+<!-- PASSWORD CHANGE MODAL -->
 <div class="password-change-modal" id="passwordChangeModal">
   <div class="password-change-box fade-in">
     <h2>Alterar Senha</h2>
@@ -255,69 +233,64 @@
   </div>
 </div>
 
-<!-- ==================== APP CONTAINER ==================== -->
+<!-- APP CONTAINER -->
 <div class="app-container" id="appContainer">
 
-<!-- TOP NAVIGATION -->
 <div class="topnav">
   <h1>📋 Pesquisa de Desligamento Involuntário</h1>
   <div class="topnav-spacer"></div>
   <div class="user-info">
     <span id="currentUserName"></span>
+    <span class="user-badge" id="currentUserBadge"></span>
     <a href="./index.html" class="btn-back">← Voltar ao Sistema</a>
     <button class="btn-logout" onclick="doLogout()">Sair</button>
   </div>
 </div>
 
-<!-- FORM CONTAINER -->
 <div class="container">
   <div class="header fade-in">
     <h2>Pesquisa de Desligamento Involuntário</h2>
     <p>Documento para registrar o processo de desligamento do colaborador</p>
   </div>
 
+  <div id="roleWarning" class="role-warning" style="display:none;">
+    ⚠️ Este formulário é exclusivo para Gestores e Administradores (RH).
+  </div>
+
   <!-- FORM CONTENT -->
   <div id="formContent" style="display:none;" class="fade-in">
-    <!-- PROGRESS BAR -->
     <div class="progress-bar">
       <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
       <div class="progress-text" id="progressText">0% concluído</div>
     </div>
 
-    <!-- DADOS DO COLABORADOR DESLIGADO -->
+    <!-- DADOS DO COLABORADOR -->
     <div class="categoria">
       <h3>👤 Dados do Colaborador Desligado</h3>
-
       <div class="form-group">
         <label class="required">Nome completo do colaborador</label>
         <input type="text" id="colaborador_nome" placeholder="Nome do colaborador">
       </div>
-
       <div class="form-group">
         <label class="required">E-mail corporativo</label>
         <input type="email" id="colaborador_email" placeholder="email@empresa.com">
       </div>
-
       <div class="form-group">
         <label class="required">Cargo</label>
         <input type="text" id="colaborador_cargo" placeholder="Cargo do colaborador">
       </div>
-
       <div class="form-group">
-        <label class="required">Departamento</label>
-        <input type="text" id="colaborador_departamento" placeholder="Departamento">
+        <label class="required">Setor</label>
+        <input type="text" id="colaborador_setor" placeholder="Setor">
       </div>
-
       <div class="form-group">
         <label class="required">Data de admissão</label>
         <input type="date" id="colaborador_data_admissao">
       </div>
-
       <div class="form-group">
         <label class="required">Data de desligamento</label>
         <input type="date" id="colaborador_data_desligamento">
       </div>
-
       <div class="form-group">
         <label class="required">Nome do gestor responsável</label>
         <input type="text" id="colaborador_gestor" placeholder="Nome do gestor">
@@ -327,7 +300,6 @@
     <!-- MOTIVOS DO DESLIGAMENTO -->
     <div class="categoria">
       <h3>📋 Motivos do Desligamento</h3>
-
       <div class="form-group">
         <label class="required">Qual o principal motivo do desligamento?</label>
         <select id="motivo_principal">
@@ -340,12 +312,10 @@
           <option value="outros">Outros</option>
         </select>
       </div>
-
       <div class="form-group">
         <label class="required">Descreva em detalhes os motivos que levaram ao desligamento:</label>
         <textarea id="motivo_descricao" placeholder="Descrição detalhada..."></textarea>
       </div>
-
       <div class="form-group">
         <label class="required">O colaborador recebeu feedbacks prévios sobre os pontos de melhoria?</label>
         <div class="yesno-container">
@@ -354,7 +324,6 @@
         </div>
         <input type="hidden" id="feedback_previo">
       </div>
-
       <div class="form-group">
         <label class="required">Quantos feedbacks formais foram dados antes do desligamento?</label>
         <select id="feedbacks_formais">
@@ -366,7 +335,6 @@
           <option value="4">Mais de 3</option>
         </select>
       </div>
-
       <div class="form-group">
         <label class="required">Foi aplicado algum plano de ação ou melhoria antes da decisão?</label>
         <div class="yesno-container">
@@ -375,7 +343,6 @@
         </div>
         <input type="hidden" id="plano_acao">
       </div>
-
       <div class="form-group condicional" id="plano_descricao_group">
         <label>Se sim, descreva o plano e seus resultados:</label>
         <textarea id="plano_descricao" placeholder="Descrição do plano..."></textarea>
@@ -385,7 +352,6 @@
     <!-- DESEMPENHO E COMPORTAMENTO -->
     <div class="categoria">
       <h3>📊 Desempenho e Comportamento</h3>
-
       <div class="form-group">
         <label class="required">Como você avalia o desempenho geral do colaborador?</label>
         <div class="scale-container">
@@ -398,7 +364,6 @@
         <div class="scale-labels"><span>Ruim</span><span>Excelente</span></div>
         <input type="hidden" id="desempenho_geral">
       </div>
-
       <div class="form-group">
         <label class="required">O colaborador cumpria prazos e metas estabelecidas?</label>
         <div class="scale-container">
@@ -411,7 +376,6 @@
         <div class="scale-labels"><span>Nunca</span><span>Sempre</span></div>
         <input type="hidden" id="prazos_metas">
       </div>
-
       <div class="form-group">
         <label class="required">Como era o comportamento do colaborador com a equipe?</label>
         <div class="scale-container">
@@ -424,7 +388,6 @@
         <div class="scale-labels"><span>Muito ruim</span><span>Excelente</span></div>
         <input type="hidden" id="comportamento_equipe">
       </div>
-
       <div class="form-group">
         <label class="required">O colaborador demonstrava comprometimento com o trabalho?</label>
         <div class="scale-container">
@@ -437,7 +400,6 @@
         <div class="scale-labels"><span>Nenhum</span><span>Muito alto</span></div>
         <input type="hidden" id="comprometimento">
       </div>
-
       <div class="form-group">
         <label class="required">Houve registros formais de advertências ou medidas disciplinares?</label>
         <div class="yesno-container">
@@ -451,7 +413,6 @@
     <!-- PROCESSO DE DESLIGAMENTO -->
     <div class="categoria">
       <h3>🔄 Processo de Desligamento</h3>
-
       <div class="form-group">
         <label class="required">O desligamento foi comunicado de forma adequada ao colaborador?</label>
         <div class="yesno-container">
@@ -460,7 +421,6 @@
         </div>
         <input type="hidden" id="comunicacao_adequada">
       </div>
-
       <div class="form-group">
         <label class="required">O colaborador foi orientado sobre seus direitos e procedimentos?</label>
         <div class="yesno-container">
@@ -469,7 +429,6 @@
         </div>
         <input type="hidden" id="orientacao_direitos">
       </div>
-
       <div class="form-group">
         <label class="required">Houve transferência adequada de conhecimento e atividades?</label>
         <div class="scale-container">
@@ -482,7 +441,6 @@
         <div class="scale-labels"><span>Nenhuma</span><span>Completa</span></div>
         <input type="hidden" id="transferencia_conhecimento">
       </div>
-
       <div class="form-group">
         <label class="required">Como o colaborador reagiu à comunicação do desligamento?</label>
         <textarea id="reacao_desligamento" placeholder="Descrição da reação..."></textarea>
@@ -492,12 +450,10 @@
     <!-- IMPACTO NA EQUIPE -->
     <div class="categoria">
       <h3>👥 Impacto na Equipe</h3>
-
       <div class="form-group">
         <label class="required">Como a equipe foi comunicada sobre o desligamento?</label>
         <textarea id="comunicacao_equipe" placeholder="Descrição..."></textarea>
       </div>
-
       <div class="form-group">
         <label class="required">Existe previsão de reposição para a vaga?</label>
         <div class="yesno-container">
@@ -506,7 +462,6 @@
         </div>
         <input type="hidden" id="reposicao_vaga">
       </div>
-
       <div class="form-group">
         <label class="required">O desligamento pode impactar entregas em andamento?</label>
         <div class="yesno-container">
@@ -515,7 +470,6 @@
         </div>
         <input type="hidden" id="impacto_entregas">
       </div>
-
       <div class="form-group condicional" id="mitigacao_impacto_group">
         <label>Se sim, quais ações estão sendo tomadas para mitigar o impacto?</label>
         <textarea id="mitigacao_impacto" placeholder="Descrição das ações..."></textarea>
@@ -525,7 +479,6 @@
     <!-- AVALIAÇÃO DO PROCESSO -->
     <div class="categoria">
       <h3>⭐ Avaliação do Processo</h3>
-
       <div class="form-group">
         <label class="required">O processo de desligamento seguiu todas as etapas necessárias?</label>
         <div class="yesno-container">
@@ -534,7 +487,6 @@
         </div>
         <input type="hidden" id="etapas_processo">
       </div>
-
       <div class="form-group">
         <label class="required">Houve apoio adequado do RH durante o processo?</label>
         <div class="scale-container">
@@ -547,12 +499,10 @@
         <div class="scale-labels"><span>Insuficiente</span><span>Excelente</span></div>
         <input type="hidden" id="apoio_rh">
       </div>
-
       <div class="form-group">
         <label class="required">Que melhorias poderiam ser feitas no processo de desligamento?</label>
         <textarea id="melhorias_processo" placeholder="Sugestões de melhoria..."></textarea>
       </div>
-
       <div class="form-group">
         <label>Observações adicionais:</label>
         <textarea id="observacoes_adicionais" placeholder="Observações..."></textarea>
@@ -570,95 +520,33 @@
     <div class="checkmark">✅</div>
     <h2>Formulário Enviado!</h2>
     <p>A pesquisa de desligamento foi registrada com sucesso.<br>Agradecemos pelas informações fornecidas.</p>
-    <button class="btn-new" onclick="resetForm()">Novo Formulário</button>
+    <button class="btn-new" onclick="window.location.href='index.html'">Voltar ao Sistema</button>
   </div>
 </div>
 
-</div><!-- end app-container -->
+</div>
 
 <script>
-// ==================== DATABASE CONFIG ====================
-const DB_NAME = 'PlanoDesenvolvimentoDB';
-const DB_VERSION = 3;
-const EMAILJS_SERVICE_ID = 'service_7q0c1os';
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+  apiKey: "AIzaSyAydCEQFyCmvcb-iTxovo6Pzpwp-8vraYM",
+  authDomain: "zukkin-rh.firebaseapp.com",
+  projectId: "zukkin-rh",
+  storageBucket: "zukkin-rh.firebasestorage.app",
+  messagingSenderId: "194398411433",
+  appId: "1:194398411433:web:a72e99b0ec8a0693d127b8"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ==================== EMAILJS CONFIG ====================
 const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
-const EMAILJS_TEMPLATE_RECUPERACAO = 'template_2y018wf';
-let dbInstance = null;
+const EMAILJS_SERVICE_ID = 'service_7q0c1os';
+const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
+
 let currentUser = null;
 
-// ==================== DATABASE FUNCTIONS ====================
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if (dbInstance) return resolve(dbInstance);
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('colaboradores')) {
-        const cs = db.createObjectStore('colaboradores', { keyPath: 'id', autoIncrement: true });
-        cs.createIndex('email', 'email', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('entrevistas')) {
-        const es = db.createObjectStore('entrevistas', { keyPath: 'id', autoIncrement: true });
-        es.createIndex('colaborador_id', 'colaborador_id', { unique: false });
-        es.createIndex('tipo', 'tipo', { unique: false });
-        es.createIndex('data_resposta', 'data_resposta', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('respostas')) {
-        const rs = db.createObjectStore('respostas', { keyPath: 'id', autoIncrement: true });
-        rs.createIndex('entrevista_id', 'entrevista_id', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('usuarios')) {
-        const us = db.createObjectStore('usuarios', { keyPath: 'id', autoIncrement: true });
-        us.createIndex('email', 'email', { unique: true });
-      }
-    };
-    request.onsuccess = (e) => { dbInstance = e.target.result; resolve(dbInstance); };
-    request.onerror = (e) => reject(e.target.error);
-  });
-}
-
-function dbAdd(store, data) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.add(data);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbPut(store, data) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.put(data);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbGetIndex(store, indexName, value) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const objectStore = tx.objectStore(store);
-    const index = objectStore.index(indexName);
-    const request = index.get(value);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-function dbGetAll(store) {
-  return openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const objectStore = tx.objectStore(store);
-    const request = objectStore.getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
-}
-
-// ==================== PASSWORD HASHING ====================
+// ==================== HASH PASSWORD ====================
 async function hashPassword(password) {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
@@ -668,31 +556,25 @@ async function hashPassword(password) {
 }
 
 async function verifyPassword(password, hash) {
-  const newHash = await hashPassword(password);
-  return newHash === hash;
+  return (await hashPassword(password)) === hash;
 }
 
 function generatePassword(length = 8) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
+  let pw = '';
+  for (let i = 0; i < length; i++) pw += chars.charAt(Math.floor(Math.random() * chars.length));
+  return pw;
 }
 
-// ==================== INIT DATABASE ====================
+// ==================== INIT DEFAULT ADMIN ====================
 async function initDatabase() {
-  const allUsers = await dbGetAll('usuarios');
-  if (allUsers.length === 0) {
-    const adminHash = await hashPassword('admin123');
-    await dbAdd('usuarios', {
-      nome: 'Administrador',
-      email: 'admin@empresa.com',
-      senha: adminHash,
-      perfil: 'admin',
-      provisoria: false,
-      created_at: new Date().toISOString()
+  const snap = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
+  if (snap.empty) {
+    const hash = await hashPassword('admin123');
+    await db.collection('usuarios').add({
+      nome: 'Administrador', email: 'admin@empresa.com', senha: hash,
+      perfil: 'admin', setor: 'RH', lider: '', cargo: 'Administrador',
+      provisoria: false, ativo: true, created_at: new Date().toISOString()
     });
   }
 }
@@ -703,32 +585,26 @@ async function doLogin() {
   const senha = document.getElementById('loginSenha').value;
   const errorEl = document.getElementById('loginError');
 
-  if (!email || !senha) {
-    errorEl.textContent = 'Preencha e-mail e senha.';
-    errorEl.style.display = 'block';
-    return;
-  }
+  if (!email || !senha) { errorEl.textContent = 'Preencha e-mail e senha.'; errorEl.style.display = 'block'; return; }
 
   try {
-    await initDatabase();
-    const user = await dbGetIndex('usuarios', 'email', email);
-    if (!user || !(await verifyPassword(senha, user.senha))) {
-      errorEl.textContent = 'E-mail ou senha incorretos.';
-      errorEl.style.display = 'block';
-      return;
+    const snap = await db.collection('usuarios').where('email', '==', email).get();
+    if (snap.empty) { errorEl.textContent = 'E-mail ou senha incorretos.'; errorEl.style.display = 'block'; return; }
+    const userDoc = snap.docs[0];
+    const userData = userDoc.data();
+    userData.id = userDoc.id;
+
+    if (!(await verifyPassword(senha, userData.senha))) {
+      errorEl.textContent = 'E-mail ou senha incorretos.'; errorEl.style.display = 'block'; return;
     }
 
-    currentUser = user;
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
+    currentUser = userData;
+    sessionStorage.setItem('currentUser', JSON.stringify(userData));
 
-    if (user.provisoria) {
-      showPasswordChangeModal();
-    } else {
-      showApp();
-    }
+    if (userData.provisoria) { showPasswordChangeModal(); } else { showApp(); }
   } catch (err) {
-    errorEl.textContent = 'Erro ao conectar. Tente novamente.';
-    errorEl.style.display = 'block';
+    console.error('Login error:', err);
+    errorEl.textContent = 'Erro ao fazer login. Tente novamente.'; errorEl.style.display = 'block';
   }
 }
 
@@ -742,145 +618,124 @@ async function submitPasswordChange() {
   const confirmPassword = document.getElementById('confirmPasswordInput').value;
   const errorEl = document.getElementById('passwordError');
 
-  if (!newPassword || !confirmPassword) {
-    errorEl.textContent = 'Preencha ambos os campos.';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  if (newPassword.length < 6) {
-    errorEl.textContent = 'A senha deve ter no mínimo 6 caracteres.';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  if (newPassword !== confirmPassword) {
-    errorEl.textContent = 'As senhas não conferem.';
-    errorEl.style.display = 'block';
-    return;
-  }
+  if (newPassword.length < 6) { errorEl.textContent = 'Senha deve ter no mínimo 6 caracteres.'; errorEl.style.display = 'block'; return; }
+  if (newPassword !== confirmPassword) { errorEl.textContent = 'As senhas não conferem.'; errorEl.style.display = 'block'; return; }
 
   try {
-    const hash = await hashPassword(newPassword);
-    currentUser.senha = hash;
+    const newHash = await hashPassword(newPassword);
+    await db.collection('usuarios').doc(currentUser.id).update({ senha: newHash, provisoria: false });
+    currentUser.senha = newHash;
     currentUser.provisoria = false;
-    await dbPut('usuarios', currentUser);
     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
     document.getElementById('passwordChangeModal').classList.remove('active');
     showApp();
   } catch (err) {
-    errorEl.textContent = 'Erro ao alterar senha.';
-    errorEl.style.display = 'block';
+    errorEl.textContent = 'Erro ao alterar senha.'; errorEl.style.display = 'block';
   }
 }
 
 // ==================== FORGOT PASSWORD ====================
 function showForgotPassword() {
-  const email = prompt('Informe seu e-mail:');
+  const email = prompt('Digite seu e-mail:');
   if (!email) return;
 
-  dbGetIndex('usuarios', 'email', email).then(user => {
-    if (!user) {
-      alert('E-mail nao encontrado no sistema.');
-      return;
-    }
+  db.collection('usuarios').where('email', '==', email).get().then(snap => {
+    if (snap.empty) { alert('E-mail não encontrado no sistema.'); return; }
+    const userDoc = snap.docs[0];
     const newPassword = generatePassword();
     hashPassword(newPassword).then(hash => {
-      user.senha = hash;
-      user.provisoria = true;
-      dbPut('usuarios', user).then(() => {
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_RECUPERACAO, {
-          subject: 'Plano de Desenvolvimento - Recuperacao de Senha',
-          to_email: email,
-          to_name: email.split('@')[0],
-          nova_senha: newPassword
+      db.collection('usuarios').doc(userDoc.id).update({ senha: hash, provisoria: true }).then(() => {
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          subject: 'Plano de Desenvolvimento - Recuperação de Senha',
+          to_email: email, to_name: email.split('@')[0], nova_senha: newPassword
         }, EMAILJS_PUBLIC_KEY).then(() => {
           alert('Nova senha enviada para seu e-mail.');
         }).catch(err => {
           console.error('Email error:', err);
-          alert(`Senha: ${newPassword}\n(Falha ao enviar email - copie esta senha)`);
+          alert(`Senha: ${newPassword}\n(Falha ao enviar e-mail - copie esta senha)`);
         });
       });
     });
   });
 }
 
-// ==================== SHOW APP ====================
+// ==================== SHOW APP / LOGOUT ====================
 function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appContainer').classList.add('active');
+  document.getElementById('appContainer').style.display = 'block';
   document.getElementById('currentUserName').textContent = currentUser.nome;
-  document.getElementById('formContent').style.display = 'block';
-  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('currentUserBadge').textContent = currentUser.perfil;
+  document.getElementById('currentUserBadge').className = 'user-badge ' + currentUser.perfil;
+
+  // Check role
+  if (currentUser.perfil === 'admin' || currentUser.perfil === 'gestor') {
+    document.getElementById('formContent').style.display = 'block';
+    document.getElementById('roleWarning').style.display = 'none';
+  } else {
+    document.getElementById('formContent').style.display = 'none';
+    document.getElementById('roleWarning').style.display = 'block';
+  }
 }
 
-// ==================== LOGOUT ====================
 function doLogout() {
-  if (confirm('Tem certeza que deseja sair?')) {
-    currentUser = null;
-    sessionStorage.removeItem('currentUser');
-    document.getElementById('appContainer').classList.remove('active');
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginSenha').value = '';
-    resetForm();
-  }
+  sessionStorage.removeItem('currentUser');
+  currentUser = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appContainer').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginSenha').value = '';
+  document.getElementById('loginError').style.display = 'none';
 }
 
 // ==================== FORM FUNCTIONS ====================
 function selectScale(btn, fieldId) {
-  const parent = btn.parentElement;
-  const siblings = parent.querySelectorAll('.scale-btn');
-  siblings.forEach(s => s.classList.remove('selected'));
+  btn.parentElement.querySelectorAll('.scale-btn').forEach(s => s.classList.remove('selected'));
   btn.classList.add('selected');
   document.getElementById(fieldId).value = btn.textContent;
+  updateProgress();
 }
 
 function selectYesNo(btn, fieldId) {
-  const parent = btn.parentElement;
-  const siblings = parent.querySelectorAll('.yesno-btn');
-  siblings.forEach(s => s.classList.remove('selected', 'yes', 'no'));
+  btn.parentElement.querySelectorAll('.yesno-btn').forEach(s => s.classList.remove('selected', 'yes', 'no'));
   btn.classList.add('selected', btn.dataset.value === 'sim' ? 'yes' : 'no');
   document.getElementById(fieldId).value = btn.dataset.value;
-
-  // Check conditionals
   checkConditionals(fieldId);
+  updateProgress();
 }
 
 function checkConditionals(fieldId) {
   if (fieldId === 'plano_acao') {
-    const value = document.getElementById('plano_acao').value;
     const group = document.getElementById('plano_descricao_group');
-    if (value === 'sim') {
-      group.classList.add('visible');
-    } else {
-      group.classList.remove('visible');
-      document.getElementById('plano_descricao').value = '';
-    }
+    if (document.getElementById('plano_acao').value === 'sim') { group.classList.add('visible'); }
+    else { group.classList.remove('visible'); document.getElementById('plano_descricao').value = ''; }
   }
-
   if (fieldId === 'impacto_entregas') {
-    const value = document.getElementById('impacto_entregas').value;
     const group = document.getElementById('mitigacao_impacto_group');
-    if (value === 'sim') {
-      group.classList.add('visible');
-    } else {
-      group.classList.remove('visible');
-      document.getElementById('mitigacao_impacto').value = '';
-    }
+    if (document.getElementById('impacto_entregas').value === 'sim') { group.classList.add('visible'); }
+    else { group.classList.remove('visible'); document.getElementById('mitigacao_impacto').value = ''; }
   }
 }
 
 function updateProgress() {
-  const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="date"], textarea, select');
+  const allFields = document.querySelectorAll('#formContent input:not([type="hidden"]), #formContent textarea, #formContent select');
+  const hiddenVals = document.querySelectorAll('#formContent input[type="hidden"]');
   let filled = 0;
-  inputs.forEach(input => {
-    if (input.value && input.type !== 'hidden') filled++;
+  let total = 0;
+
+  allFields.forEach(el => {
+    if (el.closest('.condicional') && !el.closest('.condicional').classList.contains('visible')) return;
+    total++;
+    if (el.value.trim()) filled++;
+  });
+  hiddenVals.forEach(el => {
+    if (el.closest('.condicional') && !el.closest('.condicional').classList.contains('visible')) return;
+    total++;
+    if (el.value.trim()) filled++;
   });
 
-  const progress = Math.round((filled / inputs.length) * 100);
-  document.getElementById('progressFill').style.width = progress + '%';
-  document.getElementById('progressText').textContent = progress + '% concluído';
+  const percent = total > 0 ? Math.round((filled / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = percent + '%';
+  document.getElementById('progressText').textContent = percent + '% concluído';
 }
 
 document.addEventListener('input', updateProgress);
@@ -888,9 +743,8 @@ document.addEventListener('change', updateProgress);
 
 // ==================== SUBMIT FORM ====================
 async function submitForm() {
-  // Validate required fields
   const requiredFields = [
-    'colaborador_nome', 'colaborador_email', 'colaborador_cargo', 'colaborador_departamento',
+    'colaborador_nome', 'colaborador_email', 'colaborador_cargo', 'colaborador_setor',
     'colaborador_data_admissao', 'colaborador_data_desligamento', 'colaborador_gestor',
     'motivo_principal', 'motivo_descricao', 'feedback_previo', 'feedbacks_formais',
     'plano_acao', 'desempenho_geral', 'prazos_metas', 'comportamento_equipe', 'comprometimento',
@@ -899,42 +753,39 @@ async function submitForm() {
     'etapas_processo', 'apoio_rh', 'melhorias_processo'
   ];
 
-  let allValid = true;
   for (let fieldId of requiredFields) {
-    const value = document.getElementById(fieldId).value;
-    if (!value) {
+    if (!document.getElementById(fieldId).value) {
       alert('Preencha todos os campos obrigatórios.');
-      allValid = false;
-      break;
+      return;
     }
   }
 
-  if (!allValid) return;
-
   try {
-    // Create colaborador record
-    const colaborador = {
+    const colaboradorData = {
       nome: document.getElementById('colaborador_nome').value,
       email: document.getElementById('colaborador_email').value,
       cargo: document.getElementById('colaborador_cargo').value,
-      departamento: document.getElementById('colaborador_departamento').value,
-      data_admissao: document.getElementById('colaborador_data_admissao').value,
+      setor: document.getElementById('colaborador_setor').value,
+      admissao: document.getElementById('colaborador_data_admissao').value,
       created_at: new Date().toISOString()
     };
 
-    const colaboradorId = await dbAdd('colaboradores', colaborador);
+    let colaboradorId;
+    const colabSnap = await db.collection('colaboradores').where('email', '==', colaboradorData.email).get();
+    if (colabSnap.empty) {
+      const ref = await db.collection('colaboradores').add(colaboradorData);
+      colaboradorId = ref.id;
+    } else {
+      colaboradorId = colabSnap.docs[0].id;
+    }
 
-    // Create entrevista record
-    const entrevista = {
+    const pesquisaRef = await db.collection('pesquisas').add({
       colaborador_id: colaboradorId,
       tipo: 'desligamento_involuntario',
-      usuario_id: currentUser.id,
+      preenchido_por: currentUser.email,
       data_resposta: new Date().toISOString()
-    };
+    });
 
-    const entrevistaId = await dbAdd('entrevistas', entrevista);
-
-    // Create respostas (answers)
     const answers = {
       colaborador_data_desligamento: document.getElementById('colaborador_data_desligamento').value,
       colaborador_gestor: document.getElementById('colaborador_gestor').value,
@@ -963,13 +814,12 @@ async function submitForm() {
       observacoes_adicionais: document.getElementById('observacoes_adicionais').value
     };
 
-    await dbAdd('respostas', {
-      entrevista_id: entrevistaId,
+    await db.collection('respostas').add({
+      pesquisa_id: pesquisaRef.id,
       respostas: answers,
       created_at: new Date().toISOString()
     });
 
-    // Show success screen
     document.getElementById('formContent').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
   } catch (err) {
@@ -978,25 +828,9 @@ async function submitForm() {
   }
 }
 
-// ==================== RESET FORM ====================
-function resetForm() {
-  document.querySelectorAll('input, textarea, select').forEach(el => {
-    if (el.type !== 'hidden') el.value = '';
-  });
-  document.querySelectorAll('.scale-btn, .yesno-btn').forEach(btn => {
-    btn.classList.remove('selected', 'yes', 'no');
-  });
-  document.querySelectorAll('.condicional').forEach(el => {
-    el.classList.remove('visible');
-  });
-  document.getElementById('formContent').style.display = 'block';
-  document.getElementById('successScreen').style.display = 'none';
-  updateProgress();
-}
-
 // ==================== INIT ====================
-document.addEventListener('DOMContentLoaded', () => {
-  initDatabase();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initDatabase();
   const saved = sessionStorage.getItem('currentUser');
   if (saved) {
     currentUser = JSON.parse(saved);
