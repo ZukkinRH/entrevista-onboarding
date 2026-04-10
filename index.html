@@ -1315,7 +1315,9 @@ async function handleLogin(e) {
         usuario.id = snapshot.docs[0].id;
 
         const senhaHash = await hashSenha(senha);
-        console.log('Hash gerado para comparação');
+        console.log('Hash digitado:', senhaHash);
+        console.log('Hash salvo:', usuario.senha);
+        console.log('Match:', usuario.senha === senhaHash);
 
         if (usuario.senha !== senhaHash) {
             alert('Senha incorreta.');
@@ -2609,4 +2611,131 @@ async function savePDI(pdiId = null) {
         loadPDI();
     } catch (error) {
         console.error('Erro ao salvar PDI:', error);
-        alert('Erro a
+        alert('Erro ao salvar PDI: ' + error.message);
+    }
+}
+
+async function deletePDI(pdiId, colaboradorNome) {
+    if (!confirm('Tem certeza que deseja excluir o PDI de "' + colaboradorNome + '"? Esta ação não pode ser desfeita.')) {
+        return;
+    }
+    
+    try {
+        await db.collection('pdis').doc(pdiId).delete();
+        alert('PDI excluído com sucesso.');
+        loadPDI();
+    } catch (error) {
+        console.error('Erro ao excluir PDI:', error);
+        alert('Erro ao excluir PDI: ' + error.message);
+    }
+}
+
+async function viewPDI(pdiId) {
+    try {
+        const doc = await db.collection('pdis').doc(pdiId).get();
+        const pdi = doc.data();
+        
+        const statusLabel = {
+            'pendente': 'Pendente',
+            'em_andamento': 'Em Andamento',
+            'concluido': 'Concluído',
+            'cancelado': 'Cancelado'
+        }[pdi.status] || pdi.status;
+        
+        const prazo = pdi.prazo ? new Date(pdi.prazo).toLocaleDateString('pt-BR') : 'N/A';
+        
+        let html = '<div>';
+        html += '<p><strong>Colaborador:</strong> ' + pdi.colaborador_nome + '</p>';
+        html += '<p><strong>Objetivo:</strong></p>';
+        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.objetivo + '</p>';
+        html += '<p><strong>Competências a Desenvolver:</strong></p>';
+        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.competencias + '</p>';
+        html += '<p><strong>Ações e Atividades:</strong></p>';
+        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.acoes + '</p>';
+        html += '<p><strong>Prazo:</strong> ' + prazo + '</p>';
+        html += '<p><strong>Responsável:</strong> ' + pdi.responsavel + '</p>';
+        html += '<p><strong>Status:</strong> <span class="badge badge-' + pdi.status + '">' + statusLabel + '</span></p>';
+        if (pdi.observacoes) {
+            html += '<p><strong>Observações:</strong></p>';
+            html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.observacoes + '</p>';
+        }
+        html += '</div>';
+        
+        openModal('PDI - ' + pdi.colaborador_nome, html, [
+            { text: 'Fechar', onclick: 'closeModal()', class: 'btn-primary' }
+        ]);
+    } catch (error) {
+        console.error('Erro ao visualizar PDI:', error);
+        alert('Erro ao visualizar PDI');
+    }
+}
+
+
+// Função auxiliar de hash (compatível com crypto.subtle e CryptoJS)
+async function hashSenha(senha) {
+    if (typeof CryptoJS !== 'undefined') {
+        return CryptoJS.SHA256(senha).toString();
+    }
+    // Fallback para crypto.subtle (Web Crypto API)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(senha);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Criar ou corrigir admin padrão
+async function criarAdminPadrao() {
+    try {
+        const senhaHash = await hashSenha('admin123');
+        console.log('Hash esperado do admin:', senhaHash);
+        const snapshot = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
+
+        if (snapshot.empty) {
+            await db.collection('usuarios').add({
+                nome: 'Administrador',
+                email: 'admin@empresa.com',
+                senha: senhaHash,
+                perfil: 'admin',
+                setor: 'Administrativo',
+                lider: '',
+                cargo: 'Administrador',
+                provisoria: false,
+                ativo: true,
+                created_at: new Date()
+            });
+            console.log('Admin padrão criado com sucesso');
+        } else {
+            // Limpar duplicatas: manter apenas o primeiro, deletar os demais
+            if (snapshot.docs.length > 1) {
+                console.log('Encontradas ' + snapshot.docs.length + ' entradas de admin. Limpando duplicatas...');
+                for (let i = 1; i < snapshot.docs.length; i++) {
+                    await db.collection('usuarios').doc(snapshot.docs[i].id).delete();
+                }
+                console.log('Duplicatas removidas.');
+            }
+            // Sempre forçar a senha e o status correto
+            const adminDoc = snapshot.docs[0];
+            const adminData = adminDoc.data();
+            console.log('Hash salvo no Firestore:', adminData.senha);
+            await db.collection('usuarios').doc(adminDoc.id).update({
+                senha: senhaHash,
+                ativo: true,
+                perfil: 'admin'
+            });
+            console.log('Admin atualizado com sucesso');
+        }
+    } catch (error) {
+        console.error('Erro ao criar admin padrão:', error);
+    }
+}
+
+// Initialize app on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await criarAdminPadrao();
+    initializeApp();
+});
+</script>
+
+</body>
+</html>
