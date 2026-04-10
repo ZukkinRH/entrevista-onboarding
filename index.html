@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
             --primary: #6C5CE7;
@@ -36,6 +37,7 @@
             min-height: 100vh;
         }
 
+        /* Login Styles */
         .login-container {
             display: flex;
             align-items: center;
@@ -102,8 +104,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .btn-primary {
@@ -114,12 +114,7 @@
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+            box-shadow: var(--shadow);
         }
 
         .btn-secondary {
@@ -128,7 +123,7 @@
         }
 
         .btn-secondary:hover {
-            background: #00a383;
+            background: #00A087;
         }
 
         .btn-danger {
@@ -137,109 +132,146 @@
         }
 
         .btn-danger:hover {
-            background: #c71f1f;
+            background: #BE2C15;
         }
 
-        .btn-sm {
-            padding: 6px 12px;
+        .btn-small {
+            padding: 8px 16px;
             font-size: 12px;
-            width: auto;
         }
 
-        .error-message {
-            background: #FADBD8;
-            color: #C0392B;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+        .forgot-password-link {
+            display: block;
+            margin-top: 16px;
+            text-align: center;
             font-size: 13px;
         }
 
-        .success-message {
-            background: #D5F4E6;
-            color: #117A65;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 13px;
+        .forgot-password-link a {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
         }
 
+        .forgot-password-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main App Styles */
         .app-container {
-            display: none;
+            display: flex;
             min-height: 100vh;
             background: var(--light);
         }
 
-        .app-container.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .topnav {
+        .sidebar {
+            width: 280px;
             background: white;
-            box-shadow: var(--shadow);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            overflow-y: auto;
         }
 
-        .topnav h1 {
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
             color: var(--primary);
-            font-size: 22px;
         }
 
         .user-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            font-size: 13px;
         }
 
-        .user-info span {
+        .user-info p {
+            margin: 5px 0;
+            color: #636E72;
+        }
+
+        .user-info strong {
             color: var(--dark);
-            font-size: 14px;
-            font-weight: 600;
         }
 
-        .btn-logout {
-            padding: 8px 16px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 8px;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            border-radius: 6px;
+            color: #636E72;
+            text-decoration: none;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
             transition: all 0.3s;
+            font-size: 14px;
         }
 
-        .btn-logout:hover {
-            background: #c71f1f;
+        .nav-menu a:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .nav-menu a.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
         }
 
         .tabs {
-            background: white;
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
             display: flex;
-            gap: 0;
-            overflow-x: auto;
+            gap: 20px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
-            flex: 1;
-            padding: 16px;
-            background: none;
+            padding: 12px 20px;
             border: none;
+            background: none;
+            border-bottom: 3px solid transparent;
             color: #636E72;
             font-weight: 600;
-            font-size: 14px;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
             transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+            font-size: 14px;
         }
 
         .tab-btn:hover {
@@ -251,64 +283,137 @@
             border-bottom-color: var(--primary);
         }
 
-        .content {
-            flex: 1;
-            padding: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
         .tab-content {
             display: none;
         }
 
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.3s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .card {
             background: white;
-            border-radius: 8px;
-            padding: 24px;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
             box-shadow: var(--shadow);
-            margin-bottom: 20px;
         }
 
-        .card h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .card h3 {
-            color: var(--dark);
-            margin-top: 20px;
-            margin-bottom: 15px;
-            font-size: 16px;
+        .card-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-        }
-
-        .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
 
-        .form-section:last-child {
-            border-bottom: none;
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: rgba(108, 92, 231, 0.2);
+            color: var(--primary);
+        }
+
+        .badge-secondary {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--secondary);
+        }
+
+        .badge-danger {
+            background: rgba(214, 48, 49, 0.2);
+            color: var(--danger);
+        }
+
+        .badge-warning {
+            background: rgba(253, 203, 110, 0.2);
+            color: #D68910;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--light);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 13px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .table tr:hover {
+            background: var(--light);
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
         }
 
         .question-group {
-            margin-bottom: 24px;
+            margin-bottom: 25px;
         }
 
         .question-label {
@@ -316,7 +421,12 @@
             color: var(--dark);
             margin-bottom: 10px;
             display: block;
-            font-size: 14px;
+        }
+
+        .question-help {
+            font-size: 12px;
+            color: #636E72;
+            margin-bottom: 8px;
         }
 
         .scale-buttons {
@@ -326,11 +436,12 @@
         }
 
         .scale-btn {
-            padding: 10px 14px;
-            border: 2px solid var(--border);
+            padding: 8px 12px;
+            border: 1px solid var(--border);
             background: white;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 13px;
             font-weight: 600;
             transition: all 0.3s;
             min-width: 45px;
@@ -344,165 +455,97 @@
 
         .scale-btn.selected {
             background: var(--primary);
-            border-color: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
         .nps-buttons {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .nps-btn {
-            padding: 8px 12px;
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            min-width: 35px;
-            text-align: center;
-        }
-
-        .nps-btn:hover {
-            border-color: var(--primary);
-        }
-
-        .nps-btn.selected {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        .yes-no-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .yes-no-btn {
-            padding: 10px 20px;
-            border: 2px solid var(--border);
+            width: 45px;
+            height: 45px;
+            border: 1px solid var(--border);
             background: white;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .yes-no-btn:hover {
+        .nps-btn:hover {
+            transform: scale(1.05);
             border-color: var(--primary);
         }
 
-        .yes-no-btn.selected {
+        .nps-btn.selected {
             background: var(--primary);
-            border-color: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
-        textarea {
+        .textárea-input {
             width: 100%;
             padding: 12px;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-family: inherit;
             font-size: 14px;
-            min-height: 100px;
             resize: vertical;
-            transition: border-color 0.3s;
+            min-height: 100px;
         }
 
-        textarea:focus {
+        .textárea-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
         }
 
-        .conditional-field {
-            display: none;
-            padding: 15px;
-            background: #F9F9F9;
-            border-left: 3px solid var(--primary);
-            margin-top: 10px;
-            border-radius: 0 6px 6px 0;
-        }
-
-        .conditional-field.show {
-            display: block;
-        }
-
-        .submit-section {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--primary);
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin: 10px 0;
         }
 
-        .stat-label {
-            color: #636E72;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
         }
 
-        th {
-            background: #F5F6FA;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--border);
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        .radio-item input[type="radio"] {
+            cursor: pointer;
         }
 
-        tr:hover {
-            background: #F9F9F9;
+        .radio-item label {
+            margin: 0;
+            cursor: pointer;
         }
 
         .modal {
@@ -538,1519 +581,1384 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
             padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
         }
 
         .modal-header h2 {
             color: var(--primary);
-            font-size: 18px;
         }
 
-        .modal-close {
+        .close-btn {
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
             color: #636E72;
-            transition: color 0.3s;
         }
 
-        .modal-close:hover {
+        .close-btn:hover {
             color: var(--dark);
         }
 
-        .dropdown {
-            margin-bottom: 20px;
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
         }
 
-        .dropdown select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
+        .empty-staté {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: #636E72;
         }
 
-        .loading::after {
-            content: '';
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .empty-staté p {
+            font-size: 16px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(0, 184, 148, 0.3);
+        }
+
+        .alert-error {
+            background: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(214, 48, 49, 0.3);
+        }
+
+        .alert-info {
+            background: rgba(9, 132, 227, 0.1);
+            color: var(--info);
+            border: 1px solid rgba(9, 132, 227, 0.3);
+        }
+
+        .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid var(--primary);
-            border-top-color: transparent;
+            border: 3px solid var(--light);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-left: 10px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .collaborator-select {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .collaborator-select label {
+            display: block;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            color: var(--dark);
         }
 
-        .badge-admin {
-            background: #D4EFDF;
-            color: #117A65;
-        }
-
-        .badge-gestor {
-            background: #FCF3CF;
-            color: #9A6B2E;
-        }
-
-        .badge-diretoria {
-            background: #D6EAF8;
-            color: #154360;
-        }
-
-        .badge-colaborador {
-            background: #FADBD8;
-            color: #78281F;
+        .collaborator-select select {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
         }
 
         @media (max-width: 768px) {
-            .topnav {
-                padding: 15px 20px;
+            .app-container {
                 flex-direction: column;
-                gap: 15px;
             }
 
-            .tabs {
-                padding: 0 20px;
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px;
             }
 
-            .tab-btn {
-                padding: 12px;
-                flex: 0 0 auto;
+            .user-info {
+                display: none;
             }
 
-            .content {
+            .nav-menu {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .nav-menu li {
+                margin: 0;
+            }
+
+            .main-content {
                 padding: 20px;
             }
 
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            .tabs {
+                gap: 10px;
             }
 
-            .scale-buttons {
-                gap: 4px;
-            }
-
-            .scale-btn {
-                padding: 8px 10px;
+            .tab-btn {
+                padding: 10px 15px;
                 font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-box">
-            <h1>Plano de Desenvolvimento</h1>
-            <p>Onboarding & Entrevistas</p>
-            <div id="loginError" class="error-message hidden"></div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">E-mail</label>
-                    <input type="email" id="loginEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Senha</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Entrar</button>
-            </form>
+
+<div id="loginScreen" class="login-container">
+    <div class="login-box">
+        <h1>Zukkin RH</h1>
+        <p>Plano de Desenvolvimento - Onboarding</p>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="emailInput">Email</label>
+                <input type="email" id="emailInput" required>
+            </div>
+            <div class="form-group">
+                <label for="senhaInput">Senha</label>
+                <input type="password" id="senhaInput" required>
+            </div>
+            <button type="submit" class="btn btn-primary">ENTRAR</button>
+            <div class="forgot-password-link">
+                <a onclick="showForgotPassword()">Esqueceu sua senha?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="appScreen" class="app-container" style="display: none;">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
         </div>
+        <div class="user-info">
+            <p><strong>Usuário:</strong></p>
+            <p id="userNameDisplay"></p>
+            <p id="userRoleDisplay" style="margin-top: 10px;"></p>
+        </div>
+        <ul class="nav-menu" id="navMenu"></ul>
+        <button class="btn btn-danger logout-btn" onclick="handleLogout()">Sair</button>
     </div>
 
-    <!-- Main App -->
-    <div id="appContainer" class="app-container">
-        <div class="topnav">
-            <h1>Plano de Desenvolvimento</h1>
-            <div class="user-info">
-                <span id="currentUserName"></span>
-                <span id="currentUserRole" class="badge"></span>
-                <button id="logoutBtn" class="btn-logout">Sair</button>
-            </div>
+    <div class="main-content">
+        <div class="content-header">
+            <h1>Plano de Desenvolvimento - Onboarding</h1>
         </div>
 
-        <div class="tabs" id="tabsContainer"></div>
-
-        <div class="content">
-            <!-- Formulário Tab -->
-            <div id="tabFormulario" class="tab-content">
-                <div class="card">
-                    <h2>Formulário de Onboarding - 45 Dias</h2>
-                    <div id="surveyFormContainer"></div>
-                </div>
+        <!-- Questionários do Colaborador Tab -->
+        <div id="questionnairesTab" class="tab-content">
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterSurveys('all')">Todos</button>
+                <button class="filter-btn" onclick="filterSurveys('experiencia_45_colab')">Experiência 45 Dias</button>
+                <button class="filter-btn" onclick="filterSurveys('desempenho_90_colab')">Desempenho 90 Dias</button>
             </div>
+            <div id="questionnairesContainer"></div>
+        </div>
 
-            <!-- Avaliação do Gestor Tab -->
-            <div id="tabAvaliacao" class="tab-content">
-                <div class="card">
-                    <h2>Avaliação do Gestor - 45 Dias</h2>
-                    <div class="dropdown" id="collaboratorDropdown" style="display: none;">
-                        <label>Selecione um colaborador para avaliar:</label>
-                        <select id="collaboratorSelect"></select>
-                    </div>
-                    <div id="managerEvaluationForm"></div>
-                </div>
+        <!-- Avaliações da Empresa Tab -->
+        <div id="evaluationsTab" class="tab-content">
+            <div class="collaborator-select">
+                <label for="collaboratorSelect">Selecione o Colaborador:</label>
+                <select id="collaboratorSelect" onchange="loadEvaluationsForCollaborator()">
+                    <option value="">-- Selecione um colaborador --</option>
+                </select>
             </div>
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterEvaluations('all')">Todos</button>
+                <button class="filter-btn" onclick="filterEvaluations('experiencia_45_empresa')">Experiência 45 Dias</button>
+                <button class="filter-btn" onclick="filterEvaluations('desempenho_90_empresa')">Desempenho 90 Dias</button>
+            </div>
+            <div id="evaluationsContainer"></div>
+        </div>
 
-            <!-- Meus Subordinados Tab (Gestor) -->
-            <div id="tabMeusSubordinados" class="tab-content">
-                <div class="card">
-                    <h2>Meus Subordinados</h2>
-                    <div id="subordinatesContainer"></div>
-                </div>
-            </div>
+        <!-- Meus Subordinados Tab -->
+        <div id="subordinatesTab" class="tab-content">
+            <div id="subordinatesContainer"></div>
+        </div>
 
-            <!-- Dashboard Tab -->
-            <div id="tabDashboard" class="tab-content">
-                <div class="card">
-                    <h2>Dashboard</h2>
-                    <div class="dashboard-grid" id="dashboardStats"></div>
-                    <h3>Respostas Recentes</h3>
-                    <div id="recentResponses"></div>
-                </div>
-            </div>
+        <!-- Dashboard Tab -->
+        <div id="dashboardTab" class="tab-content">
+            <div id="dashboardContainer"></div>
+        </div>
 
-            <!-- Pesquisas Tab -->
-            <div id="tabPesquisas" class="tab-content">
-                <div class="card">
-                    <h2>Pesquisas Realizadas</h2>
-                    <div id="surveysContainer"></div>
-                </div>
-            </div>
+        <!-- Liberar Pesquisas Tab (Admin) -->
+        <div id="liberacoesTab" class="tab-content">
+            <div id="liberacoesContainer"></div>
+        </div>
 
-            <!-- Avaliações dos Gestores Tab (Diretoria) -->
-            <div id="tabAvaliacoesDosGestores" class="tab-content">
-                <div class="card">
-                    <h2>Avaliações dos Gestores</h2>
-                    <div id="managerEvaluationsContainer"></div>
-                </div>
-            </div>
+        <!-- Pesquisas Tab -->
+        <div id="pesquisasTab" class="tab-content">
+            <div id="pesquisasContainer"></div>
+        </div>
 
-            <!-- Pesquisas dos Colaboradores Tab (Diretoria) -->
-            <div id="tabPesquisasDosColaboradores" class="tab-content">
-                <div class="card">
-                    <h2>Respostas dos Colaboradores</h2>
-                    <div id="collaboratorSurveysContainer"></div>
-                </div>
-            </div>
+        <!-- Colaboradores Tab -->
+        <div id="colaboradoresTab" class="tab-content">
+            <div id="colaboradoresContainer"></div>
+        </div>
 
-            <!-- Colaboradores Tab -->
-            <div id="tabColaboradores" class="tab-content">
-                <div class="card">
-                    <h2>Colaboradores</h2>
-                    <div id="collaboratorsTableContainer"></div>
-                </div>
-            </div>
+        <!-- Usuários Tab -->
+        <div id="usuáriosTab" class="tab-content">
+            <div id="usuáriosContainer"></div>
+        </div>
 
-            <!-- Usuários Tab -->
-            <div id="tabUsuarios" class="tab-content">
-                <div class="card">
-                    <h2>Gerenciar Usuários</h2>
-                    <h3>Criar Novo Usuário</h3>
-                    <form id="newUserForm" style="background: #F9F9F9; padding: 20px; border-radius: 6px; margin-bottom: 30px;">
-                        <div class="form-group">
-                            <label for="newUserNome">Nome Completo</label>
-                            <input type="text" id="newUserNome" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newUserEmail">E-mail</label>
-                            <input type="email" id="newUserEmail" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newUserPerfil">Perfil</label>
-                            <select id="newUserPerfil" required>
-                                <option value="">Selecione um perfil</option>
-                                <option value="admin">Admin (RH)</option>
-                                <option value="gestor">Gestor</option>
-                                <option value="diretoria">Diretoria</option>
-                                <option value="colaborador">Colaborador</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="newUserSetor">Setor</label>
-                            <input type="text" id="newUserSetor">
-                        </div>
-                        <div class="form-group">
-                            <label for="newUserLider">Líder</label>
-                            <input type="text" id="newUserLider">
-                        </div>
-                        <div class="form-group">
-                            <label for="newUserCargo">Cargo</label>
-                            <input type="text" id="newUserCargo">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Criar Usuário</button>
-                    </form>
-                    <h3>Usuários do Sistema</h3>
-                    <div id="usersTableContainer"></div>
-                </div>
-            </div>
+        <!-- Minhas Respostas Tab -->
+        <div id="respostasTab" class="tab-content">
+            <div id="respostasContainer"></div>
+        </div>
 
-            <!-- Desligamento Tab -->
-            <div id="tabDesligamento" class="tab-content">
-                <div class="card">
-                    <h2>Desligamento</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                        <div style="background: #D5F4E6; padding: 20px; border-radius: 8px; text-align: center;">
-                            <h3 style="color: #117A65; margin-bottom: 15px;">Desligamento Voluntário</h3>
-                            <a href="desligamento-voluntario.html" class="btn btn-secondary">Acessar Formulário</a>
-                        </div>
-                        <div style="background: #FADBD8; padding: 20px; border-radius: 8px; text-align: center;">
-                            <h3 style="color: #78281F; margin-bottom: 15px;">Desligamento Involuntário</h3>
-                            <a href="desligamento-involuntario.html" class="btn btn-danger">Acessar Formulário</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Avaliações dos Gestores Tab (Diretoria) -->
+        <div id="gestoresTab" class="tab-content">
+            <div id="gestoresContainer"></div>
+        </div>
 
-            <!-- Minhas Pesquisas Tab (Colaborador) -->
-            <div id="tabMinhasPesquisas" class="tab-content">
-                <div class="card">
-                    <h2>Minhas Pesquisas</h2>
-                    <div id="mySubmissionsContainer"></div>
-                </div>
-            </div>
+        <!-- Pesquisas dos Colaboradores Tab (Diretoria) -->
+        <div id="pesquisasColabTab" class="tab-content">
+            <div id="pesquisasColabContainer"></div>
         </div>
     </div>
+</div>
 
-    <!-- Modal for viewing survey details -->
-    <div id="detailsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <button class="modal-close" id="modalClose">&times;</button>
-            </div>
-            <div id="modalBody"></div>
+<!-- Modal -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle"></h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
         </div>
+        <div id="modalBody"></div>
+        <div class="modal-buttons" id="modalButtons"></div>
     </div>
+</div>
 
-    <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAydCEQFyCmvcb-iTxovo6Pzpwp-8vraYM",
-            authDomain: "zukkin-rh.firebaseapp.com",
-            projectId: "zukkin-rh",
-            storageBucket: "zukkin-rh.firebasestorage.app",
-            messagingSenderId: "194398411433",
-            appId: "1:194398411433:web:a72e99b0ec8a0693d127b8"
-        };
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAydCEQFyCmvcb-iTxovo6Pzpwp-8vraYM",
+    authDomain: "zukkin-rh.firebaseapp.com",
+    projectId: "zukkin-rh",
+    storageBucket: "zukkin-rh.firebasestorage.app",
+    messagingSenderId: "194398411433",
+    appId: "1:194398411433:web:a72e99b0ec8a0693d127b8"
+};
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
+const EMAILJS_SERVICE_ID = 'service_7q0c1os';
+const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
 
-        // EmailJS Configuration
-        const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
-        const EMAILJS_SERVICE_ID = 'service_7q0c1os';
-        const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
-        emailjs.init(EMAILJS_PUBLIC_KEY);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
-        // State
-        let currentUser = null;
-        let currentUserDoc = null;
+let currentUser = null;
+let currentSurveyFilter = 'all';
+let currentEvaluationFilter = 'all';
 
-        // Questionnaire Structure
-        const questionnaires = {
-            parte1: {
-                tipo: '45_dias_parte_1',
-                titulo: '45 Dias - Parte 1',
-                secoes: [
-                    {
-                        titulo: 'Acolhimento e Recepção 🤝',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como você avalia o processo de recepção e acolhimento no seu primeiro dia?' },
-                            { tipo: 'escala', texto: 'Você foi apresentado(a) adequadamente à equipe e aos colegas de trabalho?' },
-                            { tipo: 'sim_nao', texto: 'Recebeu todas as ferramentas e acessos necessários para iniciar seu trabalho?' },
-                            { tipo: 'texto', texto: 'Se não recebeu algo, o que ficou faltando?', condicional: { pergunta_index: 2, valor: 'Não' } },
-                            { tipo: 'sim_nao', texto: 'Alguém foi designado para te acompanhar nos primeiros dias?' },
-                            { tipo: 'texto', texto: 'Como foi essa experiência de acompanhamento?', condicional: { pergunta_index: 4, valor: 'Sim' } }
-                        ]
-                    },
-                    {
-                        titulo: 'Adaptação ao Ambiente 🏢',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como você avalia sua adaptação ao ambiente de trabalho até o momento?' },
-                            { tipo: 'escala', texto: 'As atividades do dia a dia estão alinhadas com o que foi apresentado no processo seletivo?' },
-                            { tipo: 'escala', texto: 'Você está conseguindo compreender suas responsabilidades e entregas esperadas?' },
-                            { tipo: 'texto', texto: 'Houve algo que te surpreendeu positivamente até agora?' },
-                            { tipo: 'texto', texto: 'Houve algo que te surpreendeu negativamente?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Aprendizado e Desenvolvimento 📚',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Os treinamentos oferecidos até agora foram suficientes para suas atividades?' },
-                            { tipo: 'escala', texto: 'Você sente que está aprendendo e se desenvolvendo profissionalmente?' },
-                            { tipo: 'texto', texto: 'Há algum treinamento adicional que você sente necessidade?' },
-                            { tipo: 'escala', texto: 'Você tem clareza sobre o que é esperado de você nos próximos meses?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Avaliação Geral ⭐',
-                        perguntas: [
-                            { tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo trabalhar aqui?' },
-                            { tipo: 'escala', texto: 'Qual seu nível geral de satisfação até o momento?' },
-                            { tipo: 'texto', texto: 'O que poderíamos melhorar no processo de integração?' },
-                            { tipo: 'texto', texto: 'Gostaria de compartilhar mais alguma coisa?' }
-                        ]
-                    }
+// Tabs and navigation
+const TABS = {
+    admin: [
+        { id: 'questionnairesTab', label: 'Questionários', key: 'questionarios' },
+        { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
+        { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
+        { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
+        { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
+        { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
+        { id: 'usuáriosTab', label: 'Usuários', key: 'usuários' }
+    ],
+    gestor: [
+        { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
+        { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' }
+    ],
+    diretoria: [
+        { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
+        { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
+        { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' }
+    ],
+    colaborador: [
+        { id: 'questionnairesTab', label: 'Questionários do Colaborador', key: 'questionarios' },
+        { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' }
+    ]
+};
+
+// Survey templates
+const SURVEY_TEMPLATES = {
+    experiencia_45_colab: {
+        nome: 'Avaliação de Experiência - 45 Dias (Colaborador)',
+        tipo: 'experiencia_45_colab',
+        secoes: [
+            {
+                titulo: 'Acolhimento e Integração',
+                questoes: [
+                    { id: 'q1', texto: 'Como foi sua recepção pela empresa?', tipo: 'escala' },
+                    { id: 'q2', texto: 'Você recebeu as ferramentas necessárias para comecar?', tipo: 'sim_nao' },
+                    { id: 'q3', texto: 'Foi designada alguem para ajudar em sua integração?', tipo: 'sim_nao' },
+                    { id: 'q4', texto: 'Comentarios adicionais sobre o acolhimento', tipo: 'texto' }
                 ]
             },
-            parte2: {
-                tipo: '45_dias_parte_2',
-                titulo: '45 Dias - Parte 2',
-                secoes: [
-                    {
-                        titulo: 'Evolução da Adaptação 🔄',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como você avalia sua evolução na adaptação desde a Parte 1?' },
-                            { tipo: 'sim_nao', texto: 'Você se sente parte do time?' },
-                            { tipo: 'texto', texto: 'O que mais contribuiu para sua adaptação?' },
-                            { tipo: 'texto', texto: 'Existe algo que ainda dificulta sua adaptação?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Relacionamento e Comunicação 💬',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como está o relacionamento com seu gestor direto?' },
-                            { tipo: 'escala', texto: 'Você sente que pode tirar dúvidas e pedir ajuda quando necessário?' },
-                            { tipo: 'sim_nao', texto: 'Recebe feedbacks frequentes sobre seu trabalho?' },
-                            { tipo: 'escala', texto: 'A comunicação dentro da equipe está fluindo bem?' },
-                            { tipo: 'texto', texto: 'Há algo que gostaria de dizer ao seu gestor mas ainda não disse?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Crescimento Profissional 🚀',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Você vê oportunidades de crescimento na empresa?' },
-                            { tipo: 'escala', texto: 'Está aprendendo coisas novas no seu trabalho?' },
-                            { tipo: 'texto', texto: 'Que tipo de desenvolvimento profissional você gostaria de ter?' },
-                            { tipo: 'escala', texto: 'Você sente que suas habilidades estão sendo bem aproveitadas?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Avaliação Geral - Parte 2 ⭐',
-                        perguntas: [
-                            { tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo?' },
-                            { tipo: 'escala', texto: 'Qual seu nível geral de satisfação neste momento?' },
-                            { tipo: 'escala', texto: 'Comparando com seus primeiros dias, sua satisfação melhorou, piorou ou se manteve?' },
-                            { tipo: 'texto', texto: 'O que a empresa poderia fazer para melhorar sua experiência?' },
-                            { tipo: 'texto', texto: 'Algum comentário adicional?' }
-                        ]
-                    }
+            {
+                titulo: 'Ambiente de Trabalho',
+                questoes: [
+                    { id: 'q5', texto: 'Como você avalia o ambiente de trabalho?', tipo: 'escala' },
+                    { id: 'q6', texto: 'O ambiente esta alinhado com o prometido no processo de seleção?', tipo: 'sim_nao' },
+                    { id: 'q7', texto: 'Comentarios sobre o ambiente', tipo: 'texto' }
                 ]
             },
-            avaliacao_gestor: {
-                tipo: 'avaliacao_gestor',
-                titulo: 'Avaliação do Gestor - 45 Dias',
-                secoes: [
-                    {
-                        titulo: 'Desempenho Técnico 💼',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como você avalia o desempenho técnico do colaborador nas atividades do dia a dia?' },
-                            { tipo: 'escala', texto: 'O colaborador demonstra conhecimento adequado para a função?' },
-                            { tipo: 'escala', texto: 'O colaborador entrega as tarefas dentro do prazo esperado?' },
-                            { tipo: 'sim_nao', texto: 'Há necessidade de treinamento técnico adicional?' },
-                            { tipo: 'texto', texto: 'Se sim, quais treinamentos são recomendados?', condicional: { pergunta_index: 3, valor: 'Sim' } }
-                        ]
-                    },
-                    {
-                        titulo: 'Comportamento e Atitudes 🤝',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como você avalia o comportamento profissional do colaborador?' },
-                            { tipo: 'escala', texto: 'O colaborador demonstra comprometimento com o trabalho?' },
-                            { tipo: 'escala', texto: 'O colaborador respeita as normas e políticas da empresa?' },
-                            { tipo: 'escala', texto: 'O colaborador demonstra boa comunicação com a equipe?' },
-                            { tipo: 'texto', texto: 'Comentários sobre comportamento e atitudes:' }
-                        ]
-                    },
-                    {
-                        titulo: 'Integração ao Time 👥',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'Como você avalia a integração do colaborador com a equipe?' },
-                            { tipo: 'escala', texto: 'O colaborador participa ativamente das atividades em grupo?' },
-                            { tipo: 'escala', texto: 'O colaborador se relaciona bem com os colegas?' },
-                            { tipo: 'sim_nao', texto: 'O colaborador busca ajuda quando necessário?' },
-                            { tipo: 'texto', texto: 'Comentários sobre integração:' }
-                        ]
-                    },
-                    {
-                        titulo: 'Proatividade e Iniciativa 🚀',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'O colaborador demonstra iniciativa no trabalho?' },
-                            { tipo: 'escala', texto: 'O colaborador sugere melhorias nos processos?' },
-                            { tipo: 'escala', texto: 'O colaborador busca aprender além do que é solicitado?' },
-                            { tipo: 'texto', texto: 'Comentários sobre proatividade:' }
-                        ]
-                    },
-                    {
-                        titulo: 'Alcance de Objetivos 🎯',
-                        perguntas: [
-                            { tipo: 'escala', texto: 'O colaborador está atingindo os objetivos definidos?' },
-                            { tipo: 'sim_nao', texto: 'As metas iniciais foram claramente comunicadas ao colaborador?' },
-                            { tipo: 'nps', texto: 'De 0 a 10, qual sua avaliação geral deste colaborador?' },
-                            { tipo: 'texto', texto: 'Recomendações e plano de ação para os próximos meses:' }
-                        ]
-                    }
+            {
+                titulo: 'Suporte da Liderança',
+                questoes: [
+                    { id: 'q8', texto: 'Seu lider esta acessível quando você precisa?', tipo: 'escala' },
+                    { id: 'q9', texto: 'As orientações e feedback sao claros?', tipo: 'sim_nao' },
+                    { id: 'q10', texto: 'Com que frequência você recebe feedback?', tipo: 'escala' },
+                    { id: 'q11', texto: 'Comentarios sobre o suporte da liderança', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Avaliação Geral',
+                questoes: [
+                    { id: 'q12', texto: 'Qual e sua satisfação geral com a empresa até o momento?', tipo: 'nps' },
+                    { id: 'q13', texto: 'Sugestões de melhorias', tipo: 'texto' }
                 ]
             }
-        };
+        ]
+    },
+    experiencia_45_empresa: {
+        nome: 'Avaliação de Experiência - 45 Dias (Empresa)',
+        tipo: 'experiencia_45_empresa',
+        secoes: [
+            {
+                titulo: 'Adaptação e Integração',
+                questoes: [
+                    { id: 'q1', texto: 'Como você avalia a adaptação do colaborador?', tipo: 'escala' },
+                    { id: 'q2', texto: 'O colaborador se integrou bem ao time?', tipo: 'sim_nao' },
+                    { id: 'q3', texto: 'Comentarios sobre a integração', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Postura Profissional',
+                questoes: [
+                    { id: 'q4', texto: 'Como você avalia o comportamento profissional?', tipo: 'escala' },
+                    { id: 'q5', texto: 'Pontualidade e assiduidade estao adequadas?', tipo: 'sim_nao' },
+                    { id: 'q6', texto: 'Comunicação e clara e efetiva?', tipo: 'sim_nao' },
+                    { id: 'q7', texto: 'Comentarios sobre a postura', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Aprendizado Inicial',
+                questoes: [
+                    { id: 'q8', texto: 'Velocidade de aprendizado', tipo: 'escala' },
+                    { id: 'q9', texto: 'Compreensão das responsabilidades', tipo: 'escala' },
+                    { id: 'q10', texto: 'Comentarios sobre o aprendizado', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Avaliação Geral',
+                questoes: [
+                    { id: 'q11', texto: 'Sua avaliacao geral sobre os primeiros 45 dias', tipo: 'nps' },
+                    { id: 'q12', texto: 'Recomendações para os próximos meses', tipo: 'texto' }
+                ]
+            }
+        ]
+    },
+    desempenho_90_colab: {
+        nome: 'Avaliação de Desempenho - 90 Dias (Colaborador)',
+        tipo: 'desempenho_90_colab',
+        secoes: [
+            {
+                titulo: 'Desenvolvimento Profissional',
+                questoes: [
+                    { id: 'q1', texto: 'Como você avalia as oportunidades de crescimento profissional?', tipo: 'escala' },
+                    { id: 'q2', texto: 'Você recebeu treinamentos ou capacitacoes?', tipo: 'sim_nao' },
+                    { id: 'q3', texto: 'A carreira esta clara e definida?', tipo: 'sim_nao' },
+                    { id: 'q4', texto: 'Comentarios sobre desenvolvimento', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Gestao e Liderança',
+                questoes: [
+                    { id: 'q5', texto: 'Suporte do seu lider na evolucao profissional', tipo: 'escala' },
+                    { id: 'q6', texto: 'Qualidade do feedback recebido', tipo: 'escala' },
+                    { id: 'q7', texto: 'Metas e objetivos estao bem definidos?', tipo: 'sim_nao' },
+                    { id: 'q8', texto: 'Comentarios sobre liderança', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Cultura e Ambiente',
+                questoes: [
+                    { id: 'q9', texto: 'Dinamica e relacionamento com o time', tipo: 'escala' },
+                    { id: 'q10', texto: 'Como você avalia a cultura da empresa?', tipo: 'escala' },
+                    { id: 'q11', texto: 'Equilibrio entre trabalho e vida pessoal', tipo: 'escala' },
+                    { id: 'q12', texto: 'Comentarios sobre cultura e ambiente', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Avaliação Geral',
+                questoes: [
+                    { id: 'q13', texto: 'Sua satisfação evoluiu desde os primeiros 45 dias?', tipo: 'nps' },
+                    { id: 'q14', texto: 'O que poderia melhorar?', tipo: 'texto' }
+                ]
+            }
+        ]
+    },
+    desempenho_90_empresa: {
+        nome: 'Avaliação de Desempenho - 90 Dias (Empresa)',
+        tipo: 'desempenho_90_empresa',
+        secoes: [
+            {
+                titulo: 'Desempenho Técnico',
+                questoes: [
+                    { id: 'q1', texto: 'Qualidade do trabalho entregue', tipo: 'escala' },
+                    { id: 'q2', texto: 'Cumprimento de prazos e tarefas', tipo: 'escala' },
+                    { id: 'q3', texto: 'Comentarios sobre desempenho técnico', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Comportamento e Atitudes',
+                questoes: [
+                    { id: 'q4', texto: 'Profissionalismo e comprometimento', tipo: 'escala' },
+                    { id: 'q5', texto: 'Comunicação e colaboração com o time', tipo: 'escala' },
+                    { id: 'q6', texto: 'Comentarios sobre comportamento', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Proatividade e Crescimento',
+                questoes: [
+                    { id: 'q7', texto: 'Iniciativa e proatividade', tipo: 'escala' },
+                    { id: 'q8', texto: 'Interesse em aprender e evoluir', tipo: 'escala' },
+                    { id: 'q9', texto: 'Sugestões de melhorias apresentadas', tipo: 'sim_nao' },
+                    { id: 'q10', texto: 'Comentarios sobre crescimento', tipo: 'texto' }
+                ]
+            },
+            {
+                titulo: 'Alcance de Objetivos',
+                questoes: [
+                    { id: 'q11', texto: 'Alcance das metas estabelecidas', tipo: 'escala' },
+                    { id: 'q12', texto: 'Avaliação geral apos 90 dias', tipo: 'nps' },
+                    { id: 'q13', texto: 'Plano de acao para os próximos meses', tipo: 'texto' }
+                ]
+            }
+        ]
+    }
+};
 
-        // Utility Functions
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+// Initialize app
+async function initializeApp() {
+    const session = sessionStorage.getItem('userSession');
+    if (session) {
+        try {
+            currentUser = JSON.parse(session);
+            showAppScreen();
+        } catch (e) {
+            console.error('Erro ao restaurar sessao:', e);
+            showLoginScreen();
+        }
+    } else {
+        showLoginScreen();
+    }
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value;
+    const senha = document.getElementById('senhaInput').value;
+
+    try {
+        const snapshot = await db.collection('usuarios').where('email', '==', email).get();
+        if (snapshot.empty) {
+            alert('Usuário não encontrado');
+            return;
         }
 
-        function showError(message) {
-            const errorEl = document.getElementById('loginError');
-            errorEl.textContent = message;
-            errorEl.classList.remove('hidden');
-            setTimeout(() => errorEl.classList.add('hidden'), 5000);
+        const usuario = snapshot.docs[0].data();
+        usuario.id = snapshot.docs[0].id;
+
+        const senhaHash = CryptoJS.SHA256(senha).toString();
+        if (usuario.senha !== senhaHash) {
+            alert('Senha incorreta');
+            return;
         }
 
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        currentUser = usuario;
+        sessionStorage.setItem('userSession', JSON.stringify(currentUser));
+        showAppScreen();
+    } catch (error) {
+        console.error('Erro no login:', error);
+        alert('Erro ao fazer login: ' + error.message);
+    }
+}
 
-            const tab = document.getElementById(`tab${tabName}`);
-            if (tab) tab.classList.add('active');
+function showForgotPassword() {
+    const email = prompt('Digite seu email:');
+    if (!email) return;
 
-            const btn = document.querySelector(`[data-tab="${tabName}"]`);
-            if (btn) btn.classList.add('active');
+    db.collection('usuarios').where('email', '==', email).get().then(snapshot => {
+        if (snapshot.empty) {
+            alert('Email não encontrado');
+            return;
         }
 
-        async function initDefaultAdmin() {
-            try {
-                const usersSnapshot = await db.collection('usuarios').get();
-                if (usersSnapshot.empty) {
-                    const password = await hashPassword('admin123');
-                    await db.collection('usuarios').add({
-                        nome: 'Administrador',
-                        email: 'admin@empresa.com',
-                        senha: password,
-                        perfil: 'admin',
-                        setor: 'RH',
-                        lider: '',
-                        cargo: 'Administrador',
-                        provisoria: false,
-                        ativo: true,
-                        created_at: new Date()
-                    });
-                    console.log('Admin padrão criado');
-                }
-            } catch (error) {
-                console.error('Erro ao criar admin padrão:', error);
+        const docId = snapshot.docs[0].id;
+        const usuario = snapshot.docs[0].data();
+        const novaSenha = generatePassword();
+        const senhaHash = CryptoJS.SHA256(novaSenha).toString();
+
+        db.collection('usuarios').doc(docId).update({
+            senha: senhaHash,
+            provisoria: true
+        }).then(() => {
+            enviarEmailSenha(usuário.nome, usuário.email, novaSenha);
+        }).catch(error => {
+            console.error('Erro ao atualizar senha:', error);
+            alert('Senha temporária: ' + novaSenha);
+        });
+    }).catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao processar recuperacao de senha');
+    });
+}
+
+function generatePassword(length = 8) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+}
+
+function enviarEmailSenha(nome, email, novaSenha) {
+    const templateParams = {
+        to_name: nome,
+        to_email: email,
+        subject: 'Plano de Desenvolvimento - Recuperacao de Senha',
+        nova_senha: novaSenha
+    };
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(() => {
+            alert('Email com nova senha enviado para ' + email);
+        })
+        .catch(() => {
+            alert('Erro ao enviar email. Sua senha temporária e: ' + novaSenha);
+        });
+}
+
+function showAppScreen() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'flex';
+    buildNavigation();
+    loadDashboard();
+    document.getElementById('userNameDisplay').textContent = currentUser.nome;
+    document.getElementById('userRoleDisplay').innerHTML = '<strong>Perfil:</strong> ' + currentUser.perfil;
+}
+
+function showLoginScreen() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appScreen').style.display = 'none';
+}
+
+function buildNavigation() {
+    const navMenu = document.getElementById('navMenu');
+    navMenu.innerHTML = '';
+
+    const tabs = TABS[currentUser.perfil] || [];
+    tabs.forEach((tab, index) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.textContent = tab.label;
+        a.onclick = () => switchTab(tab.id, a);
+        if (index === 0) a.classList.add('active');
+        li.appendChild(a);
+        navMenu.appendChild(li);
+    });
+
+    switchTab(tabs[0].id, navMenu.querySelector('a'));
+}
+
+function switchTab(tabId, element) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.nav-menu a').forEach(link => link.classList.remove('active'));
+
+    const tabElement = document.getElementById(tabId);
+    if (tabElement) {
+        tabElement.classList.add('active');
+        element.classList.add('active');
+
+        if (tabId === 'questionnairesTab') loadQuestionnaires();
+        else if (tabId === 'evaluationsTab') loadEvaluations();
+        else if (tabId === 'subordinatesTab') loadSubordinates();
+        else if (tabId === 'dashboardTab') loadDashboard();
+        else if (tabId === 'liberacoesTab') loadLiberacoes();
+        else if (tabId === 'pesquisasTab') loadPesquisas();
+        else if (tabId === 'colaboradoresTab') loadColaboradores();
+        else if (tabId === 'usuáriosTab') loadUsuarios();
+        else if (tabId === 'respostasTab') loadRespostas();
+        else if (tabId === 'gestoresTab') loadAvaliadoresTab();
+        else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
+    }
+}
+
+async function loadQuestionnaires() {
+    const container = document.getElementById('questionnairesContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const liberacoes = await db.collection('liberacoes')
+            .where('colaborador_id', '==', currentUser.id)
+            .get();
+
+        const liberadosTipos = {};
+        liberacoes.forEach(doc => {
+            liberadosTipos[doc.data().tipo_pesquisa] = true;
+        });
+
+        if (Object.keys(liberadosTipos).length === 0) {
+            container.innerHTML = '<div class="alert alert-info">Nenhum questionario disponivel no momento.</div>';
+            return;
+        }
+
+        let html = '';
+        const tiposOrdenados = ['experiencia_45_colab', 'desempenho_90_colab'];
+
+        for (const tipo of tiposOrdenados) {
+            if (liberadosTipos[tipo]) {
+                const template = SURVEY_TEMPLATES[tipo];
+                html += '<div class="card" data-survey-type="' + tipo + '">';
+                html += '<div class="card-header">';
+                html += '<div>';
+                html += '<div class="card-title">' + template.nome + '</div>';
+                html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Responda as questoes abaixo</div>';
+                html += '</div>';
+                html += '<button class="btn btn-primary btn-small" onclick="openSurveyModal(\'' + tipo + '\')">Responder</button>';
+                html += '</div>';
+                html += '</div>';
             }
         }
 
-        async function login(email, password) {
-            try {
-                const passwordHash = await hashPassword(password);
-                const usersSnapshot = await db.collection('usuarios').where('email', '==', email).get();
-
-                if (usersSnapshot.empty) {
-                    showError('Usuário ou senha incorretos');
-                    return;
-                }
-
-                const userDoc = usersSnapshot.docs[0];
-                const userData = userDoc.data();
-
-                if (userData.senha !== passwordHash) {
-                    showError('Usuário ou senha incorretos');
-                    return;
-                }
-
-                if (!userData.ativo) {
-                    showError('Usuário inativo');
-                    return;
-                }
-
-                currentUser = { ...userData, id: userDoc.id };
-                currentUserDoc = userDoc;
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appContainer').classList.add('active');
-
-                document.getElementById('currentUserName').textContent = currentUser.nome;
-                const roleEl = document.getElementById('currentUserRole');
-                const roleMap = { admin: 'Admin', gestor: 'Gestor', diretoria: 'Diretoria', colaborador: 'Colaborador' };
-                const badgeMap = { admin: 'badge-admin', gestor: 'badge-gestor', diretoria: 'badge-diretoria', colaborador: 'badge-colaborador' };
-                roleEl.textContent = roleMap[currentUser.perfil];
-                roleEl.className = `badge ${badgeMap[currentUser.perfil]}`;
-
-                setupTabs();
-                showTab('Formulario');
-
-            } catch (error) {
-                console.error('Erro no login:', error);
-                showError('Erro ao fazer login');
-            }
-        }
-
-        function setupTabs() {
-            const tabsContainer = document.getElementById('tabsContainer');
-            tabsContainer.innerHTML = '';
-
-            const allTabs = {
-                admin: ['Formulario', 'Avaliacao', 'Dashboard', 'Pesquisas', 'Colaboradores', 'Usuarios', 'Desligamento'],
-                gestor: ['Formulario', 'Avaliacao', 'MeusSubordinados', 'Desligamento'],
-                diretoria: ['Dashboard', 'AvaliacoesDosGestores', 'PesquisasDosColaboradores'],
-                colaborador: ['Formulario', 'MinhasPesquisas']
-            };
-
-            const tabLabels = {
-                Formulario: 'Formulário',
-                Avaliacao: 'Avaliar Colaborador',
-                Dashboard: 'Dashboard',
-                Pesquisas: 'Pesquisas',
-                Colaboradores: 'Colaboradores',
-                Usuarios: 'Usuários',
-                Desligamento: 'Desligamento',
-                MeusSubordinados: 'Meus Subordinados',
-                AvaliacoesDosGestores: 'Avaliações dos Gestores',
-                PesquisasDosColaboradores: 'Pesquisas dos Colaboradores',
-                MinhasPesquisas: 'Minhas Pesquisas'
-            };
-
-            const tabs = allTabs[currentUser.perfil] || [];
-            tabs.forEach(tab => {
-                const btn = document.createElement('button');
-                btn.className = 'tab-btn';
-                btn.textContent = tabLabels[tab];
-                btn.dataset.tab = tab;
-                btn.onclick = () => showTab(tab);
-                tabsContainer.appendChild(btn);
-            });
-        }
-
-        function renderScaleButtons(questionIndex, sectionIndex) {
-            let html = '<div class="scale-buttons">';
-            for (let i = 1; i <= 5; i++) {
-                html += `<button type="button" class="scale-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="${i}">${i}</button>`;
-            }
-            html += '</div>';
-            return html;
-        }
-
-        function renderNPSButtons(questionIndex, sectionIndex) {
-            let html = '<div class="nps-buttons">';
-            for (let i = 0; i <= 10; i++) {
-                html += `<button type="button" class="nps-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="${i}">${i}</button>`;
-            }
-            html += '</div>';
-            return html;
-        }
-
-        function renderYesNoButtons(questionIndex, sectionIndex) {
-            return `<div class="yes-no-buttons">
-                <button type="button" class="yes-no-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="Sim">Sim</button>
-                <button type="button" class="yes-no-btn" data-section="${sectionIndex}" data-question="${questionIndex}" data-value="Não">Não</button>
-            </div>`;
-        }
-
-        function renderTextarea(questionIndex, sectionIndex) {
-            return `<textarea data-section="${sectionIndex}" data-question="${questionIndex}" placeholder="Digite sua resposta aqui..."></textarea>`;
-        }
-
-        function renderSurveyForm(questionnaireKey) {
-            const questionnaire = questionnaires[questionnaireKey];
-            if (!questionnaire) return '';
-
-            let html = `<div class="survey-form" data-type="${questionnaire.tipo}">`;
-
-            questionnaire.secoes.forEach((section, sectionIndex) => {
-                html += `<div class="form-section">`;
-                html += `<h3>${section.titulo}</h3>`;
-
-                section.perguntas.forEach((pergunta, questionIndex) => {
-                    const fieldId = `q_${sectionIndex}_${questionIndex}`;
-                    html += `<div class="question-group" id="qg_${sectionIndex}_${questionIndex}">`;
-                    html += `<label class="question-label">${pergunta.texto}</label>`;
-
-                    switch (pergunta.tipo) {
-                        case 'escala':
-                            html += renderScaleButtons(questionIndex, sectionIndex);
-                            break;
-                        case 'nps':
-                            html += renderNPSButtons(questionIndex, sectionIndex);
-                            break;
-                        case 'sim_nao':
-                            html += renderYesNoButtons(questionIndex, sectionIndex);
-                            break;
-                        case 'texto':
-                            html += renderTextarea(questionIndex, sectionIndex);
-                            break;
-                    }
-
-                    if (pergunta.condicional) {
-                        const conditionalId = `conditional_${sectionIndex}_${questionIndex}`;
-                        html += `<div id="${conditionalId}" class="conditional-field">`;
-                        const conditionalPergunta = section.perguntas[pergunta.condicional.pergunta_index];
-                        html += `<label class="question-label">${conditionalPergunta.texto}</label>`;
-
-                        switch (conditionalPergunta.tipo) {
-                            case 'escala':
-                                html += renderScaleButtons(pergunta.condicional.pergunta_index, sectionIndex);
-                                break;
-                            case 'nps':
-                                html += renderNPSButtons(pergunta.condicional.pergunta_index, sectionIndex);
-                                break;
-                            case 'sim_nao':
-                                html += renderYesNoButtons(pergunta.condicional.pergunta_index, sectionIndex);
-                                break;
-                            case 'texto':
-                                html += renderTextarea(pergunta.condicional.pergunta_index, sectionIndex);
-                                break;
-                        }
-
-                        html += `</div>`;
-                    }
-
-                    html += `</div>`;
-                });
-
-                html += `</div>`;
-            });
-
-            html += `<div class="submit-section">
-                <button type="button" class="btn btn-primary btn-submit" data-type="${questionnaire.tipo}">Enviar Formulário</button>
-            </div></div>`;
-
-            return html;
-        }
-
-        async function setupFormularioTab() {
-            const container = document.getElementById('surveyFormContainer');
-            let html = '';
-
-            if (currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'colaborador') {
-                html += '<div style="margin-bottom: 30px;">';
-                html += '<h3>Selecione qual formulário você deseja preencher:</h3>';
-                html += '<div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">';
-                html += `<button class="btn btn-secondary" onclick="showSurveyForm('parte1')">Parte 1 - 45 Dias</button>`;
-                html += `<button class="btn btn-secondary" onclick="showSurveyForm('parte2')">Parte 2 - 45 Dias</button>`;
-                html += '</div></div>';
-                html += '<div id="formContainer"></div>';
-            }
-
+        if (html === '') {
+            container.innerHTML = '<div class="alert alert-info">Nenhum questionario disponivel no momento.</div>';
+        } else {
             container.innerHTML = html;
         }
-
-        window.showSurveyForm = function(questionnaireKey) {
-            const formContainer = document.getElementById('formContainer');
-            formContainer.innerHTML = renderSurveyForm(questionnaireKey);
-            setupFormListeners(questionnaireKey);
-        };
-
-        function setupFormListeners(questionnaireKey) {
-            const questionnaire = questionnaires[questionnaireKey];
-
-            document.querySelectorAll('.scale-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = btn.dataset.section;
-                    const question = btn.dataset.question;
-                    document.querySelectorAll(`.scale-btn[data-section="${section}"][data-question="${question}"]`)
-                        .forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                });
-            });
-
-            document.querySelectorAll('.nps-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = btn.dataset.section;
-                    const question = btn.dataset.question;
-                    document.querySelectorAll(`.nps-btn[data-section="${section}"][data-question="${question}"]`)
-                        .forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                });
-            });
-
-            document.querySelectorAll('.yes-no-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = btn.dataset.section;
-                    const question = btn.dataset.question;
-                    document.querySelectorAll(`.yes-no-btn[data-section="${section}"][data-question="${question}"]`)
-                        .forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-
-                    const pergunta = questionnaire.secoes[section].perguntas[question];
-                    if (pergunta.condicional) {
-                        const conditionalId = `conditional_${section}_${question}`;
-                        const conditionalField = document.getElementById(conditionalId);
-                        if (conditionalField) {
-                            if (btn.dataset.value === pergunta.condicional.valor) {
-                                conditionalField.classList.add('show');
-                            } else {
-                                conditionalField.classList.remove('show');
-                            }
-                        }
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-submit').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await submitSurvey(questionnaireKey);
-                });
-            });
-        }
-
-        async function submitSurvey(questionnaireKey) {
-            try {
-                const questionnaire = questionnaires[questionnaireKey];
-                const respostas = [];
-
-                questionnaire.secoes.forEach((section, sectionIndex) => {
-                    section.perguntas.forEach((pergunta, questionIndex) => {
-                        let resposta = null;
-
-                        const scaleBtns = document.querySelectorAll(`.scale-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
-                        const npsBtns = document.querySelectorAll(`.nps-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
-                        const ynBtns = document.querySelectorAll(`.yes-no-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
-                        const textareas = document.querySelectorAll(`textarea[data-section="${sectionIndex}"][data-question="${questionIndex}"]`);
-
-                        if (scaleBtns.length > 0) {
-                            resposta = scaleBtns[0].dataset.value;
-                        } else if (npsBtns.length > 0) {
-                            resposta = npsBtns[0].dataset.value;
-                        } else if (ynBtns.length > 0) {
-                            resposta = ynBtns[0].dataset.value;
-                        } else if (textareas.length > 0) {
-                            resposta = textareas[0].value;
-                        }
-
-                        if (resposta !== null && resposta !== '') {
-                            respostas.push({ pergunta_index: questionIndex, resposta: resposta });
-                        }
-                    });
-                });
-
-                const pesquisaRef = await db.collection('pesquisas').add({
-                    colaborador_id: currentUser.id,
-                    tipo: questionnaire.tipo,
-                    data_resposta: new Date(),
-                    respondente_email: currentUser.email
-                });
-
-                for (const resposta of respostas) {
-                    await db.collection('respostas').add({
-                        pesquisa_id: pesquisaRef.id,
-                        pergunta_index: resposta.pergunta_index,
-                        resposta: resposta.resposta
-                    });
-                }
-
-                alert('Formulário enviado com sucesso!');
-                document.getElementById('formContainer').innerHTML = '';
-
-            } catch (error) {
-                console.error('Erro ao enviar formulário:', error);
-                alert('Erro ao enviar formulário');
-            }
-        }
-
-        async function setupAvaliacaoTab() {
-            const container = document.getElementById('managerEvaluationForm');
-            const dropdown = document.getElementById('collaboratorDropdown');
-            const select = document.getElementById('collaboratorSelect');
-
-            if (currentUser.perfil === 'admin') {
-                dropdown.style.display = 'block';
-                const usersSnapshot = await db.collection('usuarios').get();
-                select.innerHTML = '<option value="">Selecione um colaborador</option>';
-                usersSnapshot.forEach(doc => {
-                    const user = doc.data();
-                    select.innerHTML += `<option value="${doc.id}">${user.nome}</option>`;
-                });
-
-                select.addEventListener('change', async (e) => {
-                    if (e.target.value) {
-                        container.innerHTML = renderSurveyForm('avaliacao_gestor');
-                        setupManagerEvaluationListeners(e.target.value);
-                    }
-                });
-            } else if (currentUser.perfil === 'gestor') {
-                dropdown.style.display = 'block';
-                const usersSnapshot = await db.collection('usuarios').where('lider', '==', currentUser.nome).get();
-                select.innerHTML = '<option value="">Selecione um subordinado</option>';
-                usersSnapshot.forEach(doc => {
-                    const user = doc.data();
-                    select.innerHTML += `<option value="${doc.id}">${user.nome}</option>`;
-                });
-
-                select.addEventListener('change', async (e) => {
-                    if (e.target.value) {
-                        container.innerHTML = renderSurveyForm('avaliacao_gestor');
-                        setupManagerEvaluationListeners(e.target.value);
-                    }
-                });
-            }
-        }
-
-        function setupManagerEvaluationListeners(selectedUserId) {
-            document.querySelectorAll('.scale-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = btn.dataset.section;
-                    const question = btn.dataset.question;
-                    document.querySelectorAll(`.scale-btn[data-section="${section}"][data-question="${question}"]`)
-                        .forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                });
-            });
-
-            document.querySelectorAll('.nps-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = btn.dataset.section;
-                    const question = btn.dataset.question;
-                    document.querySelectorAll(`.nps-btn[data-section="${section}"][data-question="${question}"]`)
-                        .forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                });
-            });
-
-            document.querySelectorAll('.yes-no-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = btn.dataset.section;
-                    const question = btn.dataset.question;
-                    document.querySelectorAll(`.yes-no-btn[data-section="${section}"][data-question="${question}"]`)
-                        .forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-
-                    const questionnaire = questionnaires['avaliacao_gestor'];
-                    const pergunta = questionnaire.secoes[section].perguntas[question];
-                    if (pergunta.condicional) {
-                        const conditionalId = `conditional_${section}_${question}`;
-                        const conditionalField = document.getElementById(conditionalId);
-                        if (conditionalField) {
-                            if (btn.dataset.value === pergunta.condicional.valor) {
-                                conditionalField.classList.add('show');
-                            } else {
-                                conditionalField.classList.remove('show');
-                            }
-                        }
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-submit').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await submitManagerEvaluation('avaliacao_gestor', selectedUserId);
-                });
-            });
-        }
-
-        async function submitManagerEvaluation(questionnaireKey, selectedUserId) {
-            try {
-                const questionnaire = questionnaires[questionnaireKey];
-                const respostas = [];
-
-                questionnaire.secoes.forEach((section, sectionIndex) => {
-                    section.perguntas.forEach((pergunta, questionIndex) => {
-                        let resposta = null;
-
-                        const scaleBtns = document.querySelectorAll(`.scale-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
-                        const npsBtns = document.querySelectorAll(`.nps-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
-                        const ynBtns = document.querySelectorAll(`.yes-no-btn[data-section="${sectionIndex}"][data-question="${questionIndex}"].selected`);
-                        const textareas = document.querySelectorAll(`textarea[data-section="${sectionIndex}"][data-question="${questionIndex}"]`);
-
-                        if (scaleBtns.length > 0) {
-                            resposta = scaleBtns[0].dataset.value;
-                        } else if (npsBtns.length > 0) {
-                            resposta = npsBtns[0].dataset.value;
-                        } else if (ynBtns.length > 0) {
-                            resposta = ynBtns[0].dataset.value;
-                        } else if (textareas.length > 0) {
-                            resposta = textareas[0].value;
-                        }
-
-                        if (resposta !== null && resposta !== '') {
-                            respostas.push({ pergunta_index: questionIndex, resposta: resposta });
-                        }
-                    });
-                });
-
-                const pesquisaRef = await db.collection('pesquisas').add({
-                    colaborador_id: selectedUserId,
-                    tipo: questionnaire.tipo,
-                    data_resposta: new Date(),
-                    respondente_email: currentUser.email,
-                    gestor_avaliador: currentUser.nome
-                });
-
-                for (const resposta of respostas) {
-                    await db.collection('respostas').add({
-                        pesquisa_id: pesquisaRef.id,
-                        pergunta_index: resposta.pergunta_index,
-                        resposta: resposta.resposta
-                    });
-                }
-
-                alert('Avaliação enviada com sucesso!');
-                document.getElementById('managerEvaluationForm').innerHTML = '';
-                document.getElementById('collaboratorSelect').value = '';
-
-            } catch (error) {
-                console.error('Erro ao enviar avaliação:', error);
-                alert('Erro ao enviar avaliação');
-            }
-        }
-
-        async function setupMeusSubordinadosTab() {
-            const container = document.getElementById('subordinatesContainer');
-            container.innerHTML = '<p class="loading">Carregando...</p>';
-
-            try {
-                const subordinatesSnapshot = await db.collection('usuarios').where('lider', '==', currentUser.nome).get();
-                let html = '';
-
-                if (subordinatesSnapshot.empty) {
-                    html = '<p>Você não tem subordinados registrados.</p>';
-                } else {
-                    html = '<table><thead><tr><th>Nome</th><th>Cargo</th><th>Setor</th><th>Ações</th></tr></thead><tbody>';
-
-                    for (const doc of subordinatesSnapshot.docs) {
-                        const subordinado = doc.data();
-
-                        html += `<tr>
-                            <td>${subordinado.nome}</td>
-                            <td>${subordinado.cargo}</td>
-                            <td>${subordinado.setor}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="viewSubordinateResults('${doc.id}', '${subordinado.nome}')">Ver Resultados</button>
-                            </td>
-                        </tr>`;
-                    }
-
-                    html += '</tbody></table>';
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar subordinados:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        window.viewSubordinateResults = async function(userId, userName) {
-            const modal = document.getElementById('detailsModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-
-            modalTitle.textContent = `Resultados de ${userName}`;
-            modalBody.innerHTML = '<p class="loading">Carregando...</p>';
-            modal.classList.add('active');
-
-            try {
-                const pesquisasSnapshot = await db.collection('pesquisas').where('colaborador_id', '==', userId).get();
-                let html = '';
-
-                if (pesquisasSnapshot.empty) {
-                    html = '<p>Nenhuma pesquisa respondida ainda.</p>';
-                } else {
-                    for (const pesquisaDoc of pesquisasSnapshot.docs) {
-                        const pesquisa = pesquisaDoc.data();
-                        html += `<div style="margin-bottom: 20px; padding: 15px; background: #F9F9F9; border-radius: 6px;">`;
-                        html += `<h3>${pesquisa.tipo === '45_dias_parte_1' ? '45 Dias - Parte 1' : pesquisa.tipo === '45_dias_parte_2' ? '45 Dias - Parte 2' : 'Avaliação do Gestor'}</h3>`;
-                        html += `<p><small>Respondida em: ${pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A'}</small></p>`;
-
-                        const respostasSnapshot = await db.collection('respostas').where('pesquisa_id', '==', pesquisaDoc.id).get();
-                        if (!respostasSnapshot.empty) {
-                            html += '<ul style="margin-top: 10px;">';
-                            respostasSnapshot.forEach(respostaDoc => {
-                                const resposta = respostaDoc.data();
-                                html += `<li>${resposta.resposta}</li>`;
-                            });
-                            html += '</ul>';
-                        }
-
-                        html += `</div>`;
-                    }
-                }
-
-                modalBody.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar resultados:', error);
-                modalBody.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        };
-
-        async function setupDashboardTab() {
-            const container = document.getElementById('dashboardStats');
-
-            try {
-                let totalSurveys = 0;
-                let totalUsers = 0;
-
-                if (currentUser.perfil === 'admin') {
-                    const pesquisasSnapshot = await db.collection('pesquisas').get();
-                    const usersSnapshot = await db.collection('usuarios').get();
-                    totalSurveys = pesquisasSnapshot.size;
-                    totalUsers = usersSnapshot.size;
-
-                } else if (currentUser.perfil === 'gestor') {
-                    const subordinatesSnapshot = await db.collection('usuarios').where('lider', '==', currentUser.nome).get();
-                    totalUsers = subordinatesSnapshot.size;
-
-                } else if (currentUser.perfil === 'diretoria') {
-                    const pesquisasSnapshot = await db.collection('pesquisas').where('tipo', '==', 'avaliacao_gestor').get();
-                    totalSurveys = pesquisasSnapshot.size;
-                }
-
-                container.innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-label">Total de Pesquisas</div>
-                        <div class="stat-number">${totalSurveys}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total de Usuários</div>
-                        <div class="stat-number">${totalUsers}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Taxa de Conclusão</div>
-                        <div class="stat-number">${totalUsers > 0 ? Math.round((totalSurveys / totalUsers) * 100) : 0}%</div>
-                    </div>
-                `;
-
-            } catch (error) {
-                console.error('Erro ao carregar dashboard:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        async function setupPesquisasTab() {
-            const container = document.getElementById('surveysContainer');
-            container.innerHTML = '<p class="loading">Carregando...</p>';
-
-            try {
-                const pesquisasSnapshot = await db.collection('pesquisas').get();
-
-                if (pesquisasSnapshot.empty) {
-                    container.innerHTML = '<p>Nenhuma pesquisa realizada ainda.</p>';
-                    return;
-                }
-
-                let html = '<table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th><th>Respondente</th><th>Ações</th></tr></thead><tbody>';
-
-                for (const pesquisaDoc of pesquisasSnapshot.docs) {
-                    const pesquisa = pesquisaDoc.data();
-                    const userDoc = await db.collection('usuarios').doc(pesquisa.colaborador_id).get();
-                    const user = userDoc.data();
-
-                    const tipoLabel = pesquisa.tipo === '45_dias_parte_1' ? '45D - P1' : pesquisa.tipo === '45_dias_parte_2' ? '45D - P2' : 'Avaliação';
-                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
-
-                    html += `<tr>
-                        <td>${user.nome}</td>
-                        <td>${tipoLabel}</td>
-                        <td>${data}</td>
-                        <td>${pesquisa.respondente_email}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${pesquisaDoc.id}')">Ver</button>
-                        </td>
-                    </tr>`;
-                }
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
-            } catch (error) {
-                console.error('Erro ao carregar pesquisas:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        window.viewSurveyDetails = async function(pesquisaId) {
-            const modal = document.getElementById('detailsModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-
-            modalTitle.textContent = 'Detalhes da Pesquisa';
-            modalBody.innerHTML = '<p class="loading">Carregando...</p>';
-            modal.classList.add('active');
-
-            try {
-                const pesquisaDoc = await db.collection('pesquisas').doc(pesquisaId).get();
-                const pesquisa = pesquisaDoc.data();
-                const respostasSnapshot = await db.collection('respostas').where('pesquisa_id', '==', pesquisaId).get();
-
-                let html = '<div>';
-                html += `<p><strong>Tipo:</strong> ${pesquisa.tipo}</p>`;
-                html += `<p><strong>Data:</strong> ${pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A'}</p>`;
-                html += `<h3>Respostas:</h3><ul>`;
-
-                respostasSnapshot.forEach(respostaDoc => {
-                    const resposta = respostaDoc.data();
-                    html += `<li><strong>Pergunta ${resposta.pergunta_index}:</strong> ${resposta.resposta}</li>`;
-                });
-
-                html += '</ul></div>';
-                modalBody.innerHTML = html;
-
-            } catch (error) {
-                console.error('Erro ao carregar detalhes:', error);
-                modalBody.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        };
-
-        async function setupColaboradoresTab() {
-            const container = document.getElementById('collaboratorsTableContainer');
-            container.innerHTML = '<p class="loading">Carregando...</p>';
-
-            try {
-                const colaboradoresSnapshot = await db.collection('usuarios').where('perfil', '==', 'colaborador').get();
-
-                if (colaboradoresSnapshot.empty) {
-                    container.innerHTML = '<p>Nenhum colaborador registrado.</p>';
-                    return;
-                }
-
-                let html = '<table><thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Setor</th><th>Líder</th><th>Criado em</th></tr></thead><tbody>';
-
-                colaboradoresSnapshot.forEach(doc => {
-                    const collab = doc.data();
-                    const dataCriacao = collab.created_at ? new Date(collab.created_at.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
-
-                    html += `<tr>
-                        <td>${collab.nome}</td>
-                        <td>${collab.email}</td>
-                        <td>${collab.cargo}</td>
-                        <td>${collab.setor}</td>
-                        <td>${collab.lider}</td>
-                        <td>${dataCriacao}</td>
-                    </tr>`;
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
-            } catch (error) {
-                console.error('Erro ao carregar colaboradores:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        async function setupUsuariosTab() {
-            const form = document.getElementById('newUserForm');
-            const container = document.getElementById('usersTableContainer');
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                try {
-                    const nome = document.getElementById('newUserNome').value;
-                    const email = document.getElementById('newUserEmail').value;
-                    const perfil = document.getElementById('newUserPerfil').value;
-                    const setor = document.getElementById('newUserSetor').value;
-                    const lider = document.getElementById('newUserLider').value;
-                    const cargo = document.getElementById('newUserCargo').value;
-
-                    const senha = 'senha123';
-                    const senhaHash = await hashPassword(senha);
-
-                    await db.collection('usuarios').add({
-                        nome,
-                        email,
-                        senha: senhaHash,
-                        perfil,
-                        setor,
-                        lider,
-                        cargo,
-                        provisoria: true,
-                        ativo: true,
-                        created_at: new Date()
-                    });
-
-                    alert(`Usuário criado com sucesso! Senha temporária: ${senha}`);
-                    form.reset();
-                    loadUsersTable();
-
-                } catch (error) {
-                    console.error('Erro ao criar usuário:', error);
-                    alert('Erro ao criar usuário');
-                }
-            });
-
-            await loadUsersTable();
-
-            async function loadUsersTable() {
-                container.innerHTML = '<p class="loading">Carregando...</p>';
-
-                try {
-                    const usersSnapshot = await db.collection('usuarios').get();
-
-                    if (usersSnapshot.empty) {
-                        container.innerHTML = '<p>Nenhum usuário registrado.</p>';
-                        return;
-                    }
-
-                    let html = '<table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Setor</th><th>Líder</th><th>Cargo</th><th>Criado em</th><th>Ações</th></tr></thead><tbody>';
-
-                    usersSnapshot.forEach(doc => {
-                        const user = doc.data();
-                        const dataCriacao = user.created_at ? new Date(user.created_at.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
-                        const perfil = { admin: 'Admin', gestor: 'Gestor', diretoria: 'Diretoria', colaborador: 'Colaborador' }[user.perfil] || user.perfil;
-
-                        html += `<tr>
-                            <td>${user.nome}</td>
-                            <td>${user.email}</td>
-                            <td><span class="badge badge-${user.perfil}">${perfil}</span></td>
-                            <td>${user.setor}</td>
-                            <td>${user.lider}</td>
-                            <td>${user.cargo}</td>
-                            <td>${dataCriacao}</td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" onclick="deleteUser('${doc.id}')">Deletar</button>
-                            </td>
-                        </tr>`;
-                    });
-
-                    html += '</tbody></table>';
-                    container.innerHTML = html;
-
-                } catch (error) {
-                    console.error('Erro ao carregar usuários:', error);
-                    container.innerHTML = '<p>Erro ao carregar dados</p>';
-                }
-            }
-        }
-
-        window.deleteUser = async function(userId) {
-            if (confirm('Tem certeza que deseja deletar este usuário?')) {
-                try {
-                    await db.collection('usuarios').doc(userId).delete();
-                    alert('Usuário deletado com sucesso');
-                    setupUsuariosTab();
-                } catch (error) {
-                    console.error('Erro ao deletar usuário:', error);
-                    alert('Erro ao deletar usuário');
-                }
-            }
-        };
-
-        async function setupAvaliacoesDosGestoresTab() {
-            const container = document.getElementById('managerEvaluationsContainer');
-            container.innerHTML = '<p class="loading">Carregando...</p>';
-
-            try {
-                const pesquisasSnapshot = await db.collection('pesquisas').where('tipo', '==', 'avaliacao_gestor').get();
-
-                if (pesquisasSnapshot.empty) {
-                    container.innerHTML = '<p>Nenhuma avaliação de gestor realizada ainda.</p>';
-                    return;
-                }
-
-                let html = '<table><thead><tr><th>Colaborador</th><th>Gestor Avaliador</th><th>Data</th><th>Ações</th></tr></thead><tbody>';
-
-                for (const pesquisaDoc of pesquisasSnapshot.docs) {
-                    const pesquisa = pesquisaDoc.data();
-                    const userDoc = await db.collection('usuarios').doc(pesquisa.colaborador_id).get();
-                    const user = userDoc.data();
-                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
-
-                    html += `<tr>
-                        <td>${user.nome}</td>
-                        <td>${pesquisa.gestor_avaliador}</td>
-                        <td>${data}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${pesquisaDoc.id}')">Ver</button>
-                        </td>
-                    </tr>`;
-                }
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
-            } catch (error) {
-                console.error('Erro ao carregar avaliações:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        async function setupPesquisasDosColaboradoresTab() {
-            const container = document.getElementById('collaboratorSurveysContainer');
-            container.innerHTML = '<p class="loading">Carregando...</p>';
-
-            try {
-                const pesquisasSnapshot = await db.collection('pesquisas').where('tipo', 'in', ['45_dias_parte_1', '45_dias_parte_2']).get();
-
-                if (pesquisasSnapshot.empty) {
-                    container.innerHTML = '<p>Nenhuma pesquisa de colaborador realizada ainda.</p>';
-                    return;
-                }
-
-                let html = '<table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th><th>Ações</th></tr></thead><tbody>';
-                let anonIndex = 1;
-
-                for (const pesquisaDoc of pesquisasSnapshot.docs) {
-                    const pesquisa = pesquisaDoc.data();
-                    const tipoLabel = pesquisa.tipo === '45_dias_parte_1' ? '45D - P1' : '45D - P2';
-                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
-
-                    html += `<tr>
-                        <td>Colaborador Anônimo ${anonIndex}</td>
-                        <td>${tipoLabel}</td>
-                        <td>${data}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${pesquisaDoc.id}')">Ver</button>
-                        </td>
-                    </tr>`;
-
-                    anonIndex++;
-                }
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
-            } catch (error) {
-                console.error('Erro ao carregar pesquisas:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        async function setupMinhasPesquisasTab() {
-            const container = document.getElementById('mySubmissionsContainer');
-            container.innerHTML = '<p class="loading">Carregando...</p>';
-
-            try {
-                const pesquisasSnapshot = await db.collection('pesquisas').where('colaborador_id', '==', currentUser.id).get();
-
-                if (pesquisasSnapshot.empty) {
-                    container.innerHTML = '<p>Você ainda não respondeu nenhuma pesquisa.</p>';
-                    return;
-                }
-
-                let html = '<table><thead><tr><th>Tipo</th><th>Data</th><th>Ações</th></tr></thead><tbody>';
-
-                pesquisasSnapshot.forEach(doc => {
-                    const pesquisa = doc.data();
-                    const tipoLabel = pesquisa.tipo === '45_dias_parte_1' ? '45 Dias - Parte 1' : pesquisa.tipo === '45_dias_parte_2' ? '45 Dias - Parte 2' : 'Avaliação do Gestor';
-                    const data = pesquisa.data_resposta ? new Date(pesquisa.data_resposta.seconds * 1000).toLocaleDateString('pt-BR') : 'N/A';
-
-                    html += `<tr>
-                        <td>${tipoLabel}</td>
-                        <td>${data}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewSurveyDetails('${doc.id}')">Ver</button>
-                        </td>
-                    </tr>`;
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
-            } catch (error) {
-                console.error('Erro ao carregar minhas pesquisas:', error);
-                container.innerHTML = '<p>Erro ao carregar dados</p>';
-            }
-        }
-
-        // Initialize
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            await login(email, password);
+    } catch (error) {
+        console.error('Erro ao carregar questionarios:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar questionarios</div>';
+    }
+}
+
+async function loadEvaluations() {
+    const container = document.getElementById('evaluationsContainer');
+
+    try {
+        const colaboradores = await db.collection('usuarios')
+            .where('lider', '==', currentUser.nome)
+            .where('perfil', '==', 'colaborador')
+            .get();
+
+        const select = document.getElementById('collaboratorSelect');
+        select.innerHTML = '<option value="">-- Selecione um colaborador --</option>';
+
+        colaboradores.forEach(doc => {
+            const colaborador = doc.data();
+            const option = document.createElement('option');
+            option.value = doc.id;
+            option.textContent = colaborador.nome;
+            select.appendChild(option);
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            sessionStorage.removeItem('currentUser');
-            window.location.reload();
+        container.innerHTML = '';
+    } catch (error) {
+        console.error('Erro ao carregar avaliações:', error);
+    }
+}
+
+async function loadEvaluationsForCollaborator() {
+    const collaboratorId = document.getElementById('collaboratorSelect').value;
+    const container = document.getElementById('evaluationsContainer');
+
+    if (!collaboratorId) {
+        container.innerHTML = '';
+        return;
+    }
+
+    try {
+        const liberacoes = await db.collection('liberacoes')
+            .where('colaborador_id', '==', collaboratorId)
+            .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
+            .get();
+
+        const liberadosTipos = {};
+        liberacoes.forEach(doc => {
+            liberadosTipos[doc.data().tipo_pesquisa] = true;
         });
 
-        document.getElementById('modalClose').addEventListener('click', () => {
-            document.getElementById('detailsModal').classList.remove('active');
+        let html = '';
+        const tiposOrdenados = ['experiencia_45_empresa', 'desempenho_90_empresa'];
+
+        for (const tipo of tiposOrdenados) {
+            if (liberadosTipos[tipo]) {
+                const template = SURVEY_TEMPLATES[tipo];
+                html += '<div class="card" data-survey-type="' + tipo + '" data-collaborator-id="' + collaboratorId + '">';
+                html += '<div class="card-header">';
+                html += '<div>';
+                html += '<div class="card-title">' + template.nome + '</div>';
+                html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Avaliação do colaborador</div>';
+                html += '</div>';
+                html += '<button class="btn btn-primary btn-small" onclick="openEvaluationModal(\'' + tipo + '\', \'' + collaboratorId + '\')">Avaliar</button>';
+                html += '</div>';
+                html += '</div>';
+            }
+        }
+
+        if (html === '') {
+            container.innerHTML = '<div class="alert alert-info">Nenhuma avaliacao disponivel para este colaborador.</div>';
+        } else {
+            container.innerHTML = html;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar avaliações do colaborador:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
+    }
+}
+
+function openSurveyModal(tipo) {
+    const template = SURVEY_TEMPLATES[tipo];
+    let html = '';
+
+    template.secoes.forEach(secao => {
+        html += '<div class="form-section">';
+        html += '<div class="form-section-title">' + secao.titulo + '</div>';
+        secao.questoes.forEach(q => {
+            html += renderQuestion(q, tipo);
         });
+        html += '</div>';
+    });
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await initDefaultAdmin();
+    openModal(template.nome, html, [
+        { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+        { text: 'Enviar', onclick: 'saveSurvey("' + tipo + '")', class: 'btn-primary' }
+    ]);
+}
 
-            const savedUser = sessionStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appContainer').classList.add('active');
-                document.getElementById('currentUserName').textContent = currentUser.nome;
-                const roleEl = document.getElementById('currentUserRole');
-                const roleMap = { admin: 'Admin', gestor: 'Gestor', diretoria: 'Diretoria', colaborador: 'Colaborador' };
-                const badgeMap = { admin: 'badge-admin', gestor: 'badge-gestor', diretoria: 'badge-diretoria', colaborador: 'badge-colaborador' };
-                roleEl.textContent = roleMap[currentUser.perfil];
-                roleEl.className = `badge ${badgeMap[currentUser.perfil]}`;
-                setupTabs();
-                showTab('Formulario');
+function openEvaluationModal(tipo, collaboratorId) {
+    const template = SURVEY_TEMPLATES[tipo];
+    let html = '';
+
+    template.secoes.forEach(secao => {
+        html += '<div class="form-section">';
+        html += '<div class="form-section-title">' + secao.titulo + '</div>';
+        secao.questoes.forEach(q => {
+            html += renderQuestion(q, tipo);
+        });
+        html += '</div>';
+    });
+
+    openModal(template.nome, html, [
+        { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+        { text: 'Enviar', onclick: 'saveEvaluation("' + tipo + '", "' + collaboratorId + '")', class: 'btn-primary' }
+    ]);
+}
+
+function renderQuestion(question, surveyType) {
+    const questionId = surveyType + '_' + question.id;
+
+    if (question.tipo === 'escala') {
+        let html = '<div class="question-group">';
+        html += '<label class="question-label">' + question.texto + '</label>';
+        html += '<div class="scale-buttons">';
+        for (let n = 1; n <= 5; n++) {
+            html += '<button type="button" class="scale-btn" onclick="selectScale(\'' + questionId + '\', ' + n + ')">' + n + '</button>';
+        }
+        html += '</div>';
+        html += '<input type="hidden" id="' + questionId + '" value="">';
+        html += '</div>';
+        return html;
+    } else if (question.tipo === 'sim_nao') {
+        let html = '<div class="question-group">';
+        html += '<label class="question-label">' + question.texto + '</label>';
+        html += '<div class="radio-group">';
+        html += '<div class="radio-item">';
+        html += '<input type="radio" id="' + questionId + '_yes" name="' + questionId + '" value="sim" onchange="selectOption(\'' + questionId + '\', \'sim\')">';
+        html += '<label for="' + questionId + '_yes">Sim</label>';
+        html += '</div>';
+        html += '<div class="radio-item">';
+        html += '<input type="radio" id="' + questionId + '_no" name="' + questionId + '" value="nao" onchange="selectOption(\'' + questionId + '\', \'nao\')">';
+        html += '<label for="' + questionId + '_no">Nao</label>';
+        html += '</div>';
+        html += '</div>';
+        html += '<input type="hidden" id="' + questionId + '" value="">';
+        html += '</div>';
+        return html;
+    } else if (question.tipo === 'nps') {
+        let html = '<div class="question-group">';
+        html += '<label class="question-label">' + question.texto + '</label>';
+        html += '<div class="nps-buttons">';
+        for (let i = 0; i <= 10; i++) {
+            html += '<button type="button" class="nps-btn" onclick="selectNps(\'' + questionId + '\', ' + i + ')">' + i + '</button>';
+        }
+        html += '</div>';
+        html += '<input type="hidden" id="' + questionId + '" value="">';
+        html += '</div>';
+        return html;
+    } else if (question.tipo === 'texto') {
+        let html = '<div class="question-group">';
+        html += '<label class="question-label">' + question.texto + '</label>';
+        html += '<textárea class="textárea-input" id="' + questionId + '" placeholder="Suas respostas aqui..."></textárea>';
+        html += '</div>';
+        return html;
+    }
+
+    return '';
+}
+
+function selectScale(questionId, value) {
+    document.getElementById(questionId).value = value;
+    const buttons = document.querySelectorAll('button[onclick*="' + questionId + '"]');
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    event.target.classList.add('selected');
+}
+
+function selectNps(questionId, value) {
+    document.getElementById(questionId).value = value;
+    const buttons = document.querySelectorAll('button[onclick*="' + questionId + '"]');
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    event.target.classList.add('selected');
+}
+
+function selectOption(questionId, value) {
+    document.getElementById(questionId).value = value;
+}
+
+async function saveSurvey(tipo) {
+    const template = SURVEY_TEMPLATES[tipo];
+    const respostas = {};
+
+    template.secoes.forEach(secao => {
+        secao.questoes.forEach(questao => {
+            const inputId = tipo + '_' + questao.id;
+            const input = document.getElementById(inputId);
+            if (input) {
+                respostas[questao.id] = input.value;
             }
         });
+    });
 
-        const originalShowTab = showTab;
-        window.showTab = function(tabName) {
-            originalShowTab(tabName);
+    try {
+        await db.collection('respostas').add({
+            usuário_id: currentUser.id,
+            usuário_nome: currentUser.nome,
+            tipo_pesquisa: tipo,
+            respostas: respostas,
+            data_resposta: new Date(),
+            colaborador_id: currentUser.id
+        });
 
-            if (tabName === 'Formulario') {
-                setupFormularioTab();
-            } else if (tabName === 'Avaliacao') {
-                setupAvaliacaoTab();
-            } else if (tabName === 'MeusSubordinados') {
-                setupMeusSubordinadosTab();
-            } else if (tabName === 'Dashboard') {
-                setupDashboardTab();
-            } else if (tabName === 'Pesquisas') {
-                setupPesquisasTab();
-            } else if (tabName === 'Colaboradores') {
-                setupColaboradoresTab();
-            } else if (tabName === 'Usuarios') {
-                setupUsuariosTab();
-            } else if (tabName === 'AvaliacoesDosGestores') {
-                setupAvaliacoesDosGestoresTab();
-            } else if (tabName === 'PesquisasDosColaboradores') {
-                setupPesquisasDosColaboradoresTab();
-            } else if (tabName === 'MinhasPesquisas') {
-                setupMinhasPesquisasTab();
+        alert('Questionário salvo com sucesso!');
+        closeModal();
+        loadQuestionnaires();
+    } catch (error) {
+        console.error('Erro ao salvar questionario:', error);
+        alert('Erro ao salvar: ' + error.message);
+    }
+}
+
+async function saveEvaluation(tipo, collaboratorId) {
+    const template = SURVEY_TEMPLATES[tipo];
+    const respostas = {};
+
+    template.secoes.forEach(secao => {
+        secao.questoes.forEach(questao => {
+            const inputId = tipo + '_' + questao.id;
+            const input = document.getElementById(inputId);
+            if (input) {
+                respostas[questao.id] = input.value;
             }
-        };
-    </script>
+        });
+    });
+
+    try {
+        await db.collection('pesquisas').add({
+            avaliador_id: currentUser.id,
+            avaliador_nome: currentUser.nome,
+            colaborador_id: collaboratorId,
+            tipo_pesquisa: tipo,
+            respostas: respostas,
+            data_avaliacao: new Date()
+        });
+
+        alert('Avaliação salva com sucesso!');
+        closeModal();
+        loadEvaluationsForCollaborator();
+    } catch (error) {
+        console.error('Erro ao salvar avaliacao:', error);
+        alert('Erro ao salvar: ' + error.message);
+    }
+}
+
+function filterSurveys(filter) {
+    currentSurveyFilter = filter;
+    const cards = document.querySelectorAll('#questionnairesContainer .card');
+    cards.forEach(card => {
+        if (filter === 'all') {
+            card.style.display = 'block';
+        } else {
+            card.style.display = card.dataset.surveyType === filter ? 'block' : 'none';
+        }
+    });
+}
+
+function filterEvaluations(filter) {
+    currentEvaluationFilter = filter;
+    const cards = document.querySelectorAll('#evaluationsContainer .card');
+    cards.forEach(card => {
+        if (filter === 'all') {
+            card.style.display = 'block';
+        } else {
+            card.style.display = card.dataset.surveyType === filter ? 'block' : 'none';
+        }
+    });
+}
+
+async function loadLiberacoes() {
+    const container = document.getElementById('liberacoesContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const usuarios = await db.collection('usuarios')
+            .where('perfil', '==', 'colaborador')
+            .get();
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Liberar Pesquisas para Colaboradores</h2></div>';
+        html += '<div style="padding: 20px;">';
+
+        for (const doc of usuários.docs) {
+            const usuario = doc.data();
+            const liberacoes = await db.collection('liberacoes')
+                .where('colaborador_id', '==', doc.id)
+                .get();
+
+            const liberadosTipos = {};
+            liberacoes.forEach(lib => {
+                liberadosTipos[lib.data().tipo_pesquisa] = lib.id;
+            });
+
+            html += '<div style="margin-bottom: 25px; padding: 15px; background: var(--light); border-radius: 8px;">';
+            html += '<h3 style="margin-bottom: 10px; color: var(--dark);">' + usuário.nome + '</h3>';
+            html += '<div class="checkbox-group" style="display: flex; flex-direction: column; gap: 8px;">';
+            html += '<label style="display: flex; gap: 10px; align-items: center;">';
+            html += '<input type="checkbox" ' + (liberadosTipos['experiencia_45_colab'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'experiencia_45_colab\', this.checked)">';
+            html += 'Experiência 45 Dias (Colaborador)';
+            html += '</label>';
+            html += '<label style="display: flex; gap: 10px; align-items: center;">';
+            html += '<input type="checkbox" ' + (liberadosTipos['desempenho_90_colab'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'desempenho_90_colab\', this.checked)">';
+            html += 'Desempenho 90 Dias (Colaborador)';
+            html += '</label>';
+            html += '<label style="display: flex; gap: 10px; align-items: center;">';
+            html += '<input type="checkbox" ' + (liberadosTipos['experiencia_45_empresa'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'experiencia_45_empresa\', this.checked)">';
+            html += 'Experiência 45 Dias (Empresa)';
+            html += '</label>';
+            html += '<label style="display: flex; gap: 10px; align-items: center;">';
+            html += '<input type="checkbox" ' + (liberadosTipos['desempenho_90_empresa'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'desempenho_90_empresa\', this.checked)">';
+            html += 'Desempenho 90 Dias (Empresa)';
+            html += '</label>';
+            html += '</div>';
+            html += '</div>';
+        }
+
+        html += '</div></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar liberacoes:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar liberacoes</div>';
+    }
+}
+
+async function toggleLiberacao(colaboradorId, tipo, checked) {
+    try {
+        if (checked) {
+            await db.collection('liberacoes').add({
+                colaborador_id: colaboradorId,
+                tipo_pesquisa: tipo,
+                liberado_por: currentUser.email,
+                data_liberacao: new Date()
+            });
+        } else {
+            const query = await db.collection('liberacoes')
+                .where('colaborador_id', '==', colaboradorId)
+                .where('tipo_pesquisa', '==', tipo)
+                .get();
+
+            query.forEach(doc => {
+                db.collection('liberacoes').doc(doc.id).delete();
+            });
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar liberacao:', error);
+        alert('Erro ao atualizar liberacao');
+    }
+}
+
+async function loadPesquisas() {
+    const container = document.getElementById('pesquisasContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const pesquisas = await db.collection('pesquisas').get();
+
+        if (pesquisas.empty) {
+            container.innerHTML = '<div class="alert alert-info">Nenhuma pesquisa registrada.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Avaliações Registradas</h2></div>';
+        html += '<table class="table"><thead><tr><th>Colaborador</th><th>Avaliador</th><th>Tipo</th><th>Data</th></tr></thead><tbody>';
+
+        pesquisas.forEach(doc => {
+            const pesquisa = doc.data();
+            const data = pesquisa.data_avaliacao ? new Date(pesquisa.data_avaliacao.toDate()).toLocaleDateString('pt-BR') : 'N/A';
+            html += '<tr><td>' + pesquisa.colaborador_id + '</td><td>' + pesquisa.avaliador_nome + '</td><td>' + pesquisa.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar pesquisas:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
+    }
+}
+
+async function loadColaboradores() {
+    const container = document.getElementById('colaboradoresContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const usuarios = await db.collection('usuarios')
+            .where('perfil', '==', 'colaborador')
+            .get();
+
+        if (usuários.empty) {
+            container.innerHTML = '<div class="alert alert-info">Nenhum colaborador registrado.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Colaboradores</h2></div>';
+        html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Setor</th><th>Lider</th><th>Cargo</th><th>Status</th></tr></thead><tbody>';
+
+        usuários.forEach(doc => {
+            const usuario = doc.data();
+            const status = usuário.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+            html += '<tr><td>' + usuário.nome + '</td><td>' + usuário.email + '</td><td>' + (usuário.setor || 'N/A') + '</td><td>' + (usuário.lider || 'N/A') + '</td><td>' + (usuário.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar colaboradores:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar colaboradores</div>';
+    }
+}
+
+async function loadUsuarios() {
+    const container = document.getElementById('usuáriosContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const usuarios = await db.collection('usuarios').get();
+
+        if (usuários.empty) {
+            container.innerHTML = '<div class="alert alert-info">Nenhum usuário registrado.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Todos os Usuários</h2></div>';
+        html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Setor</th><th>Status</th></tr></thead><tbody>';
+
+        usuários.forEach(doc => {
+            const usuario = doc.data();
+            const status = usuário.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+            html += '<tr><td>' + usuário.nome + '</td><td>' + usuário.email + '</td><td>' + usuario.perfil + '</td><td>' + (usuário.setor || 'N/A') + '</td><td>' + status + '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar usuários</div>';
+    }
+}
+
+async function loadRespostas() {
+    const container = document.getElementById('respostasContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const respostas = await db.collection('respostas')
+            .where('usuário_id', '==', currentUser.id)
+            .get();
+
+        if (respostas.empty) {
+            container.innerHTML = '<div class="alert alert-info">Você não respondeu a nenhum questionario ainda.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Minhas Respostas</h2></div>';
+        html += '<table class="table"><thead><tr><th>Questionário</th><th>Data</th><th>Acao</th></tr></thead><tbody>';
+
+        respostas.forEach(doc => {
+            const resposta = doc.data();
+            const data = resposta.data_resposta ? new Date(resposta.data_resposta.toDate()).toLocaleDateString('pt-BR') : 'N/A';
+            const template = SURVEY_TEMPLATES[resposta.tipo_pesquisa];
+            const nome = template ? template.nome : resposta.tipo_pesquisa;
+            html += '<tr><td>' + nome + '</td><td>' + data + '</td><td><button class="btn btn-primary btn-small" onclick="viewResposta(\'' + doc.id + '\')">Ver</button></td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar respostas:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar respostas</div>';
+    }
+}
+
+async function viewResposta(respostaId) {
+    try {
+        const doc = await db.collection('respostas').doc(respostaId).get();
+        const resposta = doc.data();
+        const template = SURVEY_TEMPLATES[resposta.tipo_pesquisa];
+
+        let html = '';
+        template.secoes.forEach(secao => {
+            html += '<div style="margin-bottom: 20px;"><h3 style="color: var(--primary); margin-bottom: 10px;">' + secao.titulo + '</h3>';
+            secao.questoes.forEach(questao => {
+                const valor = resposta.respostas[questao.id] || 'Não respondido';
+                html += '<p><strong>' + questao.texto + ':</strong> ' + valor + '</p>';
+            });
+            html += '</div>';
+        });
+
+        openModal(template.nome, html, [{ text: 'Fechar', onclick: 'closeModal()', class: 'btn-primary' }]);
+    } catch (error) {
+        console.error('Erro ao visualizar resposta:', error);
+        alert('Erro ao visualizar resposta');
+    }
+}
+
+async function loadSubordinates() {
+    const container = document.getElementById('subordinatesContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const subordinados = await db.collection('usuarios')
+            .where('lider', '==', currentUser.nome)
+            .where('perfil', '==', 'colaborador')
+            .get();
+
+        if (subordinados.empty) {
+            container.innerHTML = '<div class="alert alert-info">Você não tem colaboradores vinculados.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Meus Subordinados</h2></div>';
+        html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Setor</th><th>Cargo</th><th>Status</th></tr></thead><tbody>';
+
+        subordinados.forEach(doc => {
+            const usuario = doc.data();
+            const status = usuário.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+            html += '<tr><td>' + usuário.nome + '</td><td>' + usuário.email + '</td><td>' + (usuário.setor || 'N/A') + '</td><td>' + (usuário.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar subordinados:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar subordinados</div>';
+    }
+}
+
+async function loadDashboard() {
+    const container = document.getElementById('dashboardContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const usuarios = await db.collection('usuarios').get();
+        const pesquisas = await db.collection('pesquisas').get();
+        const respostas = await db.collection('respostas').get();
+
+        const totalUsuarios = usuários.size;
+        const totalPesquisas = pesquisas.size;
+        const totalRespostas = respostas.size;
+
+        let html = '<div class="grid">';
+        html += '<div class="card">';
+        html += '<div style="text-align: center; padding: 20px;">';
+        html += '<div style="font-size: 32px; color: var(--primary); font-weight: 700;">' + totalUsuarios + '</div>';
+        html += '<div style="color: #636E72; margin-top: 10px;">Usuários Registrados</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="card">';
+        html += '<div style="text-align: center; padding: 20px;">';
+        html += '<div style="font-size: 32px; color: var(--secondary); font-weight: 700;">' + totalPesquisas + '</div>';
+        html += '<div style="color: #636E72; margin-top: 10px;">Avaliações</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="card">';
+        html += '<div style="text-align: center; padding: 20px;">';
+        html += '<div style="font-size: 32px; color: var(--info); font-weight: 700;">' + totalRespostas + '</div>';
+        html += '<div style="color: #636E72; margin-top: 10px;">Questionários Respondidos</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar dashboard:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar dashboard</div>';
+    }
+}
+
+async function loadAvaliadoresTab() {
+    const container = document.getElementById('gestoresContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const pesquisas = await db.collection('pesquisas')
+            .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
+            .get();
+
+        if (pesquisas.empty) {
+            container.innerHTML = '<div class="alert alert-info">Nenhuma avaliacao registrada.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Avaliações dos Gestores</h2></div>';
+        html += '<table class="table"><thead><tr><th>Colaborador</th><th>Gestor</th><th>Tipo</th><th>Data</th></tr></thead><tbody>';
+
+        pesquisas.forEach(doc => {
+            const pesquisa = doc.data();
+            const data = pesquisa.data_avaliacao ? new Date(pesquisa.data_avaliacao.toDate()).toLocaleDateString('pt-BR') : 'N/A';
+            html += '<tr><td>' + pesquisa.colaborador_id + '</td><td>' + pesquisa.avaliador_nome + '</td><td>' + pesquisa.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar avaliações:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
+    }
+}
+
+async function loadPesquisasColabTab() {
+    const container = document.getElementById('pesquisasColabContainer');
+    container.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const respostas = await db.collection('respostas')
+            .where('tipo_pesquisa', 'in', ['experiencia_45_colab', 'desempenho_90_colab'])
+            .get();
+
+        if (respostas.empty) {
+            container.innerHTML = '<div class="alert alert-info">Nenhum questionario respondido.</div>';
+            return;
+        }
+
+        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Pesquisas dos Colaboradores</h2></div>';
+        html += '<table class="table"><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead><tbody>';
+
+        respostas.forEach(doc => {
+            const resposta = doc.data();
+            const data = resposta.data_resposta ? new Date(resposta.data_resposta.toDate()).toLocaleDateString('pt-BR') : 'N/A';
+            html += '<tr><td>' + resposta.usuário_nome + '</td><td>' + resposta.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Erro ao carregar pesquisas:', error);
+        container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
+    }
+}
+
+function openModal(title, body, buttons) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = body;
+
+    let buttonsHtml = '';
+    buttons.forEach(btn => {
+        buttonsHtml += '<button class="btn ' + btn.class + '" onclick="' + btn.onclick + '" style="margin-left: 10px;">' + btn.text + '</button>';
+    });
+    document.getElementById('modalButtons').innerHTML = buttonsHtml;
+    document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.remove('active');
+}
+
+function handleLogout() {
+    sessionStorage.removeItem('userSession');
+    currentUser = null;
+    showLoginScreen();
+    document.getElementById('emailInput').value = '';
+    document.getElementById('senhaInput').value = '';
+}
+
+// Initialize app on page load
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+
+    // Criar admin padrão se não existir
+    setTimeout(() => {
+        db.collection('usuarios').where('email', '==', 'admin@empresa.com').get().then(snapshot => {
+            if (snapshot.empty) {
+                const senhaHash = CryptoJS.SHA256('admin123').toString();
+                db.collection('usuarios').add({
+                    nome: 'Administrador',
+                    email: 'admin@empresa.com',
+                    senha: senhaHash,
+                    perfil: 'admin',
+                    setor: 'Administrativo',
+                    lider: null,
+                    cargo: 'Administrador',
+                    provisoria: false,
+                    ativo: true,
+                    created_at: new Date()
+                });
+            }
+        });
+    }, 1000);
+});
+</script>
+
 </body>
 </html>
