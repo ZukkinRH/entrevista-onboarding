@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plano de Desenvolvimento</title>
+    <title>Zukkin RH</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -171,6 +171,9 @@
             border-right: 1px solid var(--border);
             padding: 20px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
         }
 
         .sidebar-header {
@@ -206,6 +209,7 @@
 
         .nav-menu {
             list-style: none;
+            flex: 1;
         }
 
         .nav-menu li {
@@ -236,7 +240,9 @@
 
         .logout-btn {
             width: 100%;
-            margin-top: 20px;
+            margin-top: auto;
+            padding: 10px;
+            flex-shrink: 0;
         }
 
         .main-content {
@@ -493,71 +499,24 @@
 
         .table .actions-cell {
             white-space: nowrap;
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .btn-xs {
-            padding: 4px 8px;
-            font-size: 11px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            color: white;
-            white-space: nowrap;
-        }
-
-        .form-section {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .question-group {
-            margin-bottom: 25px;
-        }
-
-        .question-label {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .question-help {
-            font-size: 12px;
-            color: #636E72;
-            margin-bottom: 8px;
         }
 
         .scale-buttons {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
         }
 
         .scale-btn {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            background: white;
+            width: 45px;
+            height: 45px;
+            border: 2px solid var(--border);
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
+            background: white;
+            color: var(--dark);
             font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
-            min-width: 45px;
-            text-align: center;
         }
 
         .scale-btn:hover {
@@ -573,23 +532,20 @@
 
         .nps-buttons {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
-            justify-content: center;
+            margin: 15px 0;
         }
 
         .nps-btn {
-            width: 45px;
-            height: 45px;
-            border: 1px solid var(--border);
-            background: white;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--border);
             border-radius: 6px;
+            background: white;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .nps-btn:hover {
@@ -720,7 +676,7 @@
             margin-top: 20px;
         }
 
-        .empty-staté {
+        .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #636E72;
@@ -731,7 +687,7 @@
             margin-bottom: 10px;
         }
 
-        .empty-staté p {
+        .empty-state p {
             font-size: 16px;
         }
 
@@ -815,32 +771,111 @@
             border-radius: 4px;
             transition: background 0.3s;
         }
+
         .sidebar-toggle:hover {
             background: var(--light);
         }
+
         .sidebar.collapsed {
             width: 60px;
             padding: 20px 10px;
         }
+
         .sidebar.collapsed .sidebar-header h2,
         .sidebar.collapsed .user-info,
         .sidebar.collapsed .nav-menu a span,
         .sidebar.collapsed .logout-btn span {
             display: none;
         }
+
         .sidebar.collapsed .nav-menu a {
             text-align: center;
             padding: 12px 8px;
             font-size: 18px;
         }
+
         .sidebar.collapsed .sidebar-header {
             justify-content: center;
         }
-        .sidebar {
+
+        .progress-bar {
+            height: 8px;
+            background: #E0E0E0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
             transition: width 0.3s ease;
         }
 
-@media (max-width: 768px) {
+        .progress-0 {
+            background: var(--warning);
+        }
+
+        .progress-50 {
+            background: var(--info);
+        }
+
+        .progress-100 {
+            background: #00B894;
+        }
+
+        .update-item {
+            border-left: 3px solid var(--primary);
+            padding-left: 12px;
+            margin: 10px 0;
+            padding: 10px 0 10px 12px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--primary);
+            font-size: 28px;
+            margin: 10px 0;
+        }
+
+        .stat-card p {
+            color: #636E72;
+            font-size: 14px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .question-group {
+            margin-bottom: 20px;
+        }
+
+        .question-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
             .app-container {
                 flex-direction: column;
             }
@@ -891,1851 +926,1779 @@
     </style>
 </head>
 <body>
-
-<div id="loginScreen" class="login-container">
-    <div class="login-box">
-        <h1>Zukkin RH</h1>
-        <p>Plano de Desenvolvimento</p>
-        <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="emailInput">Email</label>
-                <input type="email" id="emailInput" required>
-            </div>
-            <div class="form-group">
-                <label for="senhaInput">Senha</label>
-                <input type="password" id="senhaInput" required>
-            </div>
-            <button type="submit" class="btn btn-primary">ENTRAR</button>
-            <div class="forgot-password-link">
-                <a onclick="showForgotPassword()">Esqueceu sua senha?</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="appScreen" class="app-container" style="display: none;">
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Menu</h2>
-            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Minimizar menu">☰</button>
-        </div>
-        <div class="user-info">
-            <p><strong>Usuário:</strong></p>
-            <p id="userNameDisplay"></p>
-            <p id="userRoleDisplay" style="margin-top: 10px;"></p>
-        </div>
-        <ul class="nav-menu" id="navMenu"></ul>
-        <button class="btn btn-danger logout-btn" onclick="handleLogout()">Sair</button>
-    </div>
-
-    <div class="main-content">
-        <div class="content-header">
-            <h1>Plano de Desenvolvimento</h1>
-        </div>
-
-        <!-- Questionários do Colaborador Tab -->
-        <div id="questionnairesTab" class="tab-content">
-            <div class="filters">
-                <button class="filter-btn active" onclick="filterSurveys('all')">Todos</button>
-                <button class="filter-btn" onclick="filterSurveys('experiencia_45_colab')">Experiência 45 Dias</button>
-                <button class="filter-btn" onclick="filterSurveys('desempenho_90_colab')">Desempenho 90 Dias</button>
-            </div>
-            <div id="questionnairesContainer"></div>
-        </div>
-
-        <!-- Avaliações da Empresa Tab -->
-        <div id="evaluationsTab" class="tab-content">
-            <div class="collaborator-select">
-                <label for="collaboratorSelect">Selecione o Colaborador:</label>
-                <select id="collaboratorSelect" onchange="loadEvaluationsForCollaborator()">
-                    <option value="">-- Selecione um colaborador --</option>
-                </select>
-            </div>
-            <div class="filters">
-                <button class="filter-btn active" onclick="filterEvaluations('all')">Todos</button>
-                <button class="filter-btn" onclick="filterEvaluations('experiencia_45_empresa')">Experiência 45 Dias</button>
-                <button class="filter-btn" onclick="filterEvaluations('desempenho_90_empresa')">Desempenho 90 Dias</button>
-            </div>
-            <div id="evaluationsContainer"></div>
-        </div>
-
-        <!-- Meus Subordinados Tab -->
-        <div id="subordinatesTab" class="tab-content">
-            <div id="subordinatesContainer"></div>
-        </div>
-
-        <!-- Dashboard Tab -->
-        <div id="dashboardTab" class="tab-content">
-            <div id="dashboardContainer"></div>
-        </div>
-
-        <!-- Liberar Pesquisas Tab (Admin) -->
-        <div id="liberacoesTab" class="tab-content">
-            <div id="liberacoesContainer"></div>
-        </div>
-
-        <!-- Pesquisas Tab -->
-        <div id="pesquisasTab" class="tab-content">
-            <div id="pesquisasContainer"></div>
-        </div>
-
-        <!-- Colaboradores Tab -->
-        <div id="colaboradoresTab" class="tab-content">
-            <div id="colaboradoresContainer"></div>
-        </div>
-
-        <!-- Usuários Tab -->
-        <div id="usuariosTab" class="tab-content">
-            <div class="card" style="margin-bottom: 24px;">
-                <div class="card-header"><h2 style="color: var(--primary);">Novo Usuário</h2></div>
-                <form id="newUserForm" style="padding: 20px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                        <div class="form-group">
-                            <label>Nome Completo</label>
-                            <input type="text" id="newUserNome" required>
-                        </div>
-                        <div class="form-group">
-                            <label>E-mail</label>
-                            <input type="email" id="newUserEmail" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Perfil de Acesso</label>
-                            <select id="newUserPerfil" required>
-                                <option value="">Selecione...</option>
-                                <option value="admin">Administrador</option>
-                                <option value="gestor">Gestor</option>
-                                <option value="analista">Analista</option>
-                                <option value="diretoria">Diretoria</option>
-                                <option value="colaborador">Colaborador</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Setor</label>
-                            <input type="text" id="newUserSetor" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Líder / Gestor</label>
-                            <input type="text" id="newUserLider" placeholder="Nome do gestor direto">
-                        </div>
-                        <div class="form-group">
-                            <label>Cargo</label>
-                            <input type="text" id="newUserCargo" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Cadastrar Usuário</button>
-                </form>
-            </div>
-            <div id="usuariosContainer"></div>
-        </div>
-
-        <!-- Minhas Respostas Tab -->
-        <div id="respostasTab" class="tab-content">
-            <div id="respostasContainer"></div>
-        </div>
-
-        <!-- Avaliações dos Gestores Tab (Diretoria) -->
-        <div id="gestoresTab" class="tab-content">
-            <div id="gestoresContainer"></div>
-        </div>
-
-        <!-- Pesquisas dos Colaboradores Tab (Diretoria) -->
-        <div id="pesquisasColabTab" class="tab-content">
-            <div id="pesquisasColabContainer"></div>
-        </div>
-        <!-- PDI Tab -->
-        <div id="pdiTab" class="tab-content">
-            <div id="pdiContainer"></div>
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>Zukkin RH</h1>
+            <p>Sistema de Gestão e Desenvolvimento</p>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <input type="password" id="loginPassword" placeholder="Sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <div class="forgot-password-link">
+                    <a onclick="showForgotPassword()">Esqueci minha senha</a>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-<!-- Modal -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modalTitle"></h2>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
+    <div id="appScreen" class="app-container" style="display: none;">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+            <div class="user-info">
+                <p><strong>Usuário:</strong> <span id="userNameDisplay"></span></p>
+                <p id="userRoleDisplay"></p>
+            </div>
+            <ul class="nav-menu" id="navMenu"></ul>
+            <button class="btn btn-danger logout-btn" onclick="handleLogout()"><span>Sair</span></button>
         </div>
-        <div id="modalBody"></div>
-        <div class="modal-buttons" id="modalButtons"></div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1>Zukkin RH</h1>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
+                <div class="grid" id="dashboardStats"></div>
+                <div id="dashboardContent"></div>
+            </div>
+
+            <!-- Questionários Tab -->
+            <div id="questionnairesTab" class="tab-content">
+                <div id="questionnairesContainer"></div>
+            </div>
+
+            <!-- Avaliações Tab -->
+            <div id="evaluationsTab" class="tab-content">
+                <div class="collaborator-select">
+                    <label for="collaboratorSelect">Selecione um colaborador:</label>
+                    <select id="collaboratorSelect" onchange="loadEvaluationsForCollaborator()"></select>
+                </div>
+                <div id="evaluationsContainer"></div>
+            </div>
+
+            <!-- Subordinados Tab -->
+            <div id="subordinatesTab" class="tab-content">
+                <div id="subordinatesContainer"></div>
+            </div>
+
+            <!-- Respostas Tab -->
+            <div id="respostasTab" class="tab-content">
+                <div id="respostasContainer"></div>
+            </div>
+
+            <!-- Gestores Tab -->
+            <div id="gestoresTab" class="tab-content">
+                <div id="gestoresContainer"></div>
+            </div>
+
+            <!-- Pesquisas Colaborador Tab -->
+            <div id="pesquisasColabTab" class="tab-content">
+                <div id="pesquisasColabContainer"></div>
+            </div>
+
+            <!-- Liberar Pesquisas Tab -->
+            <div id="liberacoesTab" class="tab-content">
+                <button class="btn btn-primary" onclick="openModal('Liberar Pesquisa', getLiberacoesForm(), [{text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary'}, {text: 'Liberar', onclick: 'saveLiberacao()', class: 'btn-primary'}])">+ Nova Liberação</button>
+                <div id="liberacoesContainer"></div>
+            </div>
+
+            <!-- Pesquisas Tab -->
+            <div id="pesquisasTab" class="tab-content">
+                <div id="pesquisasContainer"></div>
+            </div>
+
+            <!-- Colaboradores Tab -->
+            <div id="colaboradoresTab" class="tab-content">
+                <button class="btn btn-primary" onclick="loadColaboradores()">Atualizar</button>
+                <div id="colaboradoresContainer"></div>
+            </div>
+
+            <!-- Usuários Tab -->
+            <div id="usuariosTab" class="tab-content">
+                <button class="btn btn-primary" onclick="openNewUserForm()">+ Novo Usuário</button>
+                <div id="usuariosContainer"></div>
+            </div>
+
+            <!-- PDI Tab -->
+            <div id="pdiTab" class="tab-content">
+                <div id="pdiContainer"></div>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyAydCEQFyCmvcb-iTxovo6Pzpwp-8vraYM",
-    authDomain: "zukkin-rh.firebaseapp.com",
-    projectId: "zukkin-rh",
-    storageBucket: "zukkin-rh.firebasestorage.app",
-    messagingSenderId: "194398411433",
-    appId: "1:194398411433:web:a72e99b0ec8a0693d127b8"
-};
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+            <div class="modal-buttons" id="modalButtons"></div>
+        </div>
+    </div>
 
-const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
-const EMAILJS_SERVICE_ID = 'service_7q0c1os';
-const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_P4RuCN4cHM8JRqWj1zJWp-bLm7N4qT4",
+            authDomain: "entrevista-onboarding-5f8e7.firebaseapp.com",
+            projectId: "entrevista-onboarding-5f8e7",
+            storageBucket: "entrevista-onboarding-5f8e7.firebasestorage.app",
+            messagingSenderId: "428937319456",
+            appId: "1:428937319456:web:7e9cb4bfa5e10a3a5a2f51"
+        };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-emailjs.init(EMAILJS_PUBLIC_KEY);
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-let currentUser = null;
-let currentSurveyFilter = 'all';
-let currentEvaluationFilter = 'all';
+        // EmailJS Config
+        const EMAILJS_PUBLIC_KEY = 'your_emailjs_public_key';
+        const EMAILJS_SERVICE_ID = 'your_service_id';
+        const EMAILJS_TEMPLATE_ID = 'your_template_id';
 
-// Tabs and navigation
-const TABS = {
-    admin: [
-        { id: 'questionnairesTab', label: 'Questionários', key: 'questionarios' },
-        { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
-        { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
-        { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
-        { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
-        { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
-        { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
-        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
-    ],
-    gestor: [
-        { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
-        { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
-        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
-    ],
-    diretoria: [
-        { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
-        { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
-        { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
-        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
-    ],
-    colaborador: [
-        { id: 'questionnairesTab', label: 'Questionários do Colaborador', key: 'questionarios' },
-        { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-        { id: 'pdiTab', label: 'Meu PDI', key: 'pdi' }
-    ],
-    analista: [
-        { id: 'questionnairesTab', label: 'Questionários do Colaborador', key: 'questionarios' },
-        { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
-        { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
-        { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-        { id: 'pdiTab', label: 'PDI', key: 'pdi' }
-    ]
-};
+        // Global variables
+        let currentUser = null;
+        let currentSurveyFilter = 'all';
 
+        // TABS Configuration
+        const TABS = {
+            admin: [
+                { id: 'questionnairesTab', label: 'Questionários', key: 'questionarios' },
+                { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
+                { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
+                { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
+                { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
+                { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
+                { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
+                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+            ],
+            gestor: [
+                { id: 'questionnairesTab', label: 'Minhas Pesquisas', key: 'questionarios' },
+                { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
+                { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
+                { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
+                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+            ],
+            diretoria: [
+                { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
+                { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
+                { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
+                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+            ],
+            colaborador: [
+                { id: 'questionnairesTab', label: 'Questionários do Colaborador', key: 'questionarios' },
+                { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
+                { id: 'pdiTab', label: 'Meu PDI', key: 'pdi' }
+            ],
+            analista: [
+                { id: 'questionnairesTab', label: 'Minhas Pesquisas', key: 'questionarios' },
+                { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
+                { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
+                { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
+                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+            ]
+        };
 
-// Survey templates
-const SURVEY_TEMPLATES = {
-    experiencia_45_colab: {
-        nome: 'Avaliação de Experiência - 45 Dias (Colaborador)',
-        tipo: 'experiencia_45_colab',
-        secoes: [
-            {
-                titulo: 'Acolhimento e Integração',
-                questoes: [
-                    { id: 'q1', texto: 'Como foi sua recepção pela empresa?', tipo: 'escala' },
-                    { id: 'q2', texto: 'Você recebeu as ferramentas necessárias para comecar?', tipo: 'sim_nao' },
-                    { id: 'q3', texto: 'Foi designada alguem para ajudar em sua integração?', tipo: 'sim_nao' },
-                    { id: 'q4', texto: 'Comentarios adicionais sobre o acolhimento', tipo: 'texto' }
+        // Survey Templates
+        const SURVEY_TEMPLATES = {
+            experiencia_45_colab: {
+                nome: 'Pesquisa de Experiência 45 dias - Colaborador',
+                tipo: 'experiencia_45_colab',
+                secoes: [
+                    {
+                        titulo: 'Acolhimento e Integração',
+                        questoes: [
+                            { id: 'acolhimento_1', tipo: 'escala', texto: 'Como você avalia o acolhimento durante os primeiros dias?' },
+                            { id: 'acolhimento_2', tipo: 'sim_nao', texto: 'Você recebeu todas as informações necessárias?' },
+                            { id: 'acolhimento_3', tipo: 'texto', texto: 'Quais foram as maiores dificuldades no seu acolhimento?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Equipe e Ambiente',
+                        questoes: [
+                            { id: 'equipe_1', tipo: 'escala', texto: 'Como você se sente integrado à equipe?' },
+                            { id: 'equipe_2', tipo: 'nps', texto: 'Qual a sua disposição em permanecer na empresa?' },
+                            { id: 'equipe_3', tipo: 'texto', texto: 'Comentários adicionais sobre a equipe' }
+                        ]
+                    }
                 ]
             },
-            {
-                titulo: 'Ambiente de Trabalho',
-                questoes: [
-                    { id: 'q5', texto: 'Como você avalia o ambiente de trabalho?', tipo: 'escala' },
-                    { id: 'q6', texto: 'O ambiente esta alinhado com o prometido no processo de seleção?', tipo: 'sim_nao' },
-                    { id: 'q7', texto: 'Comentarios sobre o ambiente', tipo: 'texto' }
+            desempenho_90_colab: {
+                nome: 'Pesquisa de Desempenho 90 dias - Colaborador',
+                tipo: 'desempenho_90_colab',
+                secoes: [
+                    {
+                        titulo: 'Desempenho e Desenvolvimento',
+                        questoes: [
+                            { id: 'desempenho_1', tipo: 'escala', texto: 'Como você avalia seu próprio desempenho?' },
+                            { id: 'desempenho_2', tipo: 'sim_nao', texto: 'Recebeu feedbacks sobre seu desenvolvimento?' },
+                            { id: 'desempenho_3', tipo: 'nps', texto: 'Qual sua satisfação com as oportunidades de aprendizado?' }
+                        ]
+                    }
                 ]
             },
-            {
-                titulo: 'Suporte da Liderança',
-                questoes: [
-                    { id: 'q8', texto: 'Seu lider esta acessível quando você precisa?', tipo: 'escala' },
-                    { id: 'q9', texto: 'As orientações e feedback sao claros?', tipo: 'sim_nao' },
-                    { id: 'q10', texto: 'Com que frequência você recebe feedback?', tipo: 'escala' },
-                    { id: 'q11', texto: 'Comentarios sobre o suporte da liderança', tipo: 'texto' }
+            experiencia_45_empresa: {
+                nome: 'Pesquisa de Experiência 45 dias - Empresa',
+                tipo: 'experiencia_45_empresa',
+                secoes: [
+                    {
+                        titulo: 'Avaliação da Empresa',
+                        questoes: [
+                            { id: 'empresa_1', tipo: 'escala', texto: 'Como você avalia o desempenho deste colaborador?' },
+                            { id: 'empresa_2', tipo: 'sim_nao', texto: 'O colaborador está adequado para a função?' },
+                            { id: 'empresa_3', tipo: 'texto', texto: 'Observações gerais sobre o colaborador' }
+                        ]
+                    }
                 ]
             },
-            {
-                titulo: 'Avaliação Geral',
-                questoes: [
-                    { id: 'q12', texto: 'Qual e sua satisfação geral com a empresa até o momento?', tipo: 'nps' },
-                    { id: 'q13', texto: 'Sugestões de melhorias', tipo: 'texto' }
+            desempenho_90_empresa: {
+                nome: 'Pesquisa de Desempenho 90 dias - Empresa',
+                tipo: 'desempenho_90_empresa',
+                secoes: [
+                    {
+                        titulo: 'Avaliação de Desempenho',
+                        questoes: [
+                            { id: 'perf_1', tipo: 'escala', texto: 'Qual sua avaliação final do desempenho?' },
+                            { id: 'perf_2', tipo: 'nps', texto: 'Recomendaria a continuidade deste colaborador?' }
+                        ]
+                    }
                 ]
             }
-        ]
-    },
-    experiencia_45_empresa: {
-        nome: 'Avaliação de Experiência - 45 Dias (Empresa)',
-        tipo: 'experiencia_45_empresa',
-        secoes: [
-            {
-                titulo: 'Adaptação e Integração',
-                questoes: [
-                    { id: 'q1', texto: 'Como você avalia a adaptação do colaborador?', tipo: 'escala' },
-                    { id: 'q2', texto: 'O colaborador se integrou bem ao time?', tipo: 'sim_nao' },
-                    { id: 'q3', texto: 'Comentarios sobre a integração', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Postura Profissional',
-                questoes: [
-                    { id: 'q4', texto: 'Como você avalia o comportamento profissional?', tipo: 'escala' },
-                    { id: 'q5', texto: 'Pontualidade e assiduidade estao adequadas?', tipo: 'sim_nao' },
-                    { id: 'q6', texto: 'Comunicação e clara e efetiva?', tipo: 'sim_nao' },
-                    { id: 'q7', texto: 'Comentarios sobre a postura', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Aprendizado Inicial',
-                questoes: [
-                    { id: 'q8', texto: 'Velocidade de aprendizado', tipo: 'escala' },
-                    { id: 'q9', texto: 'Compreensão das responsabilidades', tipo: 'escala' },
-                    { id: 'q10', texto: 'Comentarios sobre o aprendizado', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Avaliação Geral',
-                questoes: [
-                    { id: 'q11', texto: 'Sua avaliacao geral sobre os primeiros 45 dias', tipo: 'nps' },
-                    { id: 'q12', texto: 'Recomendações para os próximos meses', tipo: 'texto' }
-                ]
-            }
-        ]
-    },
-    desempenho_90_colab: {
-        nome: 'Avaliação de Desempenho - 90 Dias (Colaborador)',
-        tipo: 'desempenho_90_colab',
-        secoes: [
-            {
-                titulo: 'Desenvolvimento Profissional',
-                questoes: [
-                    { id: 'q1', texto: 'Como você avalia as oportunidades de crescimento profissional?', tipo: 'escala' },
-                    { id: 'q2', texto: 'Você recebeu treinamentos ou capacitacoes?', tipo: 'sim_nao' },
-                    { id: 'q3', texto: 'A carreira esta clara e definida?', tipo: 'sim_nao' },
-                    { id: 'q4', texto: 'Comentarios sobre desenvolvimento', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Gestao e Liderança',
-                questoes: [
-                    { id: 'q5', texto: 'Suporte do seu lider na evolucao profissional', tipo: 'escala' },
-                    { id: 'q6', texto: 'Qualidade do feedback recebido', tipo: 'escala' },
-                    { id: 'q7', texto: 'Metas e objetivos estao bem definidos?', tipo: 'sim_nao' },
-                    { id: 'q8', texto: 'Comentarios sobre liderança', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Cultura e Ambiente',
-                questoes: [
-                    { id: 'q9', texto: 'Dinamica e relacionamento com o time', tipo: 'escala' },
-                    { id: 'q10', texto: 'Como você avalia a cultura da empresa?', tipo: 'escala' },
-                    { id: 'q11', texto: 'Equilibrio entre trabalho e vida pessoal', tipo: 'escala' },
-                    { id: 'q12', texto: 'Comentarios sobre cultura e ambiente', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Avaliação Geral',
-                questoes: [
-                    { id: 'q13', texto: 'Sua satisfação evoluiu desde os primeiros 45 dias?', tipo: 'nps' },
-                    { id: 'q14', texto: 'O que poderia melhorar?', tipo: 'texto' }
-                ]
-            }
-        ]
-    },
-    desempenho_90_empresa: {
-        nome: 'Avaliação de Desempenho - 90 Dias (Empresa)',
-        tipo: 'desempenho_90_empresa',
-        secoes: [
-            {
-                titulo: 'Desempenho Técnico',
-                questoes: [
-                    { id: 'q1', texto: 'Qualidade do trabalho entregue', tipo: 'escala' },
-                    { id: 'q2', texto: 'Cumprimento de prazos e tarefas', tipo: 'escala' },
-                    { id: 'q3', texto: 'Comentarios sobre desempenho técnico', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Comportamento e Atitudes',
-                questoes: [
-                    { id: 'q4', texto: 'Profissionalismo e comprometimento', tipo: 'escala' },
-                    { id: 'q5', texto: 'Comunicação e colaboração com o time', tipo: 'escala' },
-                    { id: 'q6', texto: 'Comentarios sobre comportamento', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Proatividade e Crescimento',
-                questoes: [
-                    { id: 'q7', texto: 'Iniciativa e proatividade', tipo: 'escala' },
-                    { id: 'q8', texto: 'Interesse em aprender e evoluir', tipo: 'escala' },
-                    { id: 'q9', texto: 'Sugestões de melhorias apresentadas', tipo: 'sim_nao' },
-                    { id: 'q10', texto: 'Comentarios sobre crescimento', tipo: 'texto' }
-                ]
-            },
-            {
-                titulo: 'Alcance de Objetivos',
-                questoes: [
-                    { id: 'q11', texto: 'Alcance das metas estabelecidas', tipo: 'escala' },
-                    { id: 'q12', texto: 'Avaliação geral apos 90 dias', tipo: 'nps' },
-                    { id: 'q13', texto: 'Plano de acao para os próximos meses', tipo: 'texto' }
-                ]
-            }
-        ]
-    }
-};
+        };
 
-// Initialize app
-async function initializeApp() {
-    const session = sessionStorage.getItem('userSession');
-    if (session) {
-        try {
-            currentUser = JSON.parse(session);
-            showAppScreen();
-        } catch (e) {
-            console.error('Erro ao restaurar sessao:', e);
+        const navIcons = {
+            questionarios: '📋',
+            avaliações: '✅',
+            dashboard: '📊',
+            liberacoes: '🔓',
+            pesquisas: '📝',
+            colaboradores: '👥',
+            usuarios: '⚙️',
+            subordinados: '👨‍💼',
+            avaliadores: '📈',
+            pesquisas_colab: '📄',
+            respostas: '📁',
+            pdi: '🎯'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            criarAdminPadrao();
+        });
+
+        // Authentication Functions
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const users = await db.collection('usuarios').where('email', '==', email).get();
+                if (users.empty) {
+                    alert('Usuário não encontrado');
+                    return;
+                }
+
+                const user = users.docs[0];
+                const userData = user.data();
+                const hashedPassword = hashSenha(password);
+
+                if (userData.senha !== hashedPassword) {
+                    alert('Senha incorreta');
+                    return;
+                }
+
+                currentUser = { id: user.id, ...userData };
+                showAppScreen();
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                alert('Erro ao fazer login: ' + error.message);
+            }
+        }
+
+        function hashSenha(senha) {
+            return CryptoJS.SHA256(senha).toString();
+        }
+
+        async function criarAdminPadrao() {
+            try {
+                const admins = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
+                if (admins.empty) {
+                    const hashedPassword = hashSenha('admin123');
+                    await db.collection('usuarios').add({
+                        nome: 'Administrador',
+                        email: 'admin@empresa.com',
+                        senha: hashedPassword,
+                        perfil: 'admin',
+                        ativo: true,
+                        data_criacao: new Date()
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao criar admin padrão:', error);
+            }
+        }
+
+        function showForgotPassword() {
+            const html = `
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <input type="email" id="forgotEmail" placeholder="seu@email.com" required>
+                </div>
+            `;
+            openModal('Recuperar Senha', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Enviar', onclick: 'enviarEmailSenha()', class: 'btn-primary' }
+            ]);
+        }
+
+        async function enviarEmailSenha() {
+            const email = document.getElementById('forgotEmail').value;
+            try {
+                const users = await db.collection('usuarios').where('email', '==', email).get();
+                if (users.empty) {
+                    alert('Email não encontrado');
+                    return;
+                }
+                const newPassword = generatePassword();
+                await users.docs[0].ref.update({
+                    senha: hashSenha(newPassword)
+                });
+                alert('Nova senha enviada para ' + email + ': ' + newPassword);
+                closeModal();
+            } catch (error) {
+                console.error('Erro ao enviar email:', error);
+                alert('Erro ao enviar email: ' + error.message);
+            }
+        }
+
+        function generatePassword() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        function handleLogout() {
+            currentUser = null;
             showLoginScreen();
-        }
-    } else {
-        showLoginScreen();
-    }
-}
-
-async function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('emailInput').value.trim();
-    const senha = document.getElementById('senhaInput').value;
-
-    try {
-        console.log('Tentando login com:', email);
-        const snapshot = await db.collection('usuarios').where('email', '==', email).get();
-
-        if (snapshot.empty) {
-            alert('Usuário não encontrado. Verifique o e-mail digitado.');
-            return;
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
         }
 
-        const usuario = snapshot.docs[0].data();
-        usuario.id = snapshot.docs[0].id;
-
-        const senhaHash = await hashSenha(senha);
-        console.log('Hash digitado:', senhaHash);
-        console.log('Hash salvo:', usuario.senha);
-        console.log('Match:', usuario.senha === senhaHash);
-
-        if (usuario.senha !== senhaHash) {
-            alert('Senha incorreta.');
-            return;
+        function showAppScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'flex';
+            buildNavigation();
+            loadDashboard();
+            document.getElementById('userNameDisplay').textContent = currentUser.nome;
+            document.getElementById('userRoleDisplay').innerHTML = '<strong>Perfil:</strong> ' + currentUser.perfil;
         }
 
-        if (usuario.ativo === false) {
-            alert('Usuário inativo. Contate o administrador.');
-            return;
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appScreen').style.display = 'none';
         }
 
-        currentUser = usuario;
-        sessionStorage.setItem('userSession', JSON.stringify(currentUser));
-        showAppScreen();
-    } catch (error) {
-        console.error('Erro no login:', error);
-        alert('Erro ao conectar com o servidor. Verifique sua conexão e tente novamente.\n\nDetalhes: ' + error.message);
-    }
-}
-
-async function showForgotPassword() {
-    const email = prompt('Digite seu email:');
-    if (!email) return;
-
-    try {
-        const snapshot = await db.collection('usuarios').where('email', '==', email.trim()).get();
-        if (snapshot.empty) {
-            alert('Email não encontrado');
-            return;
-        }
-
-        const docId = snapshot.docs[0].id;
-        const usuario = snapshot.docs[0].data();
-        const novaSenha = generatePassword();
-        const senhaHash = await hashSenha(novaSenha);
-
-        await db.collection('usuarios').doc(docId).update({
-            senha: senhaHash,
-            provisoria: true
-        });
-        enviarEmailSenha(usuario.nome, usuario.email, novaSenha);
-    } catch (error) {
-        console.error('Erro:', error);
-        alert('Erro ao processar recuperação de senha: ' + error.message);
-    }
-}
-
-function generatePassword(length = 8) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let password = '';
-    for (let i = 0; i < length; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
-}
-
-function enviarEmailSenha(nome, email, novaSenha) {
-    const templateParams = {
-        to_name: nome,
-        to_email: email,
-        subject: 'Plano de Desenvolvimento - Recuperacao de Senha',
-        nova_senha: novaSenha
-    };
-
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-        .then(() => {
-            alert('Email com nova senha enviado para ' + email);
-        })
-        .catch(() => {
-            alert('Erro ao enviar email. Sua senha temporária e: ' + novaSenha);
-        });
-}
-
-function showAppScreen() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'flex';
-    buildNavigation();
-    loadDashboard();
-    document.getElementById('userNameDisplay').textContent = currentUser.nome;
-    document.getElementById('userRoleDisplay').innerHTML = '<strong>Perfil:</strong> ' + currentUser.perfil;
-}
-
-function showLoginScreen() {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appScreen').style.display = 'none';
-}
-
-
-const navIcons = {
-    questionarios: '📋',
-    avaliações: '✅',
-    dashboard: '📊',
-    liberacoes: '🔓',
-    pesquisas: '📝',
-    colaboradores: '👥',
-    usuarios: '⚙️',
-    subordinados: '👨‍💼',
-    avaliadores: '📈',
-    pesquisas_colab: '📄',
-    respostas: '📁',
-    pdi: '🎯'
-};
-
-function buildNavigation() {
-    const navMenu = document.getElementById('navMenu');
-    navMenu.innerHTML = '';
-
-    const tabs = TABS[currentUser.perfil] || [];
-    tabs.forEach((tab, index) => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        const icon = navIcons[tab.key] || '•';
-        const span = document.createElement('span');
-        span.textContent = tab.label;
-        a.appendChild(document.createTextNode(icon + ' '));
-        a.appendChild(span);
-        a.onclick = () => switchTab(tab.id, a);
-        if (index === 0) a.classList.add('active');
-        li.appendChild(a);
-        navMenu.appendChild(li);
-    });
-
-    switchTab(tabs[0].id, navMenu.querySelector('a'));
-}
-
-function toggleSidebar() {
-    document.querySelector('.sidebar').classList.toggle('collapsed');
-}
-
-function switchTab(tabId, element) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.nav-menu a').forEach(link => link.classList.remove('active'));
-
-    const tabElement = document.getElementById(tabId);
-    if (tabElement) {
-        tabElement.classList.add('active');
-        element.classList.add('active');
-
-        if (tabId === 'questionnairesTab') loadQuestionnaires();
-        else if (tabId === 'evaluationsTab') loadEvaluations();
-        else if (tabId === 'subordinatesTab') loadSubordinates();
-        else if (tabId === 'dashboardTab') loadDashboard();
-        else if (tabId === 'liberacoesTab') loadLiberacoes();
-        else if (tabId === 'pesquisasTab') loadPesquisas();
-        else if (tabId === 'colaboradoresTab') loadColaboradores();
-        else if (tabId === 'usuariosTab') loadUsuarios();
-        else if (tabId === 'respostasTab') loadRespostas();
-        else if (tabId === 'gestoresTab') loadAvaliadoresTab();
-        else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
-        else if (tabId === 'pdiTab') loadPDI();
-    }
-}
-
-async function loadQuestionnaires() {
-    const container = document.getElementById('questionnairesContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const liberacoes = await db.collection('liberacoes')
-            .where('colaborador_id', '==', currentUser.id)
-            .get();
-
-        const liberadosTipos = {};
-        liberacoes.forEach(doc => {
-            liberadosTipos[doc.data().tipo_pesquisa] = true;
-        });
-
-        if (Object.keys(liberadosTipos).length === 0) {
-            container.innerHTML = '<div class="alert alert-info">Nenhum questionario disponivel no momento.</div>';
-            return;
-        }
-
-        let html = '';
-        const tiposOrdenados = ['experiencia_45_colab', 'desempenho_90_colab'];
-
-        for (const tipo of tiposOrdenados) {
-            if (liberadosTipos[tipo]) {
-                const template = SURVEY_TEMPLATES[tipo];
-                html += '<div class="card" data-survey-type="' + tipo + '">';
-                html += '<div class="card-header">';
-                html += '<div>';
-                html += '<div class="card-title">' + template.nome + '</div>';
-                html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Responda as questoes abaixo</div>';
-                html += '</div>';
-                html += '<button class="btn btn-primary btn-small" onclick="openSurveyModal(\'' + tipo + '\')">Responder</button>';
-                html += '</div>';
-                html += '</div>';
-            }
-        }
-
-        if (html === '') {
-            container.innerHTML = '<div class="alert alert-info">Nenhum questionario disponivel no momento.</div>';
-        } else {
-            container.innerHTML = html;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar questionarios:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar questionarios</div>';
-    }
-}
-
-async function loadEvaluations() {
-    const container = document.getElementById('evaluationsContainer');
-
-    try {
-        let query;
-        if (currentUser.perfil === 'admin') {
-            query = db.collection('usuarios').where('perfil', '==', 'colaborador');
-        } else {
-            query = db.collection('usuarios').where('lider', '==', currentUser.nome).where('perfil', '==', 'colaborador');
-        }
-        const colaboradores = await query.get();
-
-        const select = document.getElementById('collaboratorSelect');
-        select.innerHTML = '<option value="">-- Selecione um colaborador --</option>';
-
-        colaboradores.forEach(doc => {
-            const colaborador = doc.data();
-            const option = document.createElement('option');
-            option.value = doc.id;
-            option.textContent = colaborador.nome;
-            select.appendChild(option);
-        });
-
-        container.innerHTML = '';
-    } catch (error) {
-        console.error('Erro ao carregar avaliações:', error);
-    }
-}
-
-async function loadEvaluationsForCollaborator() {
-    const collaboratorId = document.getElementById('collaboratorSelect').value;
-    const container = document.getElementById('evaluationsContainer');
-
-    if (!collaboratorId) {
-        container.innerHTML = '';
-        return;
-    }
-
-    try {
-        const liberacoes = await db.collection('liberacoes')
-            .where('colaborador_id', '==', collaboratorId)
-            .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
-            .get();
-
-        const liberadosTipos = {};
-        liberacoes.forEach(doc => {
-            liberadosTipos[doc.data().tipo_pesquisa] = true;
-        });
-
-        let html = '';
-        const tiposOrdenados = ['experiencia_45_empresa', 'desempenho_90_empresa'];
-
-        for (const tipo of tiposOrdenados) {
-            if (liberadosTipos[tipo]) {
-                const template = SURVEY_TEMPLATES[tipo];
-                html += '<div class="card" data-survey-type="' + tipo + '" data-collaborator-id="' + collaboratorId + '">';
-                html += '<div class="card-header">';
-                html += '<div>';
-                html += '<div class="card-title">' + template.nome + '</div>';
-                html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Avaliação do colaborador</div>';
-                html += '</div>';
-                html += '<button class="btn btn-primary btn-small" onclick="openEvaluationModal(\'' + tipo + '\', \'' + collaboratorId + '\')">Avaliar</button>';
-                html += '</div>';
-                html += '</div>';
-            }
-        }
-
-        if (html === '') {
-            container.innerHTML = '<div class="alert alert-info">Nenhuma avaliacao disponivel para este colaborador.</div>';
-        } else {
-            container.innerHTML = html;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar avaliações do colaborador:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
-    }
-}
-
-function openSurveyModal(tipo) {
-    const template = SURVEY_TEMPLATES[tipo];
-    let html = '';
-
-    template.secoes.forEach(secao => {
-        html += '<div class="form-section">';
-        html += '<div class="form-section-title">' + secao.titulo + '</div>';
-        secao.questoes.forEach(q => {
-            html += renderQuestion(q, tipo);
-        });
-        html += '</div>';
-    });
-
-    openModal(template.nome, html, [
-        { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-        { text: 'Enviar', onclick: 'saveSurvey("' + tipo + '")', class: 'btn-primary' }
-    ]);
-}
-
-function openEvaluationModal(tipo, collaboratorId) {
-    const template = SURVEY_TEMPLATES[tipo];
-    let html = '';
-
-    template.secoes.forEach(secao => {
-        html += '<div class="form-section">';
-        html += '<div class="form-section-title">' + secao.titulo + '</div>';
-        secao.questoes.forEach(q => {
-            html += renderQuestion(q, tipo);
-        });
-        html += '</div>';
-    });
-
-    openModal(template.nome, html, [
-        { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-        { text: 'Enviar', onclick: 'saveEvaluation("' + tipo + '", "' + collaboratorId + '")', class: 'btn-primary' }
-    ]);
-}
-
-function renderQuestion(question, surveyType) {
-    const questionId = surveyType + '_' + question.id;
-
-    if (question.tipo === 'escala') {
-        let html = '<div class="question-group">';
-        html += '<label class="question-label">' + question.texto + '</label>';
-        html += '<div class="scale-buttons">';
-        for (let n = 1; n <= 5; n++) {
-            html += '<button type="button" class="scale-btn" onclick="selectScale(\'' + questionId + '\', ' + n + ')">' + n + '</button>';
-        }
-        html += '</div>';
-        html += '<input type="hidden" id="' + questionId + '" value="">';
-        html += '</div>';
-        return html;
-    } else if (question.tipo === 'sim_nao') {
-        let html = '<div class="question-group">';
-        html += '<label class="question-label">' + question.texto + '</label>';
-        html += '<div class="radio-group">';
-        html += '<div class="radio-item">';
-        html += '<input type="radio" id="' + questionId + '_yes" name="' + questionId + '" value="sim" onchange="selectOption(\'' + questionId + '\', \'sim\')">';
-        html += '<label for="' + questionId + '_yes">Sim</label>';
-        html += '</div>';
-        html += '<div class="radio-item">';
-        html += '<input type="radio" id="' + questionId + '_no" name="' + questionId + '" value="nao" onchange="selectOption(\'' + questionId + '\', \'nao\')">';
-        html += '<label for="' + questionId + '_no">Nao</label>';
-        html += '</div>';
-        html += '</div>';
-        html += '<input type="hidden" id="' + questionId + '" value="">';
-        html += '</div>';
-        return html;
-    } else if (question.tipo === 'nps') {
-        let html = '<div class="question-group">';
-        html += '<label class="question-label">' + question.texto + '</label>';
-        html += '<div class="nps-buttons">';
-        for (let i = 0; i <= 10; i++) {
-            html += '<button type="button" class="nps-btn" onclick="selectNps(\'' + questionId + '\', ' + i + ')">' + i + '</button>';
-        }
-        html += '</div>';
-        html += '<input type="hidden" id="' + questionId + '" value="">';
-        html += '</div>';
-        return html;
-    } else if (question.tipo === 'texto') {
-        let html = '<div class="question-group">';
-        html += '<label class="question-label">' + question.texto + '</label>';
-        html += '<textárea class="textárea-input" id="' + questionId + '" placeholder="Suas respostas aqui..."></textárea>';
-        html += '</div>';
-        return html;
-    }
-
-    return '';
-}
-
-function selectScale(questionId, value) {
-    document.getElementById(questionId).value = value;
-    const buttons = document.querySelectorAll('button[onclick*="' + questionId + '"]');
-    buttons.forEach(btn => btn.classList.remove('selected'));
-    event.target.classList.add('selected');
-}
-
-function selectNps(questionId, value) {
-    document.getElementById(questionId).value = value;
-    const buttons = document.querySelectorAll('button[onclick*="' + questionId + '"]');
-    buttons.forEach(btn => btn.classList.remove('selected'));
-    event.target.classList.add('selected');
-}
-
-function selectOption(questionId, value) {
-    document.getElementById(questionId).value = value;
-}
-
-async function saveSurvey(tipo) {
-    const template = SURVEY_TEMPLATES[tipo];
-    const respostas = {};
-
-    template.secoes.forEach(secao => {
-        secao.questoes.forEach(questao => {
-            const inputId = tipo + '_' + questao.id;
-            const input = document.getElementById(inputId);
-            if (input) {
-                respostas[questao.id] = input.value;
-            }
-        });
-    });
-
-    try {
-        await db.collection('respostas').add({
-            usuario_id: currentUser.id,
-            usuario_nome: currentUser.nome,
-            tipo_pesquisa: tipo,
-            respostas: respostas,
-            data_resposta: new Date(),
-            colaborador_id: currentUser.id
-        });
-
-        alert('Questionário salvo com sucesso!');
-        closeModal();
-        loadQuestionnaires();
-    } catch (error) {
-        console.error('Erro ao salvar questionario:', error);
-        alert('Erro ao salvar: ' + error.message);
-    }
-}
-
-async function saveEvaluation(tipo, collaboratorId) {
-    const template = SURVEY_TEMPLATES[tipo];
-    const respostas = {};
-
-    template.secoes.forEach(secao => {
-        secao.questoes.forEach(questao => {
-            const inputId = tipo + '_' + questao.id;
-            const input = document.getElementById(inputId);
-            if (input) {
-                respostas[questao.id] = input.value;
-            }
-        });
-    });
-
-    try {
-        await db.collection('pesquisas').add({
-            avaliador_id: currentUser.id,
-            avaliador_nome: currentUser.nome,
-            colaborador_id: collaboratorId,
-            tipo_pesquisa: tipo,
-            respostas: respostas,
-            data_avaliacao: new Date()
-        });
-
-        alert('Avaliação salva com sucesso!');
-        closeModal();
-        loadEvaluationsForCollaborator();
-    } catch (error) {
-        console.error('Erro ao salvar avaliacao:', error);
-        alert('Erro ao salvar: ' + error.message);
-    }
-}
-
-function filterSurveys(filter) {
-    currentSurveyFilter = filter;
-    const cards = document.querySelectorAll('#questionnairesContainer .card');
-    cards.forEach(card => {
-        if (filter === 'all') {
-            card.style.display = 'block';
-        } else {
-            card.style.display = card.dataset.surveyType === filter ? 'block' : 'none';
-        }
-    });
-}
-
-function filterEvaluations(filter) {
-    currentEvaluationFilter = filter;
-    const cards = document.querySelectorAll('#evaluationsContainer .card');
-    cards.forEach(card => {
-        if (filter === 'all') {
-            card.style.display = 'block';
-        } else {
-            card.style.display = card.dataset.surveyType === filter ? 'block' : 'none';
-        }
-    });
-}
-
-async function loadLiberacoes() {
-    const container = document.getElementById('liberacoesContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const usuarios = await db.collection('usuarios')
-            .where('perfil', '==', 'colaborador')
-            .get();
-
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Liberar Pesquisas para Colaboradores</h2></div>';
-        html += '<div style="padding: 20px;">';
-
-        if (usuarios.empty) {
-            html += '<div class="alert alert-info">Nenhum colaborador cadastrado ainda. Vá em <strong>Usuários</strong> para cadastrar colaboradores e depois volte aqui para liberar as pesquisas.</div>';
-            html += '</div></div>';
-            container.innerHTML = html;
-            return;
-        }
-
-        for (const doc of usuarios.docs) {
-            const usuario = doc.data();
-            const liberacoes = await db.collection('liberacoes')
-                .where('colaborador_id', '==', doc.id)
-                .get();
-
-            const liberadosTipos = {};
-            liberacoes.forEach(lib => {
-                liberadosTipos[lib.data().tipo_pesquisa] = lib.id;
+        function buildNavigation() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.innerHTML = '';
+
+            const tabs = TABS[currentUser.perfil] || [];
+            tabs.forEach((tab, index) => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                const icon = navIcons[tab.key] || '•';
+                const span = document.createElement('span');
+                span.textContent = tab.label;
+                a.appendChild(document.createTextNode(icon + ' '));
+                a.appendChild(span);
+                a.onclick = () => switchTab(tab.id, a);
+                if (index === 0) a.classList.add('active');
+                li.appendChild(a);
+                navMenu.appendChild(li);
             });
 
-            html += '<div style="margin-bottom: 25px; padding: 15px; background: var(--light); border-radius: 8px;">';
-            html += '<h3 style="margin-bottom: 10px; color: var(--dark);">' + usuario.nome + '</h3>';
-            html += '<div class="checkbox-group" style="display: flex; flex-direction: column; gap: 8px;">';
-            html += '<label style="display: flex; gap: 10px; align-items: center;">';
-            html += '<input type="checkbox" ' + (liberadosTipos['experiencia_45_colab'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'experiencia_45_colab\', this.checked)">';
-            html += 'Experiência 45 Dias (Colaborador)';
-            html += '</label>';
-            html += '<label style="display: flex; gap: 10px; align-items: center;">';
-            html += '<input type="checkbox" ' + (liberadosTipos['desempenho_90_colab'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'desempenho_90_colab\', this.checked)">';
-            html += 'Desempenho 90 Dias (Colaborador)';
-            html += '</label>';
-            html += '<label style="display: flex; gap: 10px; align-items: center;">';
-            html += '<input type="checkbox" ' + (liberadosTipos['experiencia_45_empresa'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'experiencia_45_empresa\', this.checked)">';
-            html += 'Experiência 45 Dias (Empresa)';
-            html += '</label>';
-            html += '<label style="display: flex; gap: 10px; align-items: center;">';
-            html += '<input type="checkbox" ' + (liberadosTipos['desempenho_90_empresa'] ? 'checked' : '') + ' onchange="toggleLiberacao(\'' + doc.id + '\', \'desempenho_90_empresa\', this.checked)">';
-            html += 'Desempenho 90 Dias (Empresa)';
-            html += '</label>';
-            html += '</div>';
-            html += '</div>';
+            switchTab(tabs[0].id, navMenu.querySelector('a'));
         }
 
-        html += '</div></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar liberacoes:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar liberacoes</div>';
-    }
-}
-
-async function toggleLiberacao(colaboradorId, tipo, checked) {
-    try {
-        if (checked) {
-            await db.collection('liberacoes').add({
-                colaborador_id: colaboradorId,
-                tipo_pesquisa: tipo,
-                liberado_por: currentUser.email,
-                data_liberacao: new Date()
-            });
-        } else {
-            const query = await db.collection('liberacoes')
-                .where('colaborador_id', '==', colaboradorId)
-                .where('tipo_pesquisa', '==', tipo)
-                .get();
-
-            query.forEach(doc => {
-                db.collection('liberacoes').doc(doc.id).delete();
-            });
-        }
-    } catch (error) {
-        console.error('Erro ao atualizar liberacao:', error);
-        alert('Erro ao atualizar liberacao');
-    }
-}
-
-async function loadPesquisas() {
-    const container = document.getElementById('pesquisasContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const pesquisas = await db.collection('pesquisas').get();
-
-        if (pesquisas.empty) {
-            container.innerHTML = '<div class="alert alert-info">Nenhuma pesquisa registrada.</div>';
-            return;
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
         }
 
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Avaliações Registradas</h2></div>';
-        html += '<table class="table"><thead><tr><th>Colaborador</th><th>Avaliador</th><th>Tipo</th><th>Data</th></tr></thead><tbody>';
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-menu a').forEach(link => link.classList.remove('active'));
 
-        pesquisas.forEach(doc => {
-            const pesquisa = doc.data();
-            const data = pesquisa.data_avaliacao ? new Date(pesquisa.data_avaliacao.toDate()).toLocaleDateString('pt-BR') : 'N/A';
-            html += '<tr><td>' + pesquisa.colaborador_id + '</td><td>' + pesquisa.avaliador_nome + '</td><td>' + pesquisa.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
-        });
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                tabElement.classList.add('active');
+                element.classList.add('active');
 
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar pesquisas:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
-    }
-}
-
-async function loadColaboradores() {
-    const container = document.getElementById('colaboradoresContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const usuarios = await db.collection('usuarios')
-            .where('perfil', '==', 'colaborador')
-            .get();
-
-        if (usuarios.empty) {
-            container.innerHTML = '<div class="alert alert-info">Nenhum colaborador registrado.</div>';
-            return;
+                if (tabId === 'questionnairesTab') loadQuestionnaires();
+                else if (tabId === 'evaluationsTab') loadEvaluations();
+                else if (tabId === 'subordinatesTab') loadSubordinates();
+                else if (tabId === 'dashboardTab') loadDashboard();
+                else if (tabId === 'liberacoesTab') loadLiberacoes();
+                else if (tabId === 'pesquisasTab') loadPesquisas();
+                else if (tabId === 'colaboradoresTab') loadColaboradores();
+                else if (tabId === 'usuariosTab') loadUsuarios();
+                else if (tabId === 'respostasTab') loadRespostas();
+                else if (tabId === 'gestoresTab') loadAvaliadoresTab();
+                else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
+                else if (tabId === 'pdiTab') loadPDI();
+            }
         }
 
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Colaboradores</h2></div>';
-        html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Setor</th><th>Lider</th><th>Cargo</th><th>Status</th></tr></thead><tbody>';
+        async function loadQuestionnaires() {
+            const container = document.getElementById('questionnairesContainer');
+            container.innerHTML = '<div class="loading"></div>';
 
-        usuarios.forEach(doc => {
-            const usuario = doc.data();
-            const status = usuario.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-            html += '<tr><td>' + usuario.nome + '</td><td>' + usuario.email + '</td><td>' + (usuario.setor || 'N/A') + '</td><td>' + (usuario.lider || 'N/A') + '</td><td>' + (usuario.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
-        });
+            try {
+                const liberacoes = await db.collection('liberacoes')
+                    .where('colaborador_id', '==', currentUser.id)
+                    .get();
 
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar colaboradores:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar colaboradores</div>';
-    }
-}
+                const liberadosTipos = {};
+                liberacoes.forEach(doc => {
+                    liberadosTipos[doc.data().tipo_pesquisa] = true;
+                });
 
-async function loadUsuarios() {
-    const container = document.getElementById('usuariosContainer');
-    container.innerHTML = '<div class="loading"></div>';
+                if (Object.keys(liberadosTipos).length === 0) {
+                    container.innerHTML = '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
+                    return;
+                }
 
-    // Setup form handler
-    const form = document.getElementById('newUserForm');
-    form.onsubmit = async function(e) {
-        e.preventDefault();
-        try {
-            const nome = document.getElementById('newUserNome').value;
-            const email = document.getElementById('newUserEmail').value;
-            const perfil = document.getElementById('newUserPerfil').value;
-            const setor = document.getElementById('newUserSetor').value;
-            const lider = document.getElementById('newUserLider').value;
-            const cargo = document.getElementById('newUserCargo').value;
+                let html = '';
+                const tiposOrdenados = ['experiencia_45_colab', 'desempenho_90_colab'];
 
-            // Verificar se email já existe
-            const existe = await db.collection('usuarios').where('email', '==', email).get();
-            if (!existe.empty) {
-                alert('Já existe um usuário com este e-mail.');
+                for (const tipo of tiposOrdenados) {
+                    if (liberadosTipos[tipo]) {
+                        const template = SURVEY_TEMPLATES[tipo];
+                        html += '<div class="card" data-survey-type="' + tipo + '">';
+                        html += '<div class="card-header">';
+                        html += '<div>';
+                        html += '<div class="card-title">' + template.nome + '</div>';
+                        html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Responda as questões abaixo</div>';
+                        html += '</div>';
+                        html += '<button class="btn btn-primary btn-small" onclick="openSurveyModal(\'' + tipo + '\')">Responder</button>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
+                }
+
+                if (html === '') {
+                    container.innerHTML = '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
+                } else {
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar questionários:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar questionários</div>';
+            }
+        }
+
+        async function loadEvaluations() {
+            const container = document.getElementById('evaluationsContainer');
+
+            try {
+                const select = document.getElementById('collaboratorSelect');
+                select.innerHTML = '<option value="">-- Selecione um membro da equipe --</option>';
+
+                if (currentUser.perfil === 'admin') {
+                    const todos = await db.collection('usuarios').get();
+                    todos.forEach(doc => {
+                        const u = doc.data();
+                        if (doc.id !== currentUser.id) {
+                            const option = document.createElement('option');
+                            option.value = doc.id;
+                            option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
+                            select.appendChild(option);
+                        }
+                    });
+                } else {
+                    const subordinados = await db.collection('usuarios')
+                        .where('lider', '==', currentUser.nome)
+                        .get();
+                    subordinados.forEach(doc => {
+                        const u = doc.data();
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
+                        select.appendChild(option);
+                    });
+                }
+
+                container.innerHTML = '';
+            } catch (error) {
+                console.error('Erro ao carregar avaliações:', error);
+            }
+        }
+
+        async function loadEvaluationsForCollaborator() {
+            const collaboratorId = document.getElementById('collaboratorSelect').value;
+            const container = document.getElementById('evaluationsContainer');
+
+            if (!collaboratorId) {
+                container.innerHTML = '';
                 return;
             }
 
-            const senhaTemp = 'senha123';
-            const senhaHash = await hashSenha(senhaTemp);
-
-            await db.collection('usuarios').add({
-                nome, email, senha: senhaHash, perfil, setor, lider, cargo,
-                provisoria: true, ativo: true, created_at: new Date()
-            });
-
-            alert('Usuário criado com sucesso!\nSenha temporária: ' + senhaTemp);
-            form.reset();
-            loadUsuarios();
-        } catch (error) {
-            console.error('Erro ao criar usuário:', error);
-            alert('Erro ao criar usuário: ' + error.message);
-        }
-    };
-
-    try {
-        const snapshot = await db.collection('usuarios').get();
-
-        if (snapshot.empty) {
-            container.innerHTML = '<div class="alert alert-info">Nenhum usuário registrado.</div>';
-            return;
-        }
-
-        const perfilLabels = { admin: 'Administrador', gestor: 'Gestor', analista: 'Analista', diretoria: 'Diretoria', colaborador: 'Colaborador' };
-
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Usuários Cadastrados</h2></div>';
-        html += '<div class="table-wrapper"><table class="table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Setor</th><th>Líder</th><th>Cargo</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
-
-        snapshot.forEach(doc => {
-            const u = doc.data();
-            const status = u.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-            const perfilLabel = perfilLabels[u.perfil] || u.perfil;
-            const toggleLabel = u.ativo ? 'Desativar' : 'Ativar';
-            const toggleClass = u.ativo ? 'btn-warning' : 'btn-secondary';
-
-            html += '<tr>';
-            html += '<td>' + u.nome + '</td>';
-            html += '<td>' + u.email + '</td>';
-            html += '<td><span class="badge badge-' + u.perfil + '">' + perfilLabel + '</span></td>';
-            html += '<td>' + (u.setor || 'N/A') + '</td>';
-            html += '<td>' + (u.lider || 'N/A') + '</td>';
-            html += '<td>' + (u.cargo || 'N/A') + '</td>';
-            html += '<td>' + status + '</td>';
-            html += '<td class="actions-cell">';
-            html += '<button class="btn-xs" style="background:var(--info);" onclick="openEditUsuario(\'' + doc.id + '\')">Editar</button>';
-            html += '<button class="btn-xs" style="background:' + (u.ativo ? 'var(--warning);color:#333;' : 'var(--secondary);') + '" onclick="toggleUsuario(\'' + doc.id + '\', ' + u.ativo + ')">' + toggleLabel + '</button>';
-            html += '<button class="btn-xs" style="background:var(--danger);" onclick="deleteUsuario(\'' + doc.id + '\', \'' + u.nome + '\')">Excluir</button>';
-            html += '</td>';
-            html += '</tr>';
-        });
-
-        html += '</tbody></table></div></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar usuários</div>';
-    }
-}
-
-window.toggleUsuario = async function(userId, isAtivo) {
-    try {
-        await db.collection('usuarios').doc(userId).update({ ativo: !isAtivo });
-        loadUsuarios();
-    } catch (error) {
-        alert('Erro ao atualizar usuário: ' + error.message);
-    }
-};
-
-window.deleteUsuario = async function(userId, nome) {
-    if (!confirm('Tem certeza que deseja excluir o usuário "' + nome + '"? Esta ação não pode ser desfeita.')) return;
-    try {
-        await db.collection('usuarios').doc(userId).delete();
-        alert('Usuário excluído com sucesso.');
-        loadUsuarios();
-    } catch (error) {
-        alert('Erro ao excluir usuário: ' + error.message);
-    }
-};
-
-window.openEditUsuario = async function(userId) {
-    try {
-        const doc = await db.collection('usuarios').doc(userId).get();
-        if (!doc.exists) { alert('Usuário não encontrado.'); return; }
-        const u = doc.data();
-
-        let formHtml = '<form id="editUserForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">';
-        formHtml += '<div class="form-group"><label>Nome Completo</label><input type="text" id="editNome" value="' + (u.nome || '') + '" required></div>';
-        formHtml += '<div class="form-group"><label>E-mail</label><input type="email" id="editEmail" value="' + (u.email || '') + '" required></div>';
-        formHtml += '<div class="form-group"><label>Perfil de Acesso</label><select id="editPerfil" required>';
-        formHtml += '<option value="admin"' + (u.perfil === 'admin' ? ' selected' : '') + '>Administrador</option>';
-        formHtml += '<option value="gestor"' + (u.perfil === 'gestor' ? ' selected' : '') + '>Gestor</option>';
-        formHtml += '<option value="analista"' + (u.perfil === 'analista' ? ' selected' : '') + '>Analista</option>';
-        formHtml += '<option value="diretoria"' + (u.perfil === 'diretoria' ? ' selected' : '') + '>Diretoria</option>';
-        formHtml += '<option value="colaborador"' + (u.perfil === 'colaborador' ? ' selected' : '') + '>Colaborador</option>';
-        formHtml += '</select></div>';
-        formHtml += '<div class="form-group"><label>Setor</label><input type="text" id="editSetor" value="' + (u.setor || '') + '"></div>';
-        formHtml += '<div class="form-group"><label>Líder / Gestor</label><input type="text" id="editLider" value="' + (u.lider || '') + '"></div>';
-        formHtml += '<div class="form-group"><label>Cargo</label><input type="text" id="editCargo" value="' + (u.cargo || '') + '"></div>';
-        formHtml += '</form>';
-
-        document.getElementById('modalTitle').textContent = 'Editar Usuário';
-        document.getElementById('modalBody').innerHTML = formHtml;
-        document.getElementById('modalButtons').innerHTML = '<button class="btn btn-primary" onclick="saveEditUsuario(\'' + userId + '\')" style="width:auto;padding:10px 24px;">Salvar</button> <button class="btn btn-secondary" onclick="closeModal()" style="width:auto;padding:10px 24px;">Cancelar</button>';
-        document.getElementById('modal').style.display = 'flex';
-    } catch (error) {
-        alert('Erro ao carregar dados do usuário: ' + error.message);
-    }
-};
-
-window.saveEditUsuario = async function(userId) {
-    try {
-        const dados = {
-            nome: document.getElementById('editNome').value,
-            email: document.getElementById('editEmail').value,
-            perfil: document.getElementById('editPerfil').value,
-            setor: document.getElementById('editSetor').value,
-            lider: document.getElementById('editLider').value,
-            cargo: document.getElementById('editCargo').value
-        };
-
-        await db.collection('usuarios').doc(userId).update(dados);
-        alert('Usuário atualizado com sucesso!');
-        closeModal();
-        loadUsuarios();
-    } catch (error) {
-        alert('Erro ao atualizar usuário: ' + error.message);
-    }
-};
-
-async function loadRespostas() {
-    const container = document.getElementById('respostasContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const respostas = await db.collection('respostas')
-            .where('usuario_id', '==', currentUser.id)
-            .get();
-
-        if (respostas.empty) {
-            container.innerHTML = '<div class="alert alert-info">Você não respondeu a nenhum questionario ainda.</div>';
-            return;
-        }
-
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Minhas Respostas</h2></div>';
-        html += '<table class="table"><thead><tr><th>Questionário</th><th>Data</th><th>Acao</th></tr></thead><tbody>';
-
-        respostas.forEach(doc => {
-            const resposta = doc.data();
-            const data = resposta.data_resposta ? new Date(resposta.data_resposta.toDate()).toLocaleDateString('pt-BR') : 'N/A';
-            const template = SURVEY_TEMPLATES[resposta.tipo_pesquisa];
-            const nome = template ? template.nome : resposta.tipo_pesquisa;
-            html += '<tr><td>' + nome + '</td><td>' + data + '</td><td><button class="btn btn-primary btn-small" onclick="viewResposta(\'' + doc.id + '\')">Ver</button></td></tr>';
-        });
-
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar respostas:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar respostas</div>';
-    }
-}
-
-async function viewResposta(respostaId) {
-    try {
-        const doc = await db.collection('respostas').doc(respostaId).get();
-        const resposta = doc.data();
-        const template = SURVEY_TEMPLATES[resposta.tipo_pesquisa];
-
-        let html = '';
-        template.secoes.forEach(secao => {
-            html += '<div style="margin-bottom: 20px;"><h3 style="color: var(--primary); margin-bottom: 10px;">' + secao.titulo + '</h3>';
-            secao.questoes.forEach(questao => {
-                const valor = resposta.respostas[questao.id] || 'Não respondido';
-                html += '<p><strong>' + questao.texto + ':</strong> ' + valor + '</p>';
-            });
-            html += '</div>';
-        });
-
-        openModal(template.nome, html, [{ text: 'Fechar', onclick: 'closeModal()', class: 'btn-primary' }]);
-    } catch (error) {
-        console.error('Erro ao visualizar resposta:', error);
-        alert('Erro ao visualizar resposta');
-    }
-}
-
-async function loadSubordinates() {
-    const container = document.getElementById('subordinatesContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const subordinados = await db.collection('usuarios')
-            .where('lider', '==', currentUser.nome)
-            .where('perfil', '==', 'colaborador')
-            .get();
-
-        if (subordinados.empty) {
-            container.innerHTML = '<div class="alert alert-info">Você não tem colaboradores vinculados.</div>';
-            return;
-        }
-
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Meus Subordinados</h2></div>';
-        html += '<table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Setor</th><th>Cargo</th><th>Status</th></tr></thead><tbody>';
-
-        subordinados.forEach(doc => {
-            const usuario = doc.data();
-            const status = usuario.ativo ? '<span class="badge badge-secondary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-            html += '<tr><td>' + usuario.nome + '</td><td>' + usuario.email + '</td><td>' + (usuario.setor || 'N/A') + '</td><td>' + (usuario.cargo || 'N/A') + '</td><td>' + status + '</td></tr>';
-        });
-
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar subordinados:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar subordinados</div>';
-    }
-}
-
-async function loadDashboard() {
-    const container = document.getElementById('dashboardContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const usuarios = await db.collection('usuarios').get();
-        const pesquisas = await db.collection('pesquisas').get();
-        const respostas = await db.collection('respostas').get();
-
-        const totalUsuarios = usuarios.size;
-        const totalPesquisas = pesquisas.size;
-        const totalRespostas = respostas.size;
-
-        let html = '<div class="grid">';
-        html += '<div class="card">';
-        html += '<div style="text-align: center; padding: 20px;">';
-        html += '<div style="font-size: 32px; color: var(--primary); font-weight: 700;">' + totalUsuarios + '</div>';
-        html += '<div style="color: #636E72; margin-top: 10px;">Usuários Registrados</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '<div class="card">';
-        html += '<div style="text-align: center; padding: 20px;">';
-        html += '<div style="font-size: 32px; color: var(--secondary); font-weight: 700;">' + totalPesquisas + '</div>';
-        html += '<div style="color: #636E72; margin-top: 10px;">Avaliações</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '<div class="card">';
-        html += '<div style="text-align: center; padding: 20px;">';
-        html += '<div style="font-size: 32px; color: var(--info); font-weight: 700;">' + totalRespostas + '</div>';
-        html += '<div style="color: #636E72; margin-top: 10px;">Questionários Respondidos</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '</div>';
-
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar dashboard:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar dashboard</div>';
-    }
-}
-
-async function loadAvaliadoresTab() {
-    const container = document.getElementById('gestoresContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const pesquisas = await db.collection('pesquisas')
-            .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
-            .get();
-
-        if (pesquisas.empty) {
-            container.innerHTML = '<div class="alert alert-info">Nenhuma avaliacao registrada.</div>';
-            return;
-        }
-
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Avaliações dos Gestores</h2></div>';
-        html += '<table class="table"><thead><tr><th>Colaborador</th><th>Gestor</th><th>Tipo</th><th>Data</th></tr></thead><tbody>';
-
-        pesquisas.forEach(doc => {
-            const pesquisa = doc.data();
-            const data = pesquisa.data_avaliacao ? new Date(pesquisa.data_avaliacao.toDate()).toLocaleDateString('pt-BR') : 'N/A';
-            html += '<tr><td>' + pesquisa.colaborador_id + '</td><td>' + pesquisa.avaliador_nome + '</td><td>' + pesquisa.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
-        });
-
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar avaliações:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
-    }
-}
-
-async function loadPesquisasColabTab() {
-    const container = document.getElementById('pesquisasColabContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        const respostas = await db.collection('respostas')
-            .where('tipo_pesquisa', 'in', ['experiencia_45_colab', 'desempenho_90_colab'])
-            .get();
-
-        if (respostas.empty) {
-            container.innerHTML = '<div class="alert alert-info">Nenhum questionario respondido.</div>';
-            return;
-        }
-
-        let html = '<div class="card"><div class="card-header"><h2 style="color: var(--primary);">Pesquisas dos Colaboradores</h2></div>';
-        html += '<table class="table"><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead><tbody>';
-
-        respostas.forEach(doc => {
-            const resposta = doc.data();
-            const data = resposta.data_resposta ? new Date(resposta.data_resposta.toDate()).toLocaleDateString('pt-BR') : 'N/A';
-            html += '<tr><td>' + resposta.usuario_nome + '</td><td>' + resposta.tipo_pesquisa + '</td><td>' + data + '</td></tr>';
-        });
-
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Erro ao carregar pesquisas:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
-    }
-}
-
-function openModal(title, body, buttons) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalBody').innerHTML = body;
-
-    let buttonsHtml = '';
-    buttons.forEach(btn => {
-        buttonsHtml += '<button class="btn ' + btn.class + '" onclick="' + btn.onclick + '" style="margin-left: 10px;">' + btn.text + '</button>';
-    });
-    document.getElementById('modalButtons').innerHTML = buttonsHtml;
-    document.getElementById('modal').classList.add('active');
-}
-
-function closeModal() {
-    document.getElementById('modal').classList.remove('active');
-}
-
-function handleLogout() {
-    sessionStorage.removeItem('userSession');
-    currentUser = null;
-    showLoginScreen();
-    document.getElementById('emailInput').value = '';
-    document.getElementById('senhaInput').value = '';
-}
-
-
-async function loadPDI() {
-    const container = document.getElementById('pdiContainer');
-    container.innerHTML = '<div class="loading"></div>';
-
-    try {
-        if (currentUser.perfil === 'admin') {
-            await loadPDIAdmin(container);
-        } else if (['gestor', 'analista'].includes(currentUser.perfil)) {
-            await loadPDIGestorAnalista(container);
-        } else if (currentUser.perfil === 'colaborador') {
-            await loadPDIColaborador(container);
-        } else if (currentUser.perfil === 'diretoria') {
-            await loadPDIDiretoria(container);
-        }
-    } catch (error) {
-        console.error('Erro ao carregar PDI:', error);
-        container.innerHTML = '<div class="alert alert-error">Erro ao carregar PDI</div>';
-    }
-}
-
-async function loadPDIAdmin(container) {
-    let html = '<div class="card"><div class="card-header">';
-    html += '<h2 style="color: var(--primary);">Plano de Desenvolvimento Individual (PDI)</h2>';
-    html += '</div>';
-    html += '<button class="btn btn-primary" onclick="openPDIForm()" style="margin: 20px; width: auto;">Novo PDI</button>';
-    html += '<div id="pdiFormContainer"></div>';
-    html += '<div id="pdiListContainer"></div>';
-    html += '</div>';
-    
-    container.innerHTML = html;
-    loadPDIList(container);
-}
-
-async function loadPDIGestorAnalista(container) {
-    let html = '<div class="card"><div class="card-header">';
-    html += '<h2 style="color: var(--primary);">Plano de Desenvolvimento Individual (PDI)</h2>';
-    html += '</div>';
-    
-    const pdis = await db.collection('pdis')
-        .where('colaborador_id', '==', currentUser.id)
-        .get();
-    
-    if (pdis.empty) {
-        // Try fetching subordinates' PDIs
-        const subordinados = await db.collection('usuarios')
-            .where('lider', '==', currentUser.nome)
-            .get();
-        
-        if (subordinados.empty) {
-            html += '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI disponível.</div>';
-            container.innerHTML = html + '</div>';
-            return;
-        }
-        
-        const subordinadoIds = subordinados.docs.map(doc => doc.id);
-        if (subordinadoIds.length > 0) {
-            const pdiSubordinados = await db.collection('pdis')
-                .where('colaborador_id', 'in', subordinadoIds)
-                .get();
-            
-            if (!pdiSubordinados.empty) {
-                html += renderPDITable(pdiSubordinados.docs, false);
-            } else {
-                html += '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI disponível para seus subordinados.</div>';
-            }
-        }
-    } else {
-        html += renderPDITable(pdis.docs, false);
-    }
-    
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-async function loadPDIColaborador(container) {
-    let html = '<div class="card"><div class="card-header">';
-    html += '<h2 style="color: var(--primary);">Meu Plano de Desenvolvimento Individual</h2>';
-    html += '</div>';
-    
-    const pdis = await db.collection('pdis')
-        .where('colaborador_id', '==', currentUser.id)
-        .get();
-    
-    if (pdis.empty) {
-        html += '<div class="alert alert-info" style="margin: 20px;">Você não possui um PDI atribuído no momento.</div>';
-        container.innerHTML = html + '</div>';
-        return;
-    }
-    
-    html += renderPDITable(pdis.docs, false);
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-async function loadPDIDiretoria(container) {
-    let html = '<div class="card"><div class="card-header">';
-    html += '<h2 style="color: var(--primary);">Plano de Desenvolvimento Individual (PDI)</h2>';
-    html += '</div>';
-    
-    const pdis = await db.collection('pdis').get();
-    
-    if (pdis.empty) {
-        html += '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI registrado.</div>';
-        container.innerHTML = html + '</div>';
-        return;
-    }
-    
-    html += renderPDITable(pdis.docs, false);
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function renderPDITable(docs, showActions = true) {
-    let html = '<div style="overflow-x: auto; margin: 20px;"><table class="pdi-table"><thead><tr>';
-    html += '<th>Colaborador</th><th>Objetivo</th><th>Prazo</th><th>Status</th>';
-    if (showActions) html += '<th>Ações</th>';
-    html += '</tr></thead><tbody>';
-    
-    docs.forEach(doc => {
-        const pdi = doc.data();
-        const statusBadgeClass = 'badge-' + pdi.status;
-        const statusLabel = {
-            'pendente': 'Pendente',
-            'em_andamento': 'Em Andamento',
-            'concluido': 'Concluído',
-            'cancelado': 'Cancelado'
-        }[pdi.status] || pdi.status;
-        
-        const prazo = pdi.prazo ? new Date(pdi.prazo).toLocaleDateString('pt-BR') : 'N/A';
-        
-        html += '<tr>';
-        html += '<td>' + pdi.colaborador_nome + '</td>';
-        html += '<td>' + pdi.objetivo + '</td>';
-        html += '<td>' + prazo + '</td>';
-        html += '<td><span class="badge ' + statusBadgeClass + '">' + statusLabel + '</span></td>';
-        
-        if (showActions && currentUser.perfil === 'admin') {
-            html += '<td><button class="btn btn-primary btn-small" onclick="openPDIForm(\'' + doc.id + '\')" style="margin-right: 5px;">Editar</button>';
-            html += '<button class="btn btn-danger btn-small" onclick="deletePDI(\'' + doc.id + '\', \'' + pdi.colaborador_nome + '\')">Excluir</button></td>';
-        } else {
-            html += '<td><button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Ver</button></td>';
-        }
-        
-        html += '</tr>';
-    });
-    
-    html += '</tbody></table></div>';
-    return html;
-}
-
-async function loadPDIList(container) {
-    const listContainer = document.getElementById('pdiListContainer') || container;
-    
-    try {
-        const pdis = await db.collection('pdis').orderBy('created_at', 'desc').get();
-        
-        if (pdis.empty) {
-            listContainer.innerHTML = '<div class="alert alert-info" style="margin: 20px;">Nenhum PDI registrado.</div>';
-            return;
-        }
-        
-        let html = renderPDITable(pdis.docs, true);
-        if (document.getElementById('pdiListContainer')) {
-            document.getElementById('pdiListContainer').innerHTML = html;
-        } else {
-            listContainer.innerHTML += html;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar lista de PDI:', error);
-    }
-}
-
-async function openPDIForm(pdiId = null) {
-    const colaboradores = await db.collection('usuarios')
-        .where('perfil', '==', 'colaborador')
-        .get();
-    
-    let html = '<div class="pdi-form">';
-    html += '<h3 style="color: var(--primary); margin-bottom: 20px;">' + (pdiId ? 'Editar PDI' : 'Novo PDI') + '</h3>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Colaborador:</label>';
-    html += '<select id="pdiColaborador" required>';
-    html += '<option value="">Selecione um colaborador</option>';
-    
-    colaboradores.forEach(doc => {
-        html += '<option value="' + doc.id + '" data-nome="' + doc.data().nome + '">' + doc.data().nome + '</option>';
-    });
-    
-    html += '</select>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Objetivo:</label>';
-    html += '<textarea id="pdiObjetivo" placeholder="Descreva o objetivo do desenvolvimento" required></textarea>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Competências a Desenvolver:</label>';
-    html += '<textarea id="pdiCompetencias" placeholder="Liste as competências" required></textarea>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Ações e Atividades:</label>';
-    html += '<textarea id="pdiAcoes" placeholder="Descreva as ações e atividades" required></textarea>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Prazo:</label>';
-    html += '<input type="date" id="pdiPrazo" required>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Responsável:</label>';
-    html += '<input type="text" id="pdiResponsavel" placeholder="Nome do responsável" required>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Status:</label>';
-    html += '<select id="pdiStatus" required>';
-    html += '<option value="pendente">Pendente</option>';
-    html += '<option value="em_andamento">Em Andamento</option>';
-    html += '<option value="concluido">Concluído</option>';
-    html += '<option value="cancelado">Cancelado</option>';
-    html += '</select>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-section">';
-    html += '<label>Observações:</label>';
-    html += '<textarea id="pdiObservacoes" placeholder="Observações adicionais"></textarea>';
-    html += '</div>';
-    
-    html += '<div class="pdi-form-buttons">';
-    html += '<button class="btn btn-secondary" onclick="closePDIForm()" style="width: auto;">Cancelar</button>';
-    html += '<button class="btn btn-primary" onclick="savePDI(' + (pdiId ? '\'' + pdiId + '\'' : 'null') + ')" style="width: auto;">Salvar PDI</button>';
-    html += '</div>';
-    
-    html += '</div>';
-    
-    const formContainer = document.getElementById('pdiFormContainer');
-    if (formContainer) {
-        formContainer.innerHTML = html;
-        formContainer.scrollIntoView({ behavior: 'smooth' });
-        
-        // If editing, load existing data
-        if (pdiId) {
-            const doc = await db.collection('pdis').doc(pdiId).get();
-            const pdi = doc.data();
-            document.getElementById('pdiColaborador').value = pdi.colaborador_id;
-            document.getElementById('pdiObjetivo').value = pdi.objetivo;
-            document.getElementById('pdiCompetencias').value = pdi.competencias;
-            document.getElementById('pdiAcoes').value = pdi.acoes;
-            document.getElementById('pdiPrazo').value = pdi.prazo;
-            document.getElementById('pdiResponsavel').value = pdi.responsavel;
-            document.getElementById('pdiStatus').value = pdi.status;
-            document.getElementById('pdiObservacoes').value = pdi.observacoes || '';
-        }
-    }
-}
-
-function closePDIForm() {
-    const formContainer = document.getElementById('pdiFormContainer');
-    if (formContainer) {
-        formContainer.innerHTML = '';
-    }
-}
-
-async function savePDI(pdiId = null) {
-    const colaboradorSelect = document.getElementById('pdiColaborador');
-    const colaboradorId = colaboradorSelect.value;
-    const colaboradorNome = colaboradorSelect.options[colaboradorSelect.selectedIndex].dataset.nome;
-    
-    const pdiData = {
-        colaborador_id: colaboradorId,
-        colaborador_nome: colaboradorNome,
-        objetivo: document.getElementById('pdiObjetivo').value,
-        competencias: document.getElementById('pdiCompetencias').value,
-        acoes: document.getElementById('pdiAcoes').value,
-        prazo: document.getElementById('pdiPrazo').value,
-        responsavel: document.getElementById('pdiResponsavel').value,
-        status: document.getElementById('pdiStatus').value,
-        observacoes: document.getElementById('pdiObservacoes').value,
-        updated_at: new Date()
-    };
-    
-    try {
-        if (pdiId) {
-            await db.collection('pdis').doc(pdiId).update(pdiData);
-            alert('PDI atualizado com sucesso!');
-        } else {
-            pdiData.criado_por = currentUser.email;
-            pdiData.created_at = new Date();
-            await db.collection('pdis').add(pdiData);
-            alert('PDI criado com sucesso!');
-        }
-        
-        closePDIForm();
-        loadPDI();
-    } catch (error) {
-        console.error('Erro ao salvar PDI:', error);
-        alert('Erro ao salvar PDI: ' + error.message);
-    }
-}
-
-async function deletePDI(pdiId, colaboradorNome) {
-    if (!confirm('Tem certeza que deseja excluir o PDI de "' + colaboradorNome + '"? Esta ação não pode ser desfeita.')) {
-        return;
-    }
-    
-    try {
-        await db.collection('pdis').doc(pdiId).delete();
-        alert('PDI excluído com sucesso.');
-        loadPDI();
-    } catch (error) {
-        console.error('Erro ao excluir PDI:', error);
-        alert('Erro ao excluir PDI: ' + error.message);
-    }
-}
-
-async function viewPDI(pdiId) {
-    try {
-        const doc = await db.collection('pdis').doc(pdiId).get();
-        const pdi = doc.data();
-        
-        const statusLabel = {
-            'pendente': 'Pendente',
-            'em_andamento': 'Em Andamento',
-            'concluido': 'Concluído',
-            'cancelado': 'Cancelado'
-        }[pdi.status] || pdi.status;
-        
-        const prazo = pdi.prazo ? new Date(pdi.prazo).toLocaleDateString('pt-BR') : 'N/A';
-        
-        let html = '<div>';
-        html += '<p><strong>Colaborador:</strong> ' + pdi.colaborador_nome + '</p>';
-        html += '<p><strong>Objetivo:</strong></p>';
-        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.objetivo + '</p>';
-        html += '<p><strong>Competências a Desenvolver:</strong></p>';
-        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.competencias + '</p>';
-        html += '<p><strong>Ações e Atividades:</strong></p>';
-        html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.acoes + '</p>';
-        html += '<p><strong>Prazo:</strong> ' + prazo + '</p>';
-        html += '<p><strong>Responsável:</strong> ' + pdi.responsavel + '</p>';
-        html += '<p><strong>Status:</strong> <span class="badge badge-' + pdi.status + '">' + statusLabel + '</span></p>';
-        if (pdi.observacoes) {
-            html += '<p><strong>Observações:</strong></p>';
-            html += '<p style="white-space: pre-wrap; margin-left: 10px;">' + pdi.observacoes + '</p>';
-        }
-        html += '</div>';
-        
-        openModal('PDI - ' + pdi.colaborador_nome, html, [
-            { text: 'Fechar', onclick: 'closeModal()', class: 'btn-primary' }
-        ]);
-    } catch (error) {
-        console.error('Erro ao visualizar PDI:', error);
-        alert('Erro ao visualizar PDI');
-    }
-}
-
-
-// Função auxiliar de hash (compatível com crypto.subtle e CryptoJS)
-async function hashSenha(senha) {
-    if (typeof CryptoJS !== 'undefined') {
-        return CryptoJS.SHA256(senha).toString();
-    }
-    // Fallback para crypto.subtle (Web Crypto API)
-    const encoder = new TextEncoder();
-    const data = encoder.encode(senha);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// Criar ou corrigir admin padrão
-async function criarAdminPadrao() {
-    try {
-        const senhaHash = await hashSenha('admin123');
-        console.log('Hash esperado do admin:', senhaHash);
-        const snapshot = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
-
-        if (snapshot.empty) {
-            await db.collection('usuarios').add({
-                nome: 'Administrador',
-                email: 'admin@empresa.com',
-                senha: senhaHash,
-                perfil: 'admin',
-                setor: 'Administrativo',
-                lider: '',
-                cargo: 'Administrador',
-                provisoria: false,
-                ativo: true,
-                created_at: new Date()
-            });
-            console.log('Admin padrão criado com sucesso');
-        } else {
-            // Limpar duplicatas: manter apenas o primeiro, deletar os demais
-            if (snapshot.docs.length > 1) {
-                console.log('Encontradas ' + snapshot.docs.length + ' entradas de admin. Limpando duplicatas...');
-                for (let i = 1; i < snapshot.docs.length; i++) {
-                    await db.collection('usuarios').doc(snapshot.docs[i].id).delete();
+            try {
+                const liberacoes = await db.collection('liberacoes')
+                    .where('colaborador_id', '==', collaboratorId)
+                    .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
+                    .get();
+
+                const liberadosTipos = {};
+                liberacoes.forEach(doc => {
+                    liberadosTipos[doc.data().tipo_pesquisa] = true;
+                });
+
+                let html = '';
+                const tiposOrdenados = ['experiencia_45_empresa', 'desempenho_90_empresa'];
+
+                for (const tipo of tiposOrdenados) {
+                    if (liberadosTipos[tipo]) {
+                        const template = SURVEY_TEMPLATES[tipo];
+                        html += '<div class="card" data-survey-type="' + tipo + '" data-collaborator-id="' + collaboratorId + '">';
+                        html += '<div class="card-header">';
+                        html += '<div>';
+                        html += '<div class="card-title">' + template.nome + '</div>';
+                        html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Avaliação do colaborador</div>';
+                        html += '</div>';
+                        html += '<button class="btn btn-primary btn-small" onclick="openEvaluationModal(\'' + tipo + '\', \'' + collaboratorId + '\')">Avaliar</button>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
                 }
-                console.log('Duplicatas removidas.');
+
+                if (html === '') {
+                    container.innerHTML = '<div class="alert alert-info">Nenhuma avaliação disponível para este colaborador.</div>';
+                } else {
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar avaliações do colaborador:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
             }
-            // Sempre forçar a senha e o status correto
-            const adminDoc = snapshot.docs[0];
-            const adminData = adminDoc.data();
-            console.log('Hash salvo no Firestore:', adminData.senha);
-            await db.collection('usuarios').doc(adminDoc.id).update({
-                senha: senhaHash,
-                ativo: true,
-                perfil: 'admin'
-            });
-            console.log('Admin atualizado com sucesso');
         }
-    } catch (error) {
-        console.error('Erro ao criar admin padrão:', error);
-    }
-}
 
-// Initialize app on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    await criarAdminPadrao();
-    initializeApp();
-});
-</script>
+        function openSurveyModal(tipo) {
+            const template = SURVEY_TEMPLATES[tipo];
+            let html = '';
 
+            template.secoes.forEach(secao => {
+                html += '<div class="form-section">';
+                html += '<div class="form-section-title">' + secao.titulo + '</div>';
+                secao.questoes.forEach(q => {
+                    html += renderQuestion(q, tipo);
+                });
+                html += '</div>';
+            });
+
+            openModal(template.nome, html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Enviar', onclick: 'saveSurvey("' + tipo + '")', class: 'btn-primary' }
+            ]);
+        }
+
+        function openEvaluationModal(tipo, collaboratorId) {
+            const template = SURVEY_TEMPLATES[tipo];
+            let html = '';
+
+            template.secoes.forEach(secao => {
+                html += '<div class="form-section">';
+                html += '<div class="form-section-title">' + secao.titulo + '</div>';
+                secao.questoes.forEach(q => {
+                    html += renderQuestion(q, tipo);
+                });
+                html += '</div>';
+            });
+
+            openModal(template.nome, html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Enviar', onclick: 'saveEvaluation("' + tipo + '", "' + collaboratorId + '")', class: 'btn-primary' }
+            ]);
+        }
+
+        function renderQuestion(question, surveyType) {
+            const questionId = surveyType + '_' + question.id;
+
+            if (question.tipo === 'escala') {
+                let html = '<div class="question-group">';
+                html += '<label class="question-label">' + question.texto + '</label>';
+                html += '<div class="scale-buttons">';
+                for (let n = 1; n <= 5; n++) {
+                    html += '<button type="button" class="scale-btn" onclick="selectScale(\'' + questionId + '\', ' + n + ')">' + n + '</button>';
+                }
+                html += '</div>';
+                html += '<input type="hidden" id="' + questionId + '" value="">';
+                html += '</div>';
+                return html;
+            } else if (question.tipo === 'sim_nao') {
+                let html = '<div class="question-group">';
+                html += '<label class="question-label">' + question.texto + '</label>';
+                html += '<div class="radio-group">';
+                html += '<div class="radio-item">';
+                html += '<input type="radio" id="' + questionId + '_yes" name="' + questionId + '" value="sim" onchange="selectOption(\'' + questionId + '\', \'sim\')">';
+                html += '<label for="' + questionId + '_yes">Sim</label>';
+                html += '</div>';
+                html += '<div class="radio-item">';
+                html += '<input type="radio" id="' + questionId + '_no" name="' + questionId + '" value="nao" onchange="selectOption(\'' + questionId + '\', \'nao\')">';
+                html += '<label for="' + questionId + '_no">Não</label>';
+                html += '</div>';
+                html += '</div>';
+                html += '<input type="hidden" id="' + questionId + '" value="">';
+                html += '</div>';
+                return html;
+            } else if (question.tipo === 'nps') {
+                let html = '<div class="question-group">';
+                html += '<label class="question-label">' + question.texto + '</label>';
+                html += '<div class="nps-buttons">';
+                for (let i = 0; i <= 10; i++) {
+                    html += '<button type="button" class="nps-btn" onclick="selectNps(\'' + questionId + '\', ' + i + ')">' + i + '</button>';
+                }
+                html += '</div>';
+                html += '<input type="hidden" id="' + questionId + '" value="">';
+                html += '</div>';
+                return html;
+            } else if (question.tipo === 'texto') {
+                let html = '<div class="question-group">';
+                html += '<label class="question-label">' + question.texto + '</label>';
+                html += '<textarea class="textárea-input" id="' + questionId + '" placeholder="Suas respostas aqui..."></textarea>';
+                html += '</div>';
+                return html;
+            }
+
+            return '';
+        }
+
+        function selectScale(questionId, value) {
+            document.getElementById(questionId).value = value;
+            const buttons = document.querySelectorAll('button[onclick*="' + questionId + '"]');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function selectNps(questionId, value) {
+            document.getElementById(questionId).value = value;
+            const buttons = document.querySelectorAll('button[onclick*="' + questionId + '"]');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function selectOption(questionId, value) {
+            document.getElementById(questionId).value = value;
+        }
+
+        async function saveSurvey(tipo) {
+            const template = SURVEY_TEMPLATES[tipo];
+            const respostas = {};
+
+            template.secoes.forEach(secao => {
+                secao.questoes.forEach(questao => {
+                    const inputId = tipo + '_' + questao.id;
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        respostas[questao.id] = input.value;
+                    }
+                });
+            });
+
+            try {
+                await db.collection('respostas').add({
+                    usuario_id: currentUser.id,
+                    usuario_nome: currentUser.nome,
+                    tipo_pesquisa: tipo,
+                    respostas: respostas,
+                    data_resposta: new Date(),
+                    colaborador_id: currentUser.id
+                });
+
+                alert('Questionário salvo com sucesso!');
+                closeModal();
+                loadQuestionnaires();
+            } catch (error) {
+                console.error('Erro ao salvar questionário:', error);
+                alert('Erro ao salvar: ' + error.message);
+            }
+        }
+
+        async function saveEvaluation(tipo, collaboratorId) {
+            const template = SURVEY_TEMPLATES[tipo];
+            const respostas = {};
+
+            template.secoes.forEach(secao => {
+                secao.questoes.forEach(questao => {
+                    const inputId = tipo + '_' + questao.id;
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        respostas[questao.id] = input.value;
+                    }
+                });
+            });
+
+            try {
+                await db.collection('pesquisas').add({
+                    avaliador_id: currentUser.id,
+                    avaliador_nome: currentUser.nome,
+                    colaborador_id: collaboratorId,
+                    tipo_pesquisa: tipo,
+                    respostas: respostas,
+                    data_avaliacao: new Date()
+                });
+
+                alert('Avaliação salva com sucesso!');
+                closeModal();
+                loadEvaluationsForCollaborator();
+            } catch (error) {
+                console.error('Erro ao salvar avaliação:', error);
+                alert('Erro ao salvar: ' + error.message);
+            }
+        }
+
+        function filterSurveys(filter) {
+            currentSurveyFilter = filter;
+            const cards = document.querySelectorAll('#questionnairesContainer .card');
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.surveyType === filter ? 'block' : 'none';
+                }
+            });
+        }
+
+        function filterEvaluations(filter) {
+            const cards = document.querySelectorAll('#evaluationsContainer .card');
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.evaluationType === filter ? 'block' : 'none';
+                }
+            });
+        }
+
+        async function loadDashboard() {
+            const statsContainer = document.getElementById('dashboardStats');
+            const contentContainer = document.getElementById('dashboardContent');
+            statsContainer.innerHTML = '<div class="loading"></div>';
+            contentContainer.innerHTML = '';
+
+            try {
+                const usuarios = await db.collection('usuarios').get();
+                const totalUsers = usuarios.size;
+                const perfisCount = {};
+                usuarios.forEach(doc => {
+                    const perfil = doc.data().perfil || 'sem perfil';
+                    perfisCount[perfil] = (perfisCount[perfil] || 0) + 1;
+                });
+
+                const pesquisas = await db.collection('pesquisas').get();
+                const totalSurveys = pesquisas.size;
+
+                const pdis = await db.collection('pdis').get();
+                const pdiByStatus = {};
+                pdis.forEach(doc => {
+                    const status = doc.data().status || 'pendente';
+                    pdiByStatus[status] = (pdiByStatus[status] || 0) + 1;
+                });
+
+                const respostas = await db.collection('respostas').orderBy('data_resposta', 'desc').limit(5).get();
+                const recentActivity = [];
+                respostas.forEach(doc => {
+                    const data = doc.data();
+                    recentActivity.push({
+                        nome: data.usuario_nome,
+                        tipo: data.tipo_pesquisa,
+                        data: data.data_resposta ? new Date(data.data_resposta).toLocaleDateString('pt-BR') : 'N/A'
+                    });
+                });
+
+                let html = '<div class="stat-card">';
+                html += '<p>Total de Usuários</p>';
+                html += '<h3>' + totalUsers + '</h3>';
+                html += '</div>';
+
+                html += '<div class="stat-card">';
+                html += '<p>Pesquisas Completas</p>';
+                html += '<h3>' + totalSurveys + '</h3>';
+                html += '</div>';
+
+                html += '<div class="stat-card">';
+                html += '<p>PDIs Concluídos</p>';
+                html += '<h3>' + (pdiByStatus['concluido'] || 0) + '</h3>';
+                html += '</div>';
+
+                html += '<div class="stat-card">';
+                html += '<p>PDIs em Andamento</p>';
+                html += '<h3>' + (pdiByStatus['em_andamento'] || 0) + '</h3>';
+                html += '</div>';
+
+                statsContainer.innerHTML = html;
+
+                let contentHtml = '<h3>Distribuição por Perfil</h3>';
+                for (const [perfil, count] of Object.entries(perfisCount)) {
+                    contentHtml += '<p>' + perfil + ': ' + count + '</p>';
+                }
+
+                contentHtml += '<h3 style="margin-top: 30px;">Últimas Atividades</h3>';
+                contentHtml += '<div class="table-wrapper"><table class="table">';
+                contentHtml += '<thead><tr><th>Usuário</th><th>Tipo de Pesquisa</th><th>Data</th></tr></thead>';
+                contentHtml += '<tbody>';
+                recentActivity.forEach(activity => {
+                    contentHtml += '<tr>';
+                    contentHtml += '<td>' + activity.nome + '</td>';
+                    contentHtml += '<td>' + activity.tipo + '</td>';
+                    contentHtml += '<td>' + activity.data + '</td>';
+                    contentHtml += '</tr>';
+                });
+                contentHtml += '</tbody></table></div>';
+
+                contentContainer.innerHTML = contentHtml;
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                statsContainer.innerHTML = '<div class="alert alert-error">Erro ao carregar dashboard</div>';
+            }
+        }
+
+        async function loadLiberacoes() {
+            const container = document.getElementById('liberacoesContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const usuarios = await db.collection('usuarios').get();
+                const liberacoes = await db.collection('liberacoes').get();
+
+                const liberacoesPorUsuario = {};
+                liberacoes.forEach(doc => {
+                    const data = doc.data();
+                    liberacoesPorUsuario[data.colaborador_id] = liberacoesPorUsuario[data.colaborador_id] || [];
+                    liberacoesPorUsuario[data.colaborador_id].push(doc.id);
+                });
+
+                let html = '<div class="table-wrapper"><table class="table">';
+                html += '<thead><tr><th>Usuário</th><th>Perfil</th><th>Pesquisas</th><th>Ações</th></tr></thead>';
+                html += '<tbody>';
+
+                usuarios.forEach(doc => {
+                    const u = doc.data();
+                    const perfil = u.perfil || 'sem perfil';
+                    const liberadas = liberacoesPorUsuario[doc.id] ? liberacoesPorUsuario[doc.id].length : 0;
+
+                    html += '<tr>';
+                    html += '<td>' + u.nome + '</td>';
+                    html += '<td><span class="badge badge-primary">' + perfil + '</span></td>';
+                    html += '<td>' + liberadas + ' pesquisa(s)</td>';
+                    html += '<td><button class="btn btn-primary btn-small" onclick="openLiberacaoForm(\'' + doc.id + '\', \'' + u.nome + '\')">Gerenciar</button></td>';
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar liberações:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar liberações</div>';
+            }
+        }
+
+        async function openLiberacaoForm(userId, userName) {
+            // Buscar liberações já existentes para este usuário
+            const existentes = await db.collection('liberacoes')
+                .where('colaborador_id', '==', userId)
+                .get();
+            const tiposLiberados = {};
+            existentes.forEach(doc => {
+                tiposLiberados[doc.data().tipo_pesquisa] = true;
+            });
+
+            const html = '<div class="pdi-form-section">' +
+                '<label>Selecione as pesquisas para liberar:</label>' +
+                '<div class="checkbox-group">' +
+                '<input type="checkbox" id="lib1" value="experiencia_45_colab"' + (tiposLiberados['experiencia_45_colab'] ? ' checked' : '') + '>' +
+                '<label for="lib1">Pesquisa de Experiência 45 dias - Colaborador</label>' +
+                '</div>' +
+                '<div class="checkbox-group">' +
+                '<input type="checkbox" id="lib2" value="desempenho_90_colab"' + (tiposLiberados['desempenho_90_colab'] ? ' checked' : '') + '>' +
+                '<label for="lib2">Pesquisa de Desempenho 90 dias - Colaborador</label>' +
+                '</div>' +
+                '<div class="checkbox-group">' +
+                '<input type="checkbox" id="lib3" value="experiencia_45_empresa"' + (tiposLiberados['experiencia_45_empresa'] ? ' checked' : '') + '>' +
+                '<label for="lib3">Pesquisa de Experiência 45 dias - Empresa</label>' +
+                '</div>' +
+                '<div class="checkbox-group">' +
+                '<input type="checkbox" id="lib4" value="desempenho_90_empresa"' + (tiposLiberados['desempenho_90_empresa'] ? ' checked' : '') + '>' +
+                '<label for="lib4">Pesquisa de Desempenho 90 dias - Empresa</label>' +
+                '</div>' +
+                '</div>';
+            openModal('Liberar Pesquisas para ' + userName, html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveLiberacaoMultipla("' + userId + '")', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveLiberacaoMultipla(userId) {
+            const todosTipos = ['experiencia_45_colab', 'desempenho_90_colab', 'experiencia_45_empresa', 'desempenho_90_empresa'];
+            const marcados = [];
+            if (document.getElementById('lib1').checked) marcados.push('experiencia_45_colab');
+            if (document.getElementById('lib2').checked) marcados.push('desempenho_90_colab');
+            if (document.getElementById('lib3').checked) marcados.push('experiencia_45_empresa');
+            if (document.getElementById('lib4').checked) marcados.push('desempenho_90_empresa');
+
+            try {
+                for (const tipo of todosTipos) {
+                    const existing = await db.collection('liberacoes')
+                        .where('colaborador_id', '==', userId)
+                        .where('tipo_pesquisa', '==', tipo)
+                        .get();
+
+                    if (marcados.includes(tipo)) {
+                        // Adicionar se não existe
+                        if (existing.empty) {
+                            await db.collection('liberacoes').add({
+                                colaborador_id: userId,
+                                tipo_pesquisa: tipo,
+                                liberado_por: currentUser.email,
+                                data_liberacao: new Date()
+                            });
+                        }
+                    } else {
+                        // Remover se existe
+                        existing.forEach(doc => {
+                            db.collection('liberacoes').doc(doc.id).delete();
+                        });
+                    }
+                }
+                alert('Pesquisas atualizadas com sucesso!');
+                closeModal();
+                loadLiberacoes();
+            } catch (error) {
+                console.error('Erro ao liberar pesquisas:', error);
+                alert('Erro ao liberar: ' + error.message);
+            }
+        }
+
+        function getLiberacoesForm() {
+            return '<p>Use o botão "Gerenciar" para liberar pesquisas aos usuários.</p>';
+        }
+
+        function saveLiberacao() {
+            alert('Use a função de gerenciar para cada usuário.');
+            closeModal();
+        }
+
+        async function loadPesquisas() {
+            const container = document.getElementById('pesquisasContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const pesquisas = await db.collection('pesquisas').get();
+                let html = '';
+
+                if (pesquisas.empty) {
+                    html = '<div class="alert alert-info">Nenhuma pesquisa realizada ainda.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Avaliador</th><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead>';
+                    html += '<tbody>';
+
+                    pesquisas.forEach(doc => {
+                        const p = doc.data();
+                        html += '<tr>';
+                        html += '<td>' + p.avaliador_nome + '</td>';
+                        html += '<td>' + p.colaborador_id + '</td>';
+                        html += '<td>' + p.tipo_pesquisa + '</td>';
+                        html += '<td>' + (p.data_avaliacao ? new Date(p.data_avaliacao).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar pesquisas:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
+            }
+        }
+
+        async function loadColaboradores() {
+            const container = document.getElementById('colaboradoresContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const usuarios = await db.collection('usuarios')
+                    .where('perfil', '==', 'colaborador')
+                    .get();
+
+                let html = '';
+                if (usuarios.empty) {
+                    html = '<div class="alert alert-info">Nenhum colaborador cadastrado.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Nome</th><th>Email</th><th>Líder</th><th>Status</th></tr></thead>';
+                    html += '<tbody>';
+
+                    usuarios.forEach(doc => {
+                        const u = doc.data();
+                        html += '<tr>';
+                        html += '<td>' + u.nome + '</td>';
+                        html += '<td>' + u.email + '</td>';
+                        html += '<td>' + (u.lider || 'N/A') + '</td>';
+                        html += '<td>' + (u.ativo ? 'Ativo' : 'Inativo') + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar colaboradores:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar colaboradores</div>';
+            }
+        }
+
+        async function loadSubordinates() {
+            const container = document.getElementById('subordinatesContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const subordinados = await db.collection('usuarios')
+                    .where('lider', '==', currentUser.nome)
+                    .get();
+
+                let html = '';
+                if (subordinados.empty) {
+                    html = '<div class="alert alert-info">Nenhum subordinado encontrado.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th></tr></thead>';
+                    html += '<tbody>';
+
+                    subordinados.forEach(doc => {
+                        const u = doc.data();
+                        html += '<tr>';
+                        html += '<td>' + u.nome + '</td>';
+                        html += '<td>' + u.email + '</td>';
+                        html += '<td>' + (u.perfil || 'N/A') + '</td>';
+                        html += '<td>' + (u.ativo ? 'Ativo' : 'Inativo') + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar subordinados:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar subordinados</div>';
+            }
+        }
+
+        async function loadRespostas() {
+            const container = document.getElementById('respostasContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const respostas = await db.collection('respostas')
+                    .where('usuario_id', '==', currentUser.id)
+                    .get();
+
+                let html = '';
+                if (respostas.empty) {
+                    html = '<div class="alert alert-info">Nenhuma resposta registrada.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Tipo de Pesquisa</th><th>Data</th></tr></thead>';
+                    html += '<tbody>';
+
+                    respostas.forEach(doc => {
+                        const r = doc.data();
+                        html += '<tr>';
+                        html += '<td>' + r.tipo_pesquisa + '</td>';
+                        html += '<td>' + (r.data_resposta ? new Date(r.data_resposta).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar respostas:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar respostas</div>';
+            }
+        }
+
+        async function loadAvaliadoresTab() {
+            const container = document.getElementById('gestoresContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const pesquisas = await db.collection('pesquisas').get();
+                let html = '';
+
+                if (pesquisas.empty) {
+                    html = '<div class="alert alert-info">Nenhuma avaliação realizada.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Avaliador</th><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead>';
+                    html += '<tbody>';
+
+                    pesquisas.forEach(doc => {
+                        const p = doc.data();
+                        html += '<tr>';
+                        html += '<td>' + p.avaliador_nome + '</td>';
+                        html += '<td>' + p.colaborador_id + '</td>';
+                        html += '<td>' + p.tipo_pesquisa + '</td>';
+                        html += '<td>' + (p.data_avaliacao ? new Date(p.data_avaliacao).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar avaliações dos gestores:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
+            }
+        }
+
+        async function loadPesquisasColabTab() {
+            const container = document.getElementById('pesquisasColabContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const liberacoes = await db.collection('liberacoes').get();
+                let html = '';
+
+                if (liberacoes.empty) {
+                    html = '<div class="alert alert-info">Nenhuma pesquisa liberada.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Colaborador</th><th>Tipo de Pesquisa</th><th>Data de Liberação</th></tr></thead>';
+                    html += '<tbody>';
+
+                    liberacoes.forEach(doc => {
+                        const l = doc.data();
+                        html += '<tr>';
+                        html += '<td>' + l.colaborador_id + '</td>';
+                        html += '<td>' + l.tipo_pesquisa + '</td>';
+                        html += '<td>' + (l.data_liberacao ? new Date(l.data_liberacao).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar pesquisas dos colaboradores:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
+            }
+        }
+
+        async function loadUsuarios() {
+            const container = document.getElementById('usuariosContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const usuarios = await db.collection('usuarios').get();
+                let html = '<div class="table-wrapper"><table class="table">';
+                html += '<thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead>';
+                html += '<tbody>';
+
+                usuarios.forEach(doc => {
+                    const u = doc.data();
+                    html += '<tr>';
+                    html += '<td>' + u.nome + '</td>';
+                    html += '<td>' + u.email + '</td>';
+                    html += '<td>' + (u.perfil || 'N/A') + '</td>';
+                    html += '<td>' + (u.ativo ? 'Ativo' : 'Inativo') + '</td>';
+                    html += '<td class="actions-cell">';
+                    html += '<button class="btn btn-primary btn-small" onclick="openEditUsuario(\'' + doc.id + '\')">Editar</button> ';
+                    html += '<button class="btn btn-danger btn-small" onclick="deleteUsuario(\'' + doc.id + '\')">Deletar</button>';
+                    html += '</td>';
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar usuários</div>';
+            }
+        }
+
+        function openNewUserForm() {
+            const html = `
+                <div class="pdi-form-section">
+                    <label>Nome:</label>
+                    <input type="text" id="newUserName" placeholder="Nome completo">
+                </div>
+                <div class="pdi-form-section">
+                    <label>Email:</label>
+                    <input type="email" id="newUserEmail" placeholder="email@empresa.com">
+                </div>
+                <div class="pdi-form-section">
+                    <label>Perfil:</label>
+                    <select id="newUserPerfil">
+                        <option value="colaborador">Colaborador</option>
+                        <option value="gestor">Gestor</option>
+                        <option value="analista">Analista</option>
+                        <option value="diretoria">Diretoria</option>
+                    </select>
+                </div>
+                <div class="pdi-form-section">
+                    <label>Líder:</label>
+                    <input type="text" id="newUserLider" placeholder="Nome do líder">
+                </div>
+            `;
+            openModal('Novo Usuário', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveNewUsuario()', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveNewUsuario() {
+            const nome = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const perfil = document.getElementById('newUserPerfil').value;
+            const lider = document.getElementById('newUserLider').value || null;
+
+            if (!nome || !email) {
+                alert('Preencha todos os campos obrigatórios');
+                return;
+            }
+
+            try {
+                const password = generatePassword();
+                await db.collection('usuarios').add({
+                    nome: nome,
+                    email: email,
+                    senha: hashSenha(password),
+                    perfil: perfil,
+                    lider: lider,
+                    ativo: true,
+                    data_criacao: new Date()
+                });
+
+                alert('Usuário criado com sucesso! Senha temporária: ' + password);
+                closeModal();
+                loadUsuarios();
+            } catch (error) {
+                console.error('Erro ao criar usuário:', error);
+                alert('Erro ao criar usuário: ' + error.message);
+            }
+        }
+
+        async function openEditUsuario(userId) {
+            try {
+                const doc = await db.collection('usuarios').doc(userId).get();
+                const u = doc.data();
+
+                const html = `
+                    <div class="pdi-form-section">
+                        <label>Nome:</label>
+                        <input type="text" id="editUserName" value="${u.nome}">
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Email:</label>
+                        <input type="email" id="editUserEmail" value="${u.email}">
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Perfil:</label>
+                        <select id="editUserPerfil">
+                            <option value="colaborador" ${u.perfil === 'colaborador' ? 'selected' : ''}>Colaborador</option>
+                            <option value="gestor" ${u.perfil === 'gestor' ? 'selected' : ''}>Gestor</option>
+                            <option value="analista" ${u.perfil === 'analista' ? 'selected' : ''}>Analista</option>
+                            <option value="diretoria" ${u.perfil === 'diretoria' ? 'selected' : ''}>Diretoria</option>
+                        </select>
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Status:</label>
+                        <select id="editUserStatus">
+                            <option value="true" ${u.ativo ? 'selected' : ''}>Ativo</option>
+                            <option value="false" ${!u.ativo ? 'selected' : ''}>Inativo</option>
+                        </select>
+                    </div>
+                `;
+                openModal('Editar Usuário', html, [
+                    { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: 'Salvar', onclick: 'saveEditUsuario("' + userId + '")', class: 'btn-primary' }
+                ]);
+            } catch (error) {
+                console.error('Erro ao abrir formulário de edição:', error);
+                alert('Erro: ' + error.message);
+            }
+        }
+
+        async function saveEditUsuario(userId) {
+            const nome = document.getElementById('editUserName').value;
+            const email = document.getElementById('editUserEmail').value;
+            const perfil = document.getElementById('editUserPerfil').value;
+            const ativo = document.getElementById('editUserStatus').value === 'true';
+
+            try {
+                await db.collection('usuarios').doc(userId).update({
+                    nome: nome,
+                    email: email,
+                    perfil: perfil,
+                    ativo: ativo
+                });
+
+                alert('Usuário atualizado com sucesso!');
+                closeModal();
+                loadUsuarios();
+            } catch (error) {
+                console.error('Erro ao atualizar usuário:', error);
+                alert('Erro ao atualizar: ' + error.message);
+            }
+        }
+
+        async function deleteUsuario(userId) {
+            if (!confirm('Tem certeza que deseja deletar este usuário?')) {
+                return;
+            }
+
+            try {
+                await db.collection('usuarios').doc(userId).delete();
+                alert('Usuário deletado com sucesso!');
+                loadUsuarios();
+            } catch (error) {
+                console.error('Erro ao deletar usuário:', error);
+                alert('Erro ao deletar: ' + error.message);
+            }
+        }
+
+        async function toggleUsuario(userId, currentStatus) {
+            try {
+                await db.collection('usuarios').doc(userId).update({
+                    ativo: !currentStatus
+                });
+                loadUsuarios();
+            } catch (error) {
+                console.error('Erro ao alternar status do usuário:', error);
+            }
+        }
+
+        async function loadPDI() {
+            const container = document.getElementById('pdiContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                if (currentUser.perfil === 'colaborador') {
+                    await loadPDIColaborador();
+                } else if (currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
+                    await loadPDIGestorAnalista();
+                } else if (currentUser.perfil === 'admin' || currentUser.perfil === 'diretoria') {
+                    await loadPDIAdmin();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar PDI:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar PDI</div>';
+            }
+        }
+
+        async function loadPDIColaborador() {
+            const container = document.getElementById('pdiContainer');
+            container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button><div id="pdiList"></div>';
+
+            try {
+                const pdis = await db.collection('pdis')
+                    .where('colaborador_id', '==', currentUser.id)
+                    .get();
+
+                const listContainer = document.getElementById('pdiList');
+                let html = '';
+
+                if (pdis.empty) {
+                    html = '<div class="alert alert-info">Nenhum PDI encontrado.</div>';
+                } else {
+                    pdis.forEach(doc => {
+                        const pdi = doc.data();
+                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
+                        const progressClass = 'progress-' + progressValue;
+
+                        html += '<div class="card">';
+                        html += '<div class="card-header">';
+                        html += '<div>';
+                        html += '<div class="card-title">' + pdi.titulo + '</div>';
+                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
+                        html += '</div>';
+                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Visualizar</button>';
+                        html += '</div>';
+                        html += '<div class="progress-bar">';
+                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
+                        html += '</div>';
+                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
+                        html += '</div>';
+                    });
+                }
+
+                listContainer.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar PDIs do colaborador:', error);
+            }
+        }
+
+        async function loadPDIGestorAnalista() {
+            const container = document.getElementById('pdiContainer');
+            container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button>';
+
+            try {
+                const myPdis = await db.collection('pdis')
+                    .where('colaborador_id', '==', currentUser.id)
+                    .get();
+
+                const subordinados = await db.collection('usuarios')
+                    .where('lider', '==', currentUser.nome)
+                    .get();
+
+                const subordinadoIds = [];
+                subordinados.forEach(doc => {
+                    subordinadoIds.push(doc.id);
+                });
+
+                let teamPdis = [];
+                if (subordinadoIds.length > 0) {
+                    const teamDocsSnap = await db.collection('pdis')
+                        .where('colaborador_id', 'in', subordinadoIds)
+                        .get();
+                    teamDocsSnap.forEach(doc => {
+                        teamPdis.push({ id: doc.id, ...doc.data() });
+                    });
+                }
+
+                let html = '';
+
+                // Meu PDI
+                html += '<h3 style="margin-top: 20px; margin-bottom: 15px;">Meu PDI</h3>';
+                if (myPdis.empty) {
+                    html += '<div class="alert alert-info">Você ainda não tem um PDI.</div>';
+                } else {
+                    myPdis.forEach(doc => {
+                        const pdi = doc.data();
+                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
+                        const progressClass = 'progress-' + progressValue;
+
+                        html += '<div class="card">';
+                        html += '<div class="card-header">';
+                        html += '<div>';
+                        html += '<div class="card-title">' + pdi.titulo + '</div>';
+                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
+                        html += '</div>';
+                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Visualizar</button>';
+                        html += '</div>';
+                        html += '<div class="progress-bar">';
+                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
+                        html += '</div>';
+                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
+                        html += '</div>';
+                    });
+                }
+
+                // PDI da Equipe
+                html += '<h3 style="margin-top: 30px; margin-bottom: 15px;">PDI da Minha Equipe</h3>';
+                if (teamPdis.length === 0) {
+                    html += '<div class="alert alert-info">Nenhum PDI encontrado para sua equipe.</div>';
+                } else {
+                    teamPdis.forEach(pdi => {
+                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
+                        const progressClass = 'progress-' + progressValue;
+
+                        html += '<div class="card">';
+                        html += '<div class="card-header">';
+                        html += '<div>';
+                        html += '<div class="card-title">' + pdi.titulo + '</div>';
+                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
+                        html += '</div>';
+                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + pdi.id + '\')">Visualizar</button>';
+                        html += '</div>';
+                        html += '<div class="progress-bar">';
+                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
+                        html += '</div>';
+                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
+                        html += '</div>';
+                    });
+                }
+
+                container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button>' + html;
+            } catch (error) {
+                console.error('Erro ao carregar PDIs do gestor/analista:', error);
+            }
+        }
+
+        async function loadPDIAdmin() {
+            const container = document.getElementById('pdiContainer');
+            container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button><div id="pdiList"></div>';
+
+            try {
+                const pdis = await db.collection('pdis').get();
+                const listContainer = document.getElementById('pdiList');
+                let html = '';
+
+                if (pdis.empty) {
+                    html = '<div class="alert alert-info">Nenhum PDI encontrado.</div>';
+                } else {
+                    pdis.forEach(doc => {
+                        const pdi = doc.data();
+                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
+                        const progressClass = 'progress-' + progressValue;
+
+                        html += '<div class="card">';
+                        html += '<div class="card-header">';
+                        html += '<div>';
+                        html += '<div class="card-title">' + pdi.titulo + '</div>';
+                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
+                        html += '</div>';
+                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Visualizar</button>';
+                        html += '</div>';
+                        html += '<div class="progress-bar">';
+                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
+                        html += '</div>';
+                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
+                        html += '</div>';
+                    });
+                }
+
+                listContainer.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar PDIs do admin:', error);
+            }
+        }
+
+        function openPDIForm() {
+            let html = `
+                <div class="pdi-form-section">
+                    <label>Título do PDI:</label>
+                    <input type="text" id="pdiTitulo" placeholder="Título do plano de desenvolvimento">
+                </div>
+                <div class="pdi-form-section">
+                    <label>Descrição:</label>
+                    <textarea id="pdiDescricao" placeholder="Descreva os objetivos do PDI"></textarea>
+                </div>
+                <div class="pdi-form-section">
+                    <label>Colaborador:</label>
+                    <select id="pdiColaborador">
+                        <option value="">-- Selecione um colaborador --</option>
+                    </select>
+                </div>
+                <div class="pdi-form-section">
+                    <label>Status:</label>
+                    <select id="pdiStatus">
+                        <option value="pendente">Pendente</option>
+                        <option value="em_andamento">Em Andamento</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+            `;
+
+            openModal('Novo PDI', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'savePDI()', class: 'btn-primary' }
+            ]);
+
+            // Load collaborators
+            loadPDIColaboradorSelect();
+        }
+
+        async function loadPDIColaboradorSelect() {
+            try {
+                const select = document.getElementById('pdiColaborador');
+                if (!select) return;
+
+                const usuarios = await db.collection('usuarios').get();
+                usuarios.forEach(doc => {
+                    if (doc.id !== currentUser.id) {
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        const u = doc.data();
+                        option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
+                        select.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao carregar colaboradores:', error);
+            }
+        }
+
+        async function savePDI() {
+            const titulo = document.getElementById('pdiTitulo').value;
+            const descricao = document.getElementById('pdiDescricao').value;
+            const colaboradorId = document.getElementById('pdiColaborador').value;
+            const status = document.getElementById('pdiStatus').value;
+
+            if (!titulo || !colaboradorId) {
+                alert('Preencha todos os campos obrigatórios');
+                return;
+            }
+
+            try {
+                await db.collection('pdis').add({
+                    titulo: titulo,
+                    descricao: descricao,
+                    colaborador_id: colaboradorId,
+                    criador_id: currentUser.id,
+                    status: status,
+                    data_criacao: new Date(),
+                    atualizacoes: []
+                });
+
+                alert('PDI criado com sucesso!');
+                closeModal();
+                loadPDI();
+            } catch (error) {
+                console.error('Erro ao criar PDI:', error);
+                alert('Erro ao criar PDI: ' + error.message);
+            }
+        }
+
+        async function viewPDI(pdiId) {
+            try {
+                const doc = await db.collection('pdis').doc(pdiId).get();
+                const pdi = doc.data();
+
+                let html = `
+                    <div class="pdi-form-section">
+                        <strong>Título:</strong> ${pdi.titulo}
+                    </div>
+                    <div class="pdi-form-section">
+                        <strong>Descrição:</strong> ${pdi.descricao}
+                    </div>
+                    <div class="pdi-form-section">
+                        <strong>Status:</strong> <span class="badge badge-${pdi.status}">${pdi.status}</span>
+                    </div>
+                    <div class="pdi-form-section">
+                        <strong>Data de Criação:</strong> ${pdi.data_criacao ? new Date(pdi.data_criacao).toLocaleDateString('pt-BR') : 'N/A'}
+                    </div>
+                `;
+
+                // Show updates if user is the collaborator or a gestor/analista viewing their team
+                if (currentUser.perfil === 'colaborador' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista' || currentUser.perfil === 'admin') {
+                    html += '<h4 style="margin-top: 20px; margin-bottom: 10px;">Atualizações de Progresso</h4>';
+
+                    if (pdi.atualizacoes && pdi.atualizacoes.length > 0) {
+                        pdi.atualizacoes.forEach(update => {
+                            html += '<div class="update-item">';
+                            html += '<strong>' + update.autor + '</strong> - ' + (update.data ? new Date(update.data).toLocaleDateString('pt-BR') : '') + '<br>';
+                            html += update.texto;
+                            html += '</div>';
+                        });
+                    } else {
+                        html += '<p style="color: #636E72;">Nenhuma atualização ainda.</p>';
+                    }
+
+                    // Allow adding updates if user is the collaborator
+                    if (currentUser.id === pdi.colaborador_id || currentUser.perfil === 'admin') {
+                        html += '<div class="pdi-form-section" style="margin-top: 20px;">';
+                        html += '<label>Adicionar Atualização:</label>';
+                        html += '<textarea id="novaAtualizacao" placeholder="Descreva o progresso..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; min-height: 80px;"></textarea>';
+                        html += '<button class="btn btn-primary" onclick="addAtualizacaoPDI(\'' + pdiId + '\')" style="margin-top: 10px; width: auto; padding: 8px 16px;">Adicionar Atualização</button>';
+                        html += '</div>';
+                    }
+                }
+
+                openModal('Visualizar PDI: ' + pdi.titulo, html, [
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: 'Editar', onclick: 'editPDI("' + pdiId + '")', class: 'btn-primary' }
+                ]);
+            } catch (error) {
+                console.error('Erro ao visualizar PDI:', error);
+                alert('Erro ao visualizar PDI: ' + error.message);
+            }
+        }
+
+        async function addAtualizacaoPDI(pdiId) {
+            const texto = document.getElementById('novaAtualizacao').value;
+
+            if (!texto.trim()) {
+                alert('Digite uma atualização');
+                return;
+            }
+
+            try {
+                const doc = await db.collection('pdis').doc(pdiId).get();
+                const pdi = doc.data();
+                const atualizacoes = pdi.atualizacoes || [];
+
+                atualizacoes.push({
+                    autor: currentUser.nome,
+                    texto: texto,
+                    data: new Date()
+                });
+
+                await db.collection('pdis').doc(pdiId).update({
+                    atualizacoes: atualizacoes
+                });
+
+                alert('Atualização adicionada com sucesso!');
+                closeModal();
+                viewPDI(pdiId);
+            } catch (error) {
+                console.error('Erro ao adicionar atualização:', error);
+                alert('Erro: ' + error.message);
+            }
+        }
+
+        function editPDI(pdiId) {
+            closeModal();
+            // Open edit form
+        }
+
+        async function deletePDI(pdiId) {
+            if (!confirm('Tem certeza que deseja deletar este PDI?')) {
+                return;
+            }
+
+            try {
+                await db.collection('pdis').doc(pdiId).delete();
+                alert('PDI deletado com sucesso!');
+                loadPDI();
+            } catch (error) {
+                console.error('Erro ao deletar PDI:', error);
+                alert('Erro ao deletar: ' + error.message);
+            }
+        }
+
+        function closePDIForm() {
+            closeModal();
+        }
+
+        function openModal(title, body, buttons) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = body;
+
+            const buttonsContainer = document.getElementById('modalButtons');
+            buttonsContainer.innerHTML = '';
+
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.className = 'btn ' + btn.class;
+                button.textContent = btn.text;
+                button.onclick = () => {
+                    eval(btn.onclick);
+                };
+                buttonsContainer.appendChild(button);
+            });
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+    </script>
 </body>
 </html>
