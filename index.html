@@ -1074,6 +1074,18 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Detectar redes/proxies que bloqueiam WebChannel streaming e cair em
+        // long-polling quando necessário. Sem isso, o 1º request pode travar
+        // 15-30s em algumas redes corporativas (gargalo observado).
+        try {
+            db.settings({
+                experimentalAutoDetectLongPolling: true,
+                merge: true
+            });
+        } catch (e) {
+            console.warn('Não foi possível aplicar settings do Firestore:', e);
+        }
+
         // Cache offline (IndexedDB) - torna navegação repetida praticamente instantânea.
         // Silencia erro "failed-precondition" (outra aba já tem persistência ativa).
         try {
@@ -1082,6 +1094,13 @@
                     console.warn('Persistência Firestore não ativada:', err.code);
                 }
             });
+        } catch (_) {}
+
+        // Warm-up: abre o canal de comunicação com o Firestore em background,
+        // logo no boot, para que o 1º clique do usuário não pague o custo do
+        // handshake (cold start ~15s em algumas redes).
+        try {
+            db.collection('usuarios').limit(1).get().catch(() => {});
         } catch (_) {}
 
         // Cache em memória por sessão (evita re-query ao alternar menus).
