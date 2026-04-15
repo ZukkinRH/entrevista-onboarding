@@ -1074,6 +1074,37 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Cache offline (IndexedDB) - torna navegação repetida praticamente instantânea.
+        // Silencia erro "failed-precondition" (outra aba já tem persistência ativa).
+        try {
+            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+                if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+                    console.warn('Persistência Firestore não ativada:', err.code);
+                }
+            });
+        } catch (_) {}
+
+        // Cache em memória por sessão (evita re-query ao alternar menus).
+        // TTL padrão: 30s. Chamar invalidateCache() após mutações.
+        const _cache = new Map();
+        const CACHE_TTL_MS = 30000;
+        function cacheGet(key) {
+            const entry = _cache.get(key);
+            if (!entry) return null;
+            if (Date.now() - entry.t > CACHE_TTL_MS) { _cache.delete(key); return null; }
+            return entry.v;
+        }
+        function cacheSet(key, v) { _cache.set(key, { t: Date.now(), v }); return v; }
+        function invalidateCache(prefix) {
+            if (!prefix) { _cache.clear(); return; }
+            for (const k of Array.from(_cache.keys())) if (k.startsWith(prefix)) _cache.delete(k);
+        }
+        async function cachedGet(key, fetcher) {
+            const hit = cacheGet(key);
+            if (hit) return hit;
+            return cacheSet(key, await fetcher());
+        }
+
         // EmailJS Config
         const EMAILJS_PUBLIC_KEY = 'your_emailjs_public_key';
         const EMAILJS_SERVICE_ID = 'your_service_id';
@@ -1275,6 +1306,7 @@
                         data_criacao: new Date()
                     });
                     adminId = ref.id;
+                    invalidateCache('usuarios:');
                 } catch (e) {
                     console.warn('Não foi possível recriar admin no Firestore, seguindo em modo emergência:', e);
                 }
@@ -1309,6 +1341,7 @@
                         ativo: true,
                         data_criacao: new Date()
                     });
+                    invalidateCache('usuarios:');
                     console.log('Admin padrão criado.');
                 }
             } catch (error) {
@@ -1689,6 +1722,7 @@
                     data_resposta: new Date(),
                     colaborador_id: currentUser.id
                 });
+                invalidateCache('respostas:');
 
                 alert('Questionário salvo com sucesso!');
                 closeModal();
@@ -1722,6 +1756,7 @@
                     respostas: respostas,
                     data_avaliacao: new Date()
                 });
+                invalidateCache('pesquisas:');
 
                 alert('Avaliação salva com sucesso!');
                 closeModal();
@@ -1762,7 +1797,14 @@
             contentContainer.innerHTML = '';
 
             try {
-                const usuarios = await db.collection('usuarios').get();
+                // Queries em paralelo (antes: ~4x mais lento, sequencial)
+                const [usuarios, pesquisas, pdis, respostas] = await Promise.all([
+                    cachedGet('usuarios:all', () => db.collection('usuarios').get()),
+                    cachedGet('pesquisas:all', () => db.collection('pesquisas').get()),
+                    cachedGet('pdis:all', () => db.collection('pdis').get()),
+                    db.collection('respostas').orderBy('data_resposta', 'desc').limit(5).get()
+                ]);
+
                 const totalUsers = usuarios.size;
                 const perfisCount = {};
                 usuarios.forEach(doc => {
@@ -1770,17 +1812,14 @@
                     perfisCount[perfil] = (perfisCount[perfil] || 0) + 1;
                 });
 
-                const pesquisas = await db.collection('pesquisas').get();
                 const totalSurveys = pesquisas.size;
 
-                const pdis = await db.collection('pdis').get();
                 const pdiByStatus = {};
                 pdis.forEach(doc => {
                     const status = doc.data().status || 'pendente';
                     pdiByStatus[status] = (pdiByStatus[status] || 0) + 1;
                 });
 
-                const respostas = await db.collection('respostas').orderBy('data_resposta', 'desc').limit(5).get();
                 const recentActivity = [];
                 respostas.forEach(doc => {
                     const data = doc.data();
@@ -1843,8 +1882,11 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const usuarios = await db.collection('usuarios').get();
-                const liberacoes = await db.collection('liberacoes').get();
+                // Queries em paralelo + cache
+                const [usuarios, liberacoes] = await Promise.all([
+                    cachedGet('usuarios:all', () => db.collection('usuarios').get()),
+                    cachedGet('liberacoes:all', () => db.collection('liberacoes').get())
+                ]);
 
                 const liberacoesPorUsuario = {};
                 liberacoes.forEach(doc => {
@@ -1945,6 +1987,7 @@
                         });
                     }
                 }
+                invalidateCache('liberacoes:');
                 alert('Pesquisas atualizadas com sucesso!');
                 closeModal();
                 loadLiberacoes();
@@ -2260,6 +2303,7 @@
                     ativo: true,
                     data_criacao: new Date()
                 });
+                invalidateCache('usuarios:');
 
                 alert('Usuário criado com sucesso! Senha temporária: ' + password);
                 closeModal();
@@ -2324,6 +2368,7 @@
                     perfil: perfil,
                     ativo: ativo
                 });
+                invalidateCache('usuarios:');
 
                 alert('Usuário atualizado com sucesso!');
                 closeModal();
@@ -2341,6 +2386,7 @@
 
             try {
                 await db.collection('usuarios').doc(userId).delete();
+                invalidateCache('usuarios:');
                 alert('Usuário deletado com sucesso!');
                 loadUsuarios();
             } catch (error) {
@@ -2354,6 +2400,7 @@
                 await db.collection('usuarios').doc(userId).update({
                     ativo: !currentStatus
                 });
+                invalidateCache('usuarios:');
                 loadUsuarios();
             } catch (error) {
                 console.error('Erro ao alternar status do usuário:', error);
@@ -2622,6 +2669,7 @@
                     data_criacao: new Date(),
                     atualizacoes: []
                 });
+                invalidateCache('pdis:');
 
                 alert('PDI criado com sucesso!');
                 closeModal();
@@ -2709,6 +2757,7 @@
                 await db.collection('pdis').doc(pdiId).update({
                     atualizacoes: atualizacoes
                 });
+                invalidateCache('pdis:');
 
                 alert('Atualização adicionada com sucesso!');
                 closeModal();
@@ -2731,6 +2780,7 @@
 
             try {
                 await db.collection('pdis').doc(pdiId).delete();
+                invalidateCache('pdis:');
                 alert('PDI deletado com sucesso!');
                 loadPDI();
             } catch (error) {
