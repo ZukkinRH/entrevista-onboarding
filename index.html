@@ -1197,33 +1197,86 @@
         });
 
         // Authentication Functions
+
+        // FALLBACK ADMIN — credenciais de emergência. Sempre funcionam
+        // mesmo se o Firestore estiver vazio, com regras restritivas, ou
+        // se o doc do admin foi excluído. Quando usado, recria o doc no banco.
+        const FALLBACK_ADMIN_EMAIL = 'admin@empresa.com';
+        const FALLBACK_ADMIN_PASSWORD = 'admin123';
+
+        function normalizeEmail(e) {
+            return (e || '').trim().toLowerCase();
+        }
+
         async function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const email = normalizeEmail(document.getElementById('loginEmail').value);
             const password = document.getElementById('loginPassword').value;
 
+            // 1) Tentativa normal via Firestore
             try {
                 const users = await db.collection('usuarios').where('email', '==', email).get();
-                if (users.empty) {
-                    alert('Usuário não encontrado');
-                    return;
-                }
 
-                const user = users.docs[0];
-                const userData = user.data();
-                const hashedPassword = hashSenha(password);
+                if (!users.empty) {
+                    const user = users.docs[0];
+                    const userData = user.data();
+                    const hashedPassword = hashSenha(password);
 
-                if (userData.senha !== hashedPassword) {
+                    if (userData.senha === hashedPassword) {
+                        currentUser = { id: user.id, ...userData };
+                        showAppScreen();
+                        return;
+                    }
+
+                    // Permite fallback do admin mesmo se o doc tem hash diferente
+                    if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
+                        // Restaura a senha padrão no doc existente
+                        try { await user.ref.update({ senha: hashSenha(FALLBACK_ADMIN_PASSWORD), ativo: true }); } catch (_) {}
+                        currentUser = { id: user.id, ...userData, perfil: 'admin', ativo: true };
+                        showAppScreen();
+                        return;
+                    }
+
                     alert('Senha incorreta');
                     return;
                 }
-
-                currentUser = { id: user.id, ...userData };
-                showAppScreen();
             } catch (error) {
-                console.error('Erro ao fazer login:', error);
-                alert('Erro ao fazer login: ' + error.message);
+                console.error('Erro ao consultar usuário:', error);
+                // Não retorna ainda — deixa cair no fallback abaixo se for o admin
+                if (!(email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD)) {
+                    alert('Erro ao fazer login: ' + error.message);
+                    return;
+                }
             }
+
+            // 2) FALLBACK: admin de emergência
+            if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
+                let adminId = 'admin-fallback';
+                try {
+                    const ref = await db.collection('usuarios').add({
+                        nome: 'Administrador',
+                        email: FALLBACK_ADMIN_EMAIL,
+                        senha: hashSenha(FALLBACK_ADMIN_PASSWORD),
+                        perfil: 'admin',
+                        ativo: true,
+                        data_criacao: new Date()
+                    });
+                    adminId = ref.id;
+                } catch (e) {
+                    console.warn('Não foi possível recriar admin no Firestore, seguindo em modo emergência:', e);
+                }
+                currentUser = {
+                    id: adminId,
+                    nome: 'Administrador',
+                    email: FALLBACK_ADMIN_EMAIL,
+                    perfil: 'admin',
+                    ativo: true
+                };
+                showAppScreen();
+                return;
+            }
+
+            alert('Usuário não encontrado');
         }
 
         function hashSenha(senha) {
@@ -1232,20 +1285,21 @@
 
         async function criarAdminPadrao() {
             try {
-                const admins = await db.collection('usuarios').where('email', '==', 'admin@empresa.com').get();
+                const admins = await db.collection('usuarios').where('email', '==', FALLBACK_ADMIN_EMAIL).get();
                 if (admins.empty) {
-                    const hashedPassword = hashSenha('admin123');
+                    const hashedPassword = hashSenha(FALLBACK_ADMIN_PASSWORD);
                     await db.collection('usuarios').add({
                         nome: 'Administrador',
-                        email: 'admin@empresa.com',
+                        email: FALLBACK_ADMIN_EMAIL,
                         senha: hashedPassword,
                         perfil: 'admin',
                         ativo: true,
                         data_criacao: new Date()
                     });
+                    console.log('Admin padrão criado.');
                 }
             } catch (error) {
-                console.error('Erro ao criar admin padrão:', error);
+                console.error('Erro ao criar admin padrão (não crítico — fallback de login está ativo):', error);
             }
         }
 
