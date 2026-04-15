@@ -136,8 +136,11 @@
         }
 
         .btn-small {
-            padding: 8px 16px;
+            padding: 6px 14px;
             font-size: 12px;
+            width: auto;
+            display: inline-block;
+            min-width: 0;
         }
 
         .forgot-password-link {
@@ -499,6 +502,16 @@
 
         .table .actions-cell {
             white-space: nowrap;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .table .actions-cell .btn,
+        .table .actions-cell .btn-small {
+            width: auto;
+            flex: 0 0 auto;
         }
 
         .scale-buttons {
