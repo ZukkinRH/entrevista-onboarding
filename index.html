@@ -1074,12 +1074,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Detectar redes/proxies que bloqueiam WebChannel streaming e cair em
-        // long-polling quando necessário. Sem isso, o 1º request pode travar
-        // 15-30s em algumas redes corporativas (gargalo observado).
+        // Muitas redes corporativas (e alguns proxies/antivírus) bloqueiam o
+        // WebChannel streaming do Firestore, o que causa timeouts de ~13-30s
+        // por query enquanto o SDK tenta descobrir o transporte certo.
+        // Forçar long-polling evita o probe e deixa cada request sub-segundo.
         try {
             db.settings({
-                experimentalAutoDetectLongPolling: true,
+                experimentalForceLongPolling: true,
                 merge: true
             });
         } catch (e) {
