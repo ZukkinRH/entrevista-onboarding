@@ -1078,40 +1078,29 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Muitas redes corporativas (e alguns proxies/antivírus) bloqueiam o
-        // WebChannel streaming do Firestore, o que causa timeouts de ~13-30s
-        // por query enquanto o SDK tenta descobrir o transporte certo.
-        // Forçar long-polling evita o probe e deixa cada request sub-segundo.
-        try {
-            db.settings({
-                experimentalForceLongPolling: true,
-                merge: true
-            });
-        } catch (e) {
-            console.warn('Não foi possível aplicar settings do Firestore:', e);
-        }
-
-        // Cache offline (IndexedDB) - torna navegação repetida praticamente instantânea.
-        // Silencia erro "failed-precondition" (outra aba já tem persistência ativa).
-        try {
-            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-                if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
-                    console.warn('Persistência Firestore não ativada:', err.code);
-                }
-            });
-        } catch (_) {}
-
-        // Warm-up: abre o canal de comunicação com o Firestore em background,
-        // logo no boot, para que o 1º clique do usuário não pague o custo do
-        // handshake (cold start ~15s em algumas redes).
-        try {
-            db.collection('usuarios').limit(1).get().catch(() => {});
-        } catch (_) {}
+        // Pré-carrega TODAS as collections no boot em background.
+        // Quando o usuário logar e trocar de aba, os dados já vão estar
+        // em memória (cachedGet) e a resposta será instantânea.
+        (async function prefetchAll() {
+            try {
+                const t0 = Date.now();
+                await Promise.all([
+                    cachedGet('usuarios:all', () => db.collection('usuarios').get()),
+                    cachedGet('pesquisas:all', () => db.collection('pesquisas').get()),
+                    cachedGet('pdis:all', () => db.collection('pdis').get()),
+                    cachedGet('liberacoes:all', () => db.collection('liberacoes').get()),
+                    cachedGet('respostas:recent', () => db.collection('respostas').orderBy('data_resposta', 'desc').limit(20).get())
+                ]);
+                console.log('Prefetch completo em', Date.now() - t0, 'ms');
+            } catch (e) {
+                console.warn('Prefetch parcial (não crítico):', e.message || e);
+            }
+        })();
 
         // Cache em memória por sessão (evita re-query ao alternar menus).
         // TTL padrão: 30s. Chamar invalidateCache() após mutações.
         const _cache = new Map();
-        const CACHE_TTL_MS = 30000;
+        const CACHE_TTL_MS = 120000; // 2 minutos — dados mudam raramente
         function cacheGet(key) {
             const entry = _cache.get(key);
             if (!entry) return null;
@@ -1486,9 +1475,8 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const liberacoes = await db.collection('liberacoes')
-                    .where('colaborador_id', '==', currentUser.id)
-                    .get();
+                const liberacoes = await cachedGet('liberacoes:user:' + currentUser.id, () =>
+                    db.collection('liberacoes').where('colaborador_id', '==', currentUser.id).get());
 
                 const liberadosTipos = {};
                 liberacoes.forEach(doc => {
@@ -1537,7 +1525,7 @@
                 select.innerHTML = '<option value="">-- Selecione um membro da equipe --</option>';
 
                 if (currentUser.perfil === 'admin') {
-                    const todos = await db.collection('usuarios').get();
+                    const todos = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
                     todos.forEach(doc => {
                         const u = doc.data();
                         if (doc.id !== currentUser.id) {
@@ -1548,9 +1536,8 @@
                         }
                     });
                 } else {
-                    const subordinados = await db.collection('usuarios')
-                        .where('lider', '==', currentUser.nome)
-                        .get();
+                    const subordinados = await cachedGet('usuarios:subordinados:' + currentUser.nome, () =>
+                        db.collection('usuarios').where('lider', '==', currentUser.nome).get());
                     subordinados.forEach(doc => {
                         const u = doc.data();
                         const option = document.createElement('option');
@@ -1576,10 +1563,11 @@
             }
 
             try {
-                const liberacoes = await db.collection('liberacoes')
+                const liberacoes = await cachedGet('liberacoes:eval:' + collaboratorId, () =>
+                    db.collection('liberacoes')
                     .where('colaborador_id', '==', collaboratorId)
                     .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
-                    .get();
+                    .get());
 
                 const liberadosTipos = {};
                 liberacoes.forEach(doc => {
@@ -2035,7 +2023,7 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const pesquisas = await db.collection('pesquisas').get();
+                const pesquisas = await cachedGet('pesquisas:all', () => db.collection('pesquisas').get());
                 let html = '';
 
                 if (pesquisas.empty) {
@@ -2070,9 +2058,8 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const usuarios = await db.collection('usuarios')
-                    .where('perfil', '==', 'colaborador')
-                    .get();
+                const usuarios = await cachedGet('usuarios:colaboradores', () =>
+                    db.collection('usuarios').where('perfil', '==', 'colaborador').get());
 
                 let html = '';
                 if (usuarios.empty) {
@@ -2179,7 +2166,7 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const pesquisas = await db.collection('pesquisas').get();
+                const pesquisas = await cachedGet('pesquisas:all', () => db.collection('pesquisas').get());
                 let html = '';
 
                 if (pesquisas.empty) {
@@ -2214,7 +2201,7 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const liberacoes = await db.collection('liberacoes').get();
+                const liberacoes = await cachedGet('liberacoes:all', () => db.collection('liberacoes').get());
                 let html = '';
 
                 if (liberacoes.empty) {
@@ -2248,7 +2235,7 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const usuarios = await db.collection('usuarios').get();
+                const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
                 let html = '<div class="table-wrapper"><table class="table">';
                 html += '<thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead>';
                 html += '<tbody>';
@@ -2454,9 +2441,8 @@
             container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button><div id="pdiList"></div>';
 
             try {
-                const pdis = await db.collection('pdis')
-                    .where('colaborador_id', '==', currentUser.id)
-                    .get();
+                const pdis = await cachedGet('pdis:user:' + currentUser.id, () =>
+                    db.collection('pdis').where('colaborador_id', '==', currentUser.id).get());
 
                 const listContainer = document.getElementById('pdiList');
                 let html = '';
@@ -2496,13 +2482,12 @@
             container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button>';
 
             try {
-                const myPdis = await db.collection('pdis')
-                    .where('colaborador_id', '==', currentUser.id)
-                    .get();
-
-                const subordinados = await db.collection('usuarios')
-                    .where('lider', '==', currentUser.nome)
-                    .get();
+                const [myPdis, subordinados] = await Promise.all([
+                    cachedGet('pdis:user:' + currentUser.id, () =>
+                        db.collection('pdis').where('colaborador_id', '==', currentUser.id).get()),
+                    cachedGet('usuarios:subordinados:' + currentUser.nome, () =>
+                        db.collection('usuarios').where('lider', '==', currentUser.nome).get())
+                ]);
 
                 const subordinadoIds = [];
                 subordinados.forEach(doc => {
@@ -2583,7 +2568,7 @@
             container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button><div id="pdiList"></div>';
 
             try {
-                const pdis = await db.collection('pdis').get();
+                const pdis = await cachedGet('pdis:all', () => db.collection('pdis').get());
                 const listContainer = document.getElementById('pdiList');
                 let html = '';
 
@@ -2657,7 +2642,7 @@
                 const select = document.getElementById('pdiColaborador');
                 if (!select) return;
 
-                const usuarios = await db.collection('usuarios').get();
+                const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
                 usuarios.forEach(doc => {
                     if (doc.id !== currentUser.id) {
                         const option = document.createElement('option');
