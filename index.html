@@ -1078,24 +1078,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Pré-carrega TODAS as collections no boot em background.
-        // Quando o usuário logar e trocar de aba, os dados já vão estar
-        // em memória (cachedGet) e a resposta será instantânea.
-        (async function prefetchAll() {
-            try {
-                const t0 = Date.now();
-                await Promise.all([
-                    cachedGet('usuarios:all', () => db.collection('usuarios').get()),
-                    cachedGet('pesquisas:all', () => db.collection('pesquisas').get()),
-                    cachedGet('pdis:all', () => db.collection('pdis').get()),
-                    cachedGet('liberacoes:all', () => db.collection('liberacoes').get()),
-                    cachedGet('respostas:recent', () => db.collection('respostas').orderBy('data_resposta', 'desc').limit(20).get())
-                ]);
-                console.log('Prefetch completo em', Date.now() - t0, 'ms');
-            } catch (e) {
-                console.warn('Prefetch parcial (não crítico):', e.message || e);
-            }
-        })();
+        // Força long-polling (POST) ao invés de WebChannel streaming (GET).
+        // O endpoint de streaming retorna 503, causando retries de 10-15s.
+        // Long-polling usa apenas POST, contornando o problema.
+        db.settings({ experimentalForceLongPolling: true });
 
         // Cache em memória por sessão (evita re-query ao alternar menus).
         // TTL padrão: 30s. Chamar invalidateCache() após mutações.
