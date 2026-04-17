@@ -1084,19 +1084,13 @@
         // Firestore atualiza em background; quando responde, salva.
         // ============================================================
 
-        // Limpa IndexedDB do Firestore (resquício de enablePersistence).
-        try {
-            if (indexedDB && indexedDB.databases) {
-                indexedDB.databases().then(dbs => {
-                    for (const d of dbs) {
-                        if (d.name && (d.name.indexOf('firestore') !== -1 || d.name.indexOf('firebase') !== -1)) {
-                            indexedDB.deleteDatabase(d.name);
-                            console.log('Limpou IndexedDB:', d.name);
-                        }
-                    }
-                });
-            }
-        } catch(_) {}
+        // Helper: query com timeout (evita travar se Firestore não responder)
+        function withTimeout(promise, ms) {
+            return Promise.race([
+                promise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), ms))
+            ]);
+        }
 
         // --- localStorage cache helpers ---
         function lsGet(key) {
@@ -1367,9 +1361,11 @@
             const email = normalizeEmail(document.getElementById('loginEmail').value);
             const password = document.getElementById('loginPassword').value;
 
-            // 1) Tentativa normal via Firestore
+            // 1) Tentativa normal via Firestore (com timeout de 6s)
             try {
-                const users = await db.collection('usuarios').where('email', '==', email).get();
+                const users = await withTimeout(
+                    db.collection('usuarios').where('email', '==', email).get(), 6000
+                );
 
                 if (!users.empty) {
                     const user = users.docs[0];
@@ -1396,9 +1392,11 @@
                 }
             } catch (error) {
                 console.error('Erro ao consultar usuário:', error);
-                // Não retorna ainda — deixa cair no fallback abaixo se for o admin
+                // Timeout ou erro de rede — cai no fallback admin se for o admin
                 if (!(email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD)) {
-                    alert('Erro ao fazer login: ' + error.message);
+                    alert(error.message === 'TIMEOUT'
+                        ? 'Servidor demorou para responder. Tente novamente.'
+                        : 'Erro ao fazer login: ' + error.message);
                     return;
                 }
             }
@@ -1440,17 +1438,19 @@
 
         async function criarAdminPadrao() {
             try {
-                const admins = await db.collection('usuarios').where('email', '==', FALLBACK_ADMIN_EMAIL).get();
+                const admins = await withTimeout(
+                    db.collection('usuarios').where('email', '==', FALLBACK_ADMIN_EMAIL).get(), 6000
+                );
                 if (admins.empty) {
                     const hashedPassword = hashSenha(FALLBACK_ADMIN_PASSWORD);
-                    await db.collection('usuarios').add({
+                    await withTimeout(db.collection('usuarios').add({
                         nome: 'Administrador',
                         email: FALLBACK_ADMIN_EMAIL,
                         senha: hashedPassword,
                         perfil: 'admin',
                         ativo: true,
                         data_criacao: new Date()
-                    });
+                    }), 6000);
                     invalidateCache('usuarios:');
                     console.log('Admin padrão criado.');
                 }
@@ -1475,15 +1475,17 @@
         async function enviarEmailSenha() {
             const email = document.getElementById('forgotEmail').value;
             try {
-                const users = await db.collection('usuarios').where('email', '==', email).get();
+                const users = await withTimeout(
+                    db.collection('usuarios').where('email', '==', email).get(), 6000
+                );
                 if (users.empty) {
                     alert('Email não encontrado');
                     return;
                 }
                 const newPassword = generatePassword();
-                await users.docs[0].ref.update({
+                await withTimeout(users.docs[0].ref.update({
                     senha: hashSenha(newPassword)
-                });
+                }), 6000);
                 alert('Nova senha enviada para ' + email + ': ' + newPassword);
                 closeModal();
             } catch (error) {
