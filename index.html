@@ -1067,12 +1067,12 @@
     <script>
         // Firebase Config
         const firebaseConfig = {
-            apiKey: "AIzaSyC_P4RuCN4cHM8JRqWj1zJWp-bLm7N4qT4",
-            authDomain: "entrevista-onboarding-5f8e7.firebaseapp.com",
-            projectId: "entrevista-onboarding-5f8e7",
-            storageBucket: "entrevista-onboarding-5f8e7.firebasestorage.app",
-            messagingSenderId: "428937319456",
-            appId: "1:428937319456:web:7e9cb4bfa5e10a3a5a2f51"
+            apiKey: "AIzaSyAydCEQFyCmvcb-iTxovo6Pzpwp-8vraYM",
+            authDomain: "zukkin-rh.firebaseapp.com",
+            projectId: "zukkin-rh",
+            storageBucket: "zukkin-rh.firebasestorage.app",
+            messagingSenderId: "194398411433",
+            appId: "1:194398411433:web:a72e99b0ec8a0693d127b8"
         };
 
         // ============================================================
@@ -1103,61 +1103,48 @@
             return _dbReady;
         }
 
-        // Compat: mantém `db` como getter lazy para código existente
-        // que faz `db.collection(...)` diretamente
-        const db = new Proxy({}, {
-            get(_, prop) {
-                if (!_db) {
-                    // Força init síncrono se possível
-                    if (typeof firebase !== 'undefined' && firebase.firestore) {
-                        try { firebase.initializeApp(firebaseConfig); } catch(_) {}
-                        _db = firebase.firestore();
-                    }
-                }
-                if (_db) return typeof _db[prop] === 'function' ? _db[prop].bind(_db) : _db[prop];
-                // SDK ainda não carregou — retorna funções que penduram até carregar
-                if (prop === 'collection') {
-                    return function(name) {
+        // Compat: `db.collection(...)` funciona mesmo antes do SDK carregar.
+        // TUDO é async — NUNCA bloqueia a thread.
+        const db = {
+            collection: function(name) {
+                return {
+                    get: () => getDb().then(d => d.collection(name).get()),
+                    add: (data) => getDb().then(d => d.collection(name).add(data)),
+                    where: function() {
+                        const a = Array.from(arguments);
                         return {
-                            get: () => getDb().then(d => d.collection(name).get()),
-                            add: (data) => getDb().then(d => d.collection(name).add(data)),
+                            get: () => getDb().then(d => d.collection(name).where(...a).get()),
                             where: function() {
-                                const args = arguments;
+                                const b = Array.from(arguments);
                                 return {
-                                    get: () => getDb().then(d => d.collection(name).where(...args).get()),
-                                    where: function() {
-                                        const args2 = arguments;
-                                        return {
-                                            get: () => getDb().then(d => d.collection(name).where(...args).where(...args2).get())
-                                        };
-                                    }
-                                };
-                            },
-                            orderBy: function() {
-                                const args = arguments;
-                                return {
-                                    limit: function(n) {
-                                        return {
-                                            get: () => getDb().then(d => d.collection(name).orderBy(...args).limit(n).get())
-                                        };
-                                    },
-                                    get: () => getDb().then(d => d.collection(name).orderBy(...args).get())
-                                };
-                            },
-                            doc: function(id) {
-                                return {
-                                    get: () => getDb().then(d => d.collection(name).doc(id).get()),
-                                    update: (data) => getDb().then(d => d.collection(name).doc(id).update(data)),
-                                    delete: () => getDb().then(d => d.collection(name).doc(id).delete())
+                                    get: () => getDb().then(d => d.collection(name).where(...a).where(...b).get())
                                 };
                             }
                         };
-                    };
-                }
-                if (prop === 'settings') return function() {};
-                return undefined;
-            }
-        });
+                    },
+                    orderBy: function() {
+                        const a = Array.from(arguments);
+                        return {
+                            limit: function(n) {
+                                return {
+                                    get: () => getDb().then(d => d.collection(name).orderBy(...a).limit(n).get())
+                                };
+                            },
+                            get: () => getDb().then(d => d.collection(name).orderBy(...a).get())
+                        };
+                    },
+                    doc: function(id) {
+                        return {
+                            get: () => getDb().then(d => d.collection(name).doc(id).get()),
+                            update: (data) => getDb().then(d => d.collection(name).doc(id).update(data)),
+                            delete: () => getDb().then(d => d.collection(name).doc(id).delete()),
+                            ref: { update: (data) => getDb().then(d => d.collection(name).doc(id).update(data)) }
+                        };
+                    }
+                };
+            },
+            settings: function() {}
+        };
 
         // Helper: query com timeout (evita travar se Firestore não responder)
         function withTimeout(promise, ms) {
@@ -1285,9 +1272,10 @@
         }
 
         // EmailJS Config
-        const EMAILJS_PUBLIC_KEY = 'your_emailjs_public_key';
-        const EMAILJS_SERVICE_ID = 'your_service_id';
-        const EMAILJS_TEMPLATE_ID = 'your_template_id';
+        const EMAILJS_PUBLIC_KEY = 'y-qdjp0EHirSZTQrcHt_7';
+        const EMAILJS_SERVICE_ID = 'service_7q0c1os';
+        const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
+        emailjs.init(EMAILJS_PUBLIC_KEY);
 
         // Global variables
         let currentUser = null;
