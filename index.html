@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://www.googleapis.com" crossorigin>
     <link rel="dns-prefetch" href="https://firestore.googleapis.com">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
@@ -1075,14 +1075,89 @@
             appId: "1:428937319456:web:7e9cb4bfa5e10a3a5a2f51"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // ============================================================
+        // FIRESTORE LAZY INIT — o SDK é pesado e bloqueia a thread.
+        // Inicializamos SOMENTE quando a primeira query for necessária.
+        // A tela de login aparece instantaneamente, sem depender do SDK.
+        // ============================================================
+        let _db = null;
+        let _dbReady = null;
 
-        // ============================================================
-        // STALE-WHILE-REVALIDATE — solução definitiva de performance.
-        // Dados são servidos de localStorage instantaneamente.
-        // Firestore atualiza em background; quando responde, salva.
-        // ============================================================
+        function getDb() {
+            if (_db) return Promise.resolve(_db);
+            if (_dbReady) return _dbReady;
+            _dbReady = new Promise((resolve) => {
+                function tryInit() {
+                    if (typeof firebase !== 'undefined' && firebase.firestore) {
+                        try {
+                            firebase.initializeApp(firebaseConfig);
+                        } catch(_) {} // already initialized
+                        _db = firebase.firestore();
+                        resolve(_db);
+                    } else {
+                        setTimeout(tryInit, 100);
+                    }
+                }
+                tryInit();
+            });
+            return _dbReady;
+        }
+
+        // Compat: mantém `db` como getter lazy para código existente
+        // que faz `db.collection(...)` diretamente
+        const db = new Proxy({}, {
+            get(_, prop) {
+                if (!_db) {
+                    // Força init síncrono se possível
+                    if (typeof firebase !== 'undefined' && firebase.firestore) {
+                        try { firebase.initializeApp(firebaseConfig); } catch(_) {}
+                        _db = firebase.firestore();
+                    }
+                }
+                if (_db) return typeof _db[prop] === 'function' ? _db[prop].bind(_db) : _db[prop];
+                // SDK ainda não carregou — retorna funções que penduram até carregar
+                if (prop === 'collection') {
+                    return function(name) {
+                        return {
+                            get: () => getDb().then(d => d.collection(name).get()),
+                            add: (data) => getDb().then(d => d.collection(name).add(data)),
+                            where: function() {
+                                const args = arguments;
+                                return {
+                                    get: () => getDb().then(d => d.collection(name).where(...args).get()),
+                                    where: function() {
+                                        const args2 = arguments;
+                                        return {
+                                            get: () => getDb().then(d => d.collection(name).where(...args).where(...args2).get())
+                                        };
+                                    }
+                                };
+                            },
+                            orderBy: function() {
+                                const args = arguments;
+                                return {
+                                    limit: function(n) {
+                                        return {
+                                            get: () => getDb().then(d => d.collection(name).orderBy(...args).limit(n).get())
+                                        };
+                                    },
+                                    get: () => getDb().then(d => d.collection(name).orderBy(...args).get())
+                                };
+                            },
+                            doc: function(id) {
+                                return {
+                                    get: () => getDb().then(d => d.collection(name).doc(id).get()),
+                                    update: (data) => getDb().then(d => d.collection(name).doc(id).update(data)),
+                                    delete: () => getDb().then(d => d.collection(name).doc(id).delete())
+                                };
+                            }
+                        };
+                    };
+                }
+                if (prop === 'settings') return function() {};
+                return undefined;
+            }
+        });
 
         // Helper: query com timeout (evita travar se Firestore não responder)
         function withTimeout(promise, ms) {
@@ -1341,7 +1416,9 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            criarAdminPadrao();
+            // NÃO chama criarAdminPadrao no boot — isso travava a thread.
+            // O admin fallback funciona sem precisar criar doc no Firestore.
+            showLoginScreen();
         });
 
         // Authentication Functions
