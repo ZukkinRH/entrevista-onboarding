@@ -1078,30 +1078,141 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Força long-polling (POST) ao invés de WebChannel streaming (GET).
-        // O endpoint de streaming retorna 503, causando retries de 10-15s.
-        // Long-polling usa apenas POST, contornando o problema.
-        db.settings({ experimentalForceLongPolling: true });
+        // ============================================================
+        // STALE-WHILE-REVALIDATE — solução definitiva de performance.
+        // Dados são servidos de localStorage instantaneamente.
+        // Firestore atualiza em background; quando responde, salva.
+        // ============================================================
 
-        // Cache em memória por sessão (evita re-query ao alternar menus).
-        // TTL padrão: 30s. Chamar invalidateCache() após mutações.
+        // Limpa IndexedDB do Firestore (resquício de enablePersistence).
+        try {
+            if (indexedDB && indexedDB.databases) {
+                indexedDB.databases().then(dbs => {
+                    for (const d of dbs) {
+                        if (d.name && (d.name.indexOf('firestore') !== -1 || d.name.indexOf('firebase') !== -1)) {
+                            indexedDB.deleteDatabase(d.name);
+                            console.log('Limpou IndexedDB:', d.name);
+                        }
+                    }
+                });
+            }
+        } catch(_) {}
+
+        // --- localStorage cache helpers ---
+        function lsGet(key) {
+            try {
+                const raw = localStorage.getItem('zrh_' + key);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch(_) { return null; }
+        }
+        function lsSet(key, docs) {
+            try {
+                localStorage.setItem('zrh_' + key, JSON.stringify(docs));
+            } catch(_) {}
+        }
+        function lsClear(prefix) {
+            try {
+                const keys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith('zrh_' + (prefix || ''))) keys.push(k);
+                }
+                keys.forEach(k => localStorage.removeItem(k));
+            } catch(_) {}
+        }
+
+        // Converte snapshot do Firestore em array serializável
+        function snapToArray(snap) {
+            const arr = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                // Converte Timestamps para ISO string
+                for (const k in d) {
+                    if (d[k] && typeof d[k].toDate === 'function') {
+                        d[k] = d[k].toDate().toISOString();
+                    }
+                }
+                arr.push({ id: doc.id, ...d });
+            });
+            return arr;
+        }
+
+        // Cria um "fake snapshot" a partir do array do localStorage
+        // compatível com o padrão snap.forEach(doc => { doc.id, doc.data() })
+        function arrayToFakeSnap(arr) {
+            if (!arr) return null;
+            return {
+                empty: arr.length === 0,
+                size: arr.length,
+                docs: arr.map(item => ({
+                    id: item.id,
+                    data: () => {
+                        const copy = { ...item };
+                        delete copy.id;
+                        return copy;
+                    }
+                })),
+                forEach: function(fn) { this.docs.forEach(fn); }
+            };
+        }
+
+        // --- Cache em memória (sessão atual) ---
         const _cache = new Map();
-        const CACHE_TTL_MS = 120000; // 2 minutos — dados mudam raramente
-        function cacheGet(key) {
-            const entry = _cache.get(key);
-            if (!entry) return null;
-            if (Date.now() - entry.t > CACHE_TTL_MS) { _cache.delete(key); return null; }
-            return entry.v;
-        }
-        function cacheSet(key, v) { _cache.set(key, { t: Date.now(), v }); return v; }
         function invalidateCache(prefix) {
-            if (!prefix) { _cache.clear(); return; }
+            if (!prefix) { _cache.clear(); lsClear(''); return; }
             for (const k of Array.from(_cache.keys())) if (k.startsWith(prefix)) _cache.delete(k);
+            lsClear(prefix);
         }
+
+        // CORE: busca com stale-while-revalidate
+        // 1. Retorna localStorage imediatamente se tiver dados
+        // 2. Dispara Firestore em background
+        // 3. Quando Firestore responder, salva em localStorage e memória
         async function cachedGet(key, fetcher) {
-            const hit = cacheGet(key);
-            if (hit) return hit;
-            return cacheSet(key, await fetcher());
+            // 1. Check memória (mais rápido)
+            const memHit = _cache.get(key);
+            if (memHit) return memHit;
+
+            // 2. Check localStorage (instantâneo, sobrevive refresh)
+            const lsData = lsGet(key);
+            const fakeSnap = arrayToFakeSnap(lsData);
+
+            // 3. Dispara Firestore com timeout de 8s
+            const firestorePromise = Promise.race([
+                fetcher().then(snap => {
+                    // Salva no localStorage e memória para próxima vez
+                    lsSet(key, snapToArray(snap));
+                    _cache.set(key, snap);
+                    return snap;
+                }),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('timeout')), 8000)
+                )
+            ]).catch(err => {
+                console.warn('Firestore lento/offline para', key, err.message || err);
+                return null;
+            });
+
+            // 4. Se temos dados no localStorage, retorna imediatamente
+            if (fakeSnap) {
+                _cache.set(key, fakeSnap);
+                // Background: atualiza quando Firestore responder
+                firestorePromise.then(snap => {
+                    if (snap) _cache.set(key, snap);
+                });
+                return fakeSnap;
+            }
+
+            // 5. Sem cache: espera Firestore (primeira vez)
+            const result = await firestorePromise;
+            if (result) {
+                _cache.set(key, result);
+                return result;
+            }
+
+            // 6. Fallback: snapshot vazio
+            return arrayToFakeSnap([]);
         }
 
         // EmailJS Config
@@ -1800,7 +1911,7 @@
                     cachedGet('usuarios:all', () => db.collection('usuarios').get()),
                     cachedGet('pesquisas:all', () => db.collection('pesquisas').get()),
                     cachedGet('pdis:all', () => db.collection('pdis').get()),
-                    db.collection('respostas').orderBy('data_resposta', 'desc').limit(5).get()
+                    cachedGet('respostas:recent', () => db.collection('respostas').orderBy('data_resposta', 'desc').limit(5).get())
                 ]);
 
                 const totalUsers = usuarios.size;
