@@ -1329,58 +1329,213 @@
                     {
                         titulo: 'Acolhimento e Integração',
                         questoes: [
-                            { id: 'acolhimento_1', tipo: 'escala', texto: 'Como você avalia o acolhimento durante os primeiros dias?' },
-                            { id: 'acolhimento_2', tipo: 'sim_nao', texto: 'Você recebeu todas as informações necessárias?' },
-                            { id: 'acolhimento_3', tipo: 'texto', texto: 'Quais foram as maiores dificuldades no seu acolhimento?' }
+                            { id: 'acol_1', tipo: 'escala', texto: 'Como você avalia o processo de recepção e acolhimento no seu primeiro dia?' },
+                            { id: 'acol_2', tipo: 'escala', texto: 'Você foi apresentado(a) adequadamente à equipe e colegas de trabalho?' },
+                            { id: 'acol_3', tipo: 'sim_nao', texto: 'Recebeu todas as ferramentas e acessos necessários para iniciar seu trabalho?' },
+                            { id: 'acol_4', tipo: 'texto', texto: 'Se não recebeu algo, o que ficou faltando?' },
+                            { id: 'acol_5', tipo: 'sim_nao', texto: 'Alguém foi designado para te acompanhar nos primeiros dias (buddy/padrinho)?' },
+                            { id: 'acol_6', tipo: 'texto', texto: 'Como foi essa experiência de acompanhamento?' }
                         ]
                     },
                     {
-                        titulo: 'Equipe e Ambiente',
+                        titulo: 'Expectativas vs. Realidade',
                         questoes: [
-                            { id: 'equipe_1', tipo: 'escala', texto: 'Como você se sente integrado à equipe?' },
-                            { id: 'equipe_2', tipo: 'nps', texto: 'Qual a sua disposição em permanecer na empresa?' },
-                            { id: 'equipe_3', tipo: 'texto', texto: 'Comentários adicionais sobre a equipe' }
+                            { id: 'exp_1', tipo: 'escala', texto: 'As atividades do dia a dia estão alinhadas com o que foi apresentado no processo seletivo?' },
+                            { id: 'exp_2', tipo: 'escala', texto: 'Você está conseguindo compreender suas responsabilidades e entregas esperadas?' },
+                            { id: 'exp_3', tipo: 'texto', texto: 'Houve algo que te surpreendeu positivamente até agora?' },
+                            { id: 'exp_4', tipo: 'texto', texto: 'Houve algo que te surpreendeu negativamente?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Infraestrutura e Ambiente',
+                        questoes: [
+                            { id: 'infra_1', tipo: 'escala', texto: 'Como você avalia o ambiente físico de trabalho (espaço, equipamentos, conforto)?' },
+                            { id: 'infra_2', tipo: 'escala', texto: 'Os sistemas e ferramentas tecnológicas estão funcionando adequadamente?' },
+                            { id: 'infra_3', tipo: 'texto', texto: 'Há algo na infraestrutura que precisa ser melhorado?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Relacionamento com Gestor e Equipe',
+                        questoes: [
+                            { id: 'rel_1', tipo: 'escala', texto: 'Como está o relacionamento com seu gestor direto?' },
+                            { id: 'rel_2', tipo: 'escala', texto: 'Você sente que pode tirar dúvidas e pedir ajuda quando necessário?' },
+                            { id: 'rel_3', tipo: 'escala', texto: 'Como está a integração com os colegas de equipe?' },
+                            { id: 'rel_4', tipo: 'sim_nao', texto: 'Você se sente parte do time?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Treinamento e Desenvolvimento',
+                        questoes: [
+                            { id: 'trein_1', tipo: 'escala', texto: 'Os treinamentos oferecidos até agora foram suficientes para suas atividades?' },
+                            { id: 'trein_2', tipo: 'texto', texto: 'Há algum treinamento adicional que você sente necessidade?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Avaliação Geral',
+                        questoes: [
+                            { id: 'ger45_1', tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo trabalhar aqui? (eNPS)' },
+                            { id: 'ger45_2', tipo: 'escala', texto: 'Qual seu nível geral de satisfação até o momento?' },
+                            { id: 'ger45_3', tipo: 'texto', texto: 'O que poderíamos melhorar no processo de integração?' },
+                            { id: 'ger45_4', tipo: 'texto', texto: 'Gostaria de compartilhar mais alguma coisa?' }
                         ]
                     }
                 ]
             },
             desempenho_90_colab: {
-                nome: 'Pesquisa de Desempenho 90 dias - Colaborador',
+                nome: 'Avaliação 360° - Autoavaliação (90 dias)',
                 tipo: 'desempenho_90_colab',
                 secoes: [
                     {
-                        titulo: 'Desempenho e Desenvolvimento',
+                        titulo: 'Competências Técnicas',
                         questoes: [
-                            { id: 'desempenho_1', tipo: 'escala', texto: 'Como você avalia seu próprio desempenho?' },
-                            { id: 'desempenho_2', tipo: 'sim_nao', texto: 'Recebeu feedbacks sobre seu desenvolvimento?' },
-                            { id: 'desempenho_3', tipo: 'nps', texto: 'Qual sua satisfação com as oportunidades de aprendizado?' }
+                            { id: 'ct_1', tipo: 'escala', texto: 'Como você avalia seu domínio das ferramentas e sistemas necessários para o cargo?' },
+                            { id: 'ct_2', tipo: 'escala', texto: 'Você consegue executar suas atividades com autonomia e qualidade?' },
+                            { id: 'ct_3', tipo: 'escala', texto: 'Como avalia sua capacidade de resolver problemas técnicos do dia a dia?' },
+                            { id: 'ct_4', tipo: 'texto', texto: 'Em quais áreas técnicas você sente que precisa de mais desenvolvimento?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Competências Comportamentais',
+                        questoes: [
+                            { id: 'cc_1', tipo: 'escala', texto: 'Como você avalia sua comunicação com colegas e gestores?' },
+                            { id: 'cc_2', tipo: 'escala', texto: 'Como avalia sua capacidade de trabalhar em equipe e colaborar?' },
+                            { id: 'cc_3', tipo: 'escala', texto: 'Como avalia sua organização e gestão do tempo?' },
+                            { id: 'cc_4', tipo: 'escala', texto: 'Como avalia sua proatividade e iniciativa?' },
+                            { id: 'cc_5', tipo: 'escala', texto: 'Como avalia sua adaptabilidade diante de mudanças?' },
+                            { id: 'cc_6', tipo: 'texto', texto: 'Descreva uma situação em que precisou se adaptar a algo inesperado.' }
+                        ]
+                    },
+                    {
+                        titulo: 'Metas e Entregas',
+                        questoes: [
+                            { id: 'me_1', tipo: 'escala', texto: 'Você tem clareza sobre as metas e o que é esperado de você?' },
+                            { id: 'me_2', tipo: 'escala', texto: 'Está conseguindo cumprir os prazos estabelecidos?' },
+                            { id: 'me_3', tipo: 'escala', texto: 'Como avalia a qualidade das suas entregas?' },
+                            { id: 'me_4', tipo: 'sim_nao', texto: 'Existe algo impedindo você de entregar mais ou melhor?' },
+                            { id: 'me_5', tipo: 'texto', texto: 'Se sim, quais são os principais impedimentos?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Relacionamento e Liderança',
+                        questoes: [
+                            { id: 'rl_1', tipo: 'escala', texto: 'Como está o relacionamento com seu gestor direto?' },
+                            { id: 'rl_2', tipo: 'sim_nao', texto: 'Recebe feedbacks frequentes sobre seu trabalho?' },
+                            { id: 'rl_3', tipo: 'escala', texto: 'A comunicação dentro da equipe está fluindo bem?' },
+                            { id: 'rl_4', tipo: 'escala', texto: 'Sente que suas ideias e opiniões são ouvidas e valorizadas?' },
+                            { id: 'rl_5', tipo: 'texto', texto: 'Há algo que gostaria de dizer ao seu gestor mas ainda não disse?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Cultura e Valores',
+                        questoes: [
+                            { id: 'cv_1', tipo: 'escala', texto: 'Você se identifica com os valores e a cultura da empresa?' },
+                            { id: 'cv_2', tipo: 'escala', texto: 'Sente que a empresa pratica os valores que comunica?' },
+                            { id: 'cv_3', tipo: 'escala', texto: 'Você se sente respeitado(a) e incluído(a) no ambiente de trabalho?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Crescimento e Desenvolvimento',
+                        questoes: [
+                            { id: 'cd_1', tipo: 'escala', texto: 'Você vê oportunidades de crescimento na empresa?' },
+                            { id: 'cd_2', tipo: 'escala', texto: 'Está aprendendo coisas novas no seu trabalho?' },
+                            { id: 'cd_3', tipo: 'texto', texto: 'Que tipo de desenvolvimento profissional você gostaria de ter?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Avaliação Geral e Satisfação',
+                        questoes: [
+                            { id: 'ag_1', tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de recomendar a empresa para um amigo trabalhar aqui? (eNPS)' },
+                            { id: 'ag_2', tipo: 'escala', texto: 'Qual seu nível geral de satisfação neste momento?' },
+                            { id: 'ag_3', tipo: 'escala', texto: 'Qual a probabilidade de você permanecer na empresa nos próximos 12 meses?' },
+                            { id: 'ag_4', tipo: 'texto', texto: 'O que a empresa poderia fazer para melhorar sua experiência?' },
+                            { id: 'ag_5', tipo: 'texto', texto: 'Algum comentário adicional?' }
                         ]
                     }
                 ]
             },
             experiencia_45_empresa: {
-                nome: 'Pesquisa de Experiência 45 dias - Empresa',
+                nome: 'Avaliação 360° - Pelo Gestor (45 dias)',
                 tipo: 'experiencia_45_empresa',
                 secoes: [
                     {
-                        titulo: 'Avaliação da Empresa',
+                        titulo: 'Adaptação e Integração',
                         questoes: [
-                            { id: 'empresa_1', tipo: 'escala', texto: 'Como você avalia o desempenho deste colaborador?' },
-                            { id: 'empresa_2', tipo: 'sim_nao', texto: 'O colaborador está adequado para a função?' },
-                            { id: 'empresa_3', tipo: 'texto', texto: 'Observações gerais sobre o colaborador' }
+                            { id: 'ga_1', tipo: 'escala', texto: 'Como você avalia a adaptação deste colaborador ao time?' },
+                            { id: 'ga_2', tipo: 'escala', texto: 'O colaborador demonstrou proatividade para se integrar?' },
+                            { id: 'ga_3', tipo: 'sim_nao', texto: 'O colaborador buscou esclarecer dúvidas e entender os processos?' },
+                            { id: 'ga_4', tipo: 'texto', texto: 'Pontos fortes observados na adaptação:' }
+                        ]
+                    },
+                    {
+                        titulo: 'Competências Técnicas',
+                        questoes: [
+                            { id: 'gct_1', tipo: 'escala', texto: 'O colaborador demonstra conhecimento técnico adequado para a função?' },
+                            { id: 'gct_2', tipo: 'escala', texto: 'Qual o nível de autonomia do colaborador nas atividades?' },
+                            { id: 'gct_3', tipo: 'escala', texto: 'A qualidade das entregas está de acordo com o esperado?' },
+                            { id: 'gct_4', tipo: 'texto', texto: 'Áreas técnicas que precisam de desenvolvimento:' }
+                        ]
+                    },
+                    {
+                        titulo: 'Competências Comportamentais',
+                        questoes: [
+                            { id: 'gcc_1', tipo: 'escala', texto: 'Como avalia a comunicação do colaborador?' },
+                            { id: 'gcc_2', tipo: 'escala', texto: 'O colaborador trabalha bem em equipe?' },
+                            { id: 'gcc_3', tipo: 'escala', texto: 'Demonstra comprometimento e responsabilidade?' },
+                            { id: 'gcc_4', tipo: 'escala', texto: 'Cumpre horários e prazos estabelecidos?' },
+                            { id: 'gcc_5', tipo: 'texto', texto: 'Observações sobre comportamento e postura profissional:' }
+                        ]
+                    },
+                    {
+                        titulo: 'Potencial e Recomendação',
+                        questoes: [
+                            { id: 'gp_1', tipo: 'escala', texto: 'Qual o potencial de crescimento do colaborador na empresa?' },
+                            { id: 'gp_2', tipo: 'sim_nao', texto: 'O colaborador está adequado para a função?' },
+                            { id: 'gp_3', tipo: 'nps', texto: 'De 0 a 10, recomendaria a efetivação/continuidade deste colaborador?' },
+                            { id: 'gp_4', tipo: 'texto', texto: 'Plano de ação sugerido para os próximos meses:' },
+                            { id: 'gp_5', tipo: 'texto', texto: 'Observações gerais sobre o colaborador:' }
                         ]
                     }
                 ]
             },
             desempenho_90_empresa: {
-                nome: 'Pesquisa de Desempenho 90 dias - Empresa',
+                nome: 'Avaliação 360° - Pelo Gestor (90 dias)',
                 tipo: 'desempenho_90_empresa',
                 secoes: [
                     {
-                        titulo: 'Avaliação de Desempenho',
+                        titulo: 'Desempenho e Entregas',
                         questoes: [
-                            { id: 'perf_1', tipo: 'escala', texto: 'Qual sua avaliação final do desempenho?' },
-                            { id: 'perf_2', tipo: 'nps', texto: 'Recomendaria a continuidade deste colaborador?' }
+                            { id: 'gd_1', tipo: 'escala', texto: 'O colaborador está atingindo as metas e entregas definidas?' },
+                            { id: 'gd_2', tipo: 'escala', texto: 'A qualidade do trabalho evoluiu desde a última avaliação?' },
+                            { id: 'gd_3', tipo: 'escala', texto: 'Demonstra autonomia crescente nas atividades?' },
+                            { id: 'gd_4', tipo: 'escala', texto: 'Gerencia bem múltiplas tarefas e prioridades?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Evolução Comportamental',
+                        questoes: [
+                            { id: 'ge_1', tipo: 'escala', texto: 'Houve evolução nas competências comportamentais desde a avaliação anterior?' },
+                            { id: 'ge_2', tipo: 'escala', texto: 'Como avalia a capacidade de receber e aplicar feedbacks?' },
+                            { id: 'ge_3', tipo: 'escala', texto: 'Demonstra alinhamento com os valores e cultura da empresa?' },
+                            { id: 'ge_4', tipo: 'escala', texto: 'Contribui positivamente para o clima e ambiente da equipe?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Liderança e Influência',
+                        questoes: [
+                            { id: 'gl_1', tipo: 'escala', texto: 'Demonstra potencial de liderança ou influência positiva no time?' },
+                            { id: 'gl_2', tipo: 'sim_nao', texto: 'O colaborador ajuda ou orienta colegas quando solicitado?' },
+                            { id: 'gl_3', tipo: 'escala', texto: 'Propõe ideias ou melhorias para processos e atividades?' }
+                        ]
+                    },
+                    {
+                        titulo: 'Avaliação Final e Recomendações',
+                        questoes: [
+                            { id: 'gf_1', tipo: 'nps', texto: 'De 0 a 10, qual sua avaliação geral do desempenho nos 90 dias?' },
+                            { id: 'gf_2', tipo: 'sim_nao', texto: 'Recomenda a continuidade/efetivação deste colaborador?' },
+                            { id: 'gf_3', tipo: 'escala', texto: 'Qual o potencial de crescimento do colaborador na organização?' },
+                            { id: 'gf_4', tipo: 'texto', texto: 'Principais pontos fortes do colaborador:' },
+                            { id: 'gf_5', tipo: 'texto', texto: 'Principais pontos de desenvolvimento:' },
+                            { id: 'gf_6', tipo: 'texto', texto: 'Plano de ação sugerido:' }
                         ]
                     }
                 ]
@@ -1404,9 +1559,14 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // NÃO chama criarAdminPadrao no boot — isso travava a thread.
-            // O admin fallback funciona sem precisar criar doc no Firestore.
-            showLoginScreen();
+            // Restaura sessão do localStorage (evita logout no F5)
+            const savedSession = lsGet('session');
+            if (savedSession && savedSession.id && savedSession.email) {
+                currentUser = savedSession;
+                showAppScreen();
+            } else {
+                showLoginScreen();
+            }
         });
 
         // Authentication Functions
@@ -1439,6 +1599,12 @@
 
                     if (userData.senha === hashedPassword) {
                         currentUser = { id: user.id, ...userData };
+                        lsSet('session', currentUser);
+                        // Verifica senha provisória
+                        if (userData.provisoria) {
+                            showChangePasswordScreen(user.id);
+                            return;
+                        }
                         showAppScreen();
                         return;
                     }
@@ -1448,6 +1614,7 @@
                         // Restaura a senha padrão no doc existente
                         try { await user.ref.update({ senha: hashSenha(FALLBACK_ADMIN_PASSWORD), ativo: true }); } catch (_) {}
                         currentUser = { id: user.id, ...userData, perfil: 'admin', ativo: true };
+                        lsSet('session', currentUser);
                         showAppScreen();
                         return;
                     }
@@ -1490,6 +1657,7 @@
                     perfil: 'admin',
                     ativo: true
                 };
+                lsSet('session', currentUser);
                 showAppScreen();
                 return;
             }
@@ -1565,9 +1733,65 @@
 
         function handleLogout() {
             currentUser = null;
+            try { localStorage.removeItem('zrh_session'); } catch(_) {}
             showLoginScreen();
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
+        }
+
+        function showChangePasswordScreen(userId) {
+            const html = `
+                <div style="max-width: 400px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <h2 style="color: var(--primary); margin-bottom: 10px;">Redefinir Senha</h2>
+                    <p style="color: #636E72; margin-bottom: 20px;">Sua senha é provisória. Por favor, defina uma nova senha para continuar.</p>
+                    <div class="form-group">
+                        <label for="newPass">Nova Senha:</label>
+                        <input type="password" id="newPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;">
+                    </div>
+                    <div class="form-group" style="margin-top:10px;">
+                        <label for="confirmPass">Confirmar Senha:</label>
+                        <input type="password" id="confirmPass" placeholder="Repita a nova senha" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveNewPassword('${userId}')" style="width:100%;margin-top:15px;padding:12px;">Salvar Nova Senha</button>
+                </div>
+            `;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'none';
+            // Usa o mainContent como tela temporária
+            const mainContent = document.querySelector('.main-content') || document.getElementById('appScreen');
+            document.getElementById('appScreen').style.display = 'flex';
+            document.querySelector('.sidebar').style.display = 'none';
+            document.querySelector('.main-content').innerHTML = html;
+        }
+
+        async function saveNewPassword(userId) {
+            const newPass = document.getElementById('newPass').value;
+            const confirmPass = document.getElementById('confirmPass').value;
+
+            if (newPass.length < 6) {
+                alert('A senha deve ter no mínimo 6 caracteres.');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                alert('As senhas não coincidem.');
+                return;
+            }
+
+            try {
+                await db.collection('usuarios').doc(userId).update({
+                    senha: hashSenha(newPass),
+                    provisoria: false
+                });
+                invalidateCache('usuarios:');
+                currentUser.provisoria = false;
+                lsSet('session', currentUser);
+                alert('Senha atualizada com sucesso!');
+                document.querySelector('.sidebar').style.display = '';
+                showAppScreen();
+            } catch (error) {
+                console.error('Erro ao atualizar senha:', error);
+                alert('Erro ao atualizar senha: ' + error.message);
+            }
         }
 
         function showAppScreen() {
@@ -1700,8 +1924,8 @@
                         }
                     });
                 } else {
-                    const subordinados = await cachedGet('usuarios:subordinados:' + currentUser.nome, () =>
-                        db.collection('usuarios').where('lider', '==', currentUser.nome).get());
+                    const subordinados = await cachedGet('usuarios:subordinados:' + currentUser.id, () =>
+                        db.collection('usuarios').where('gestor_id', '==', currentUser.id).get());
                     subordinados.forEach(doc => {
                         const u = doc.data();
                         const option = document.createElement('option');
@@ -2072,7 +2296,7 @@
                 });
 
                 let html = '<div class="table-wrapper"><table class="table">';
-                html += '<thead><tr><th>Usuário</th><th>Perfil</th><th>Pesquisas</th><th>Ações</th></tr></thead>';
+                html += '<thead><tr><th>Usuário</th><th>Perfil</th><th>Gestor</th><th>Pesquisas Liberadas</th><th>Ações</th></tr></thead>';
                 html += '<tbody>';
 
                 usuarios.forEach(doc => {
@@ -2083,8 +2307,9 @@
                     html += '<tr>';
                     html += '<td>' + u.nome + '</td>';
                     html += '<td><span class="badge badge-primary">' + perfil + '</span></td>';
+                    html += '<td>' + (u.lider || 'N/A') + '</td>';
                     html += '<td>' + liberadas + ' pesquisa(s)</td>';
-                    html += '<td><button class="btn btn-primary btn-small" onclick="openLiberacaoForm(\'' + doc.id + '\', \'' + u.nome + '\')">Gerenciar</button></td>';
+                    html += '<td><button class="btn btn-primary btn-small" onclick="openLiberacaoForm(\'' + doc.id + '\', \'' + (u.nome || '').replace(/'/g, "\\'") + '\')">Gerenciar</button></td>';
                     html += '</tr>';
                 });
 
@@ -2097,79 +2322,88 @@
         }
 
         async function openLiberacaoForm(userId, userName) {
-            // Buscar liberações já existentes para este usuário
+            // Buscar histórico de liberações para este usuário
             const existentes = await db.collection('liberacoes')
                 .where('colaborador_id', '==', userId)
                 .get();
-            const tiposLiberados = {};
+
+            let historicoHtml = '';
+            const liberacoesList = [];
             existentes.forEach(doc => {
-                tiposLiberados[doc.data().tipo_pesquisa] = true;
+                const l = doc.data();
+                liberacoesList.push({ id: doc.id, ...l });
             });
 
-            const html = '<div class="pdi-form-section">' +
-                '<label>Selecione as pesquisas para liberar:</label>' +
-                '<div class="checkbox-group">' +
-                '<input type="checkbox" id="lib1" value="experiencia_45_colab"' + (tiposLiberados['experiencia_45_colab'] ? ' checked' : '') + '>' +
-                '<label for="lib1">Pesquisa de Experiência 45 dias - Colaborador</label>' +
-                '</div>' +
-                '<div class="checkbox-group">' +
-                '<input type="checkbox" id="lib2" value="desempenho_90_colab"' + (tiposLiberados['desempenho_90_colab'] ? ' checked' : '') + '>' +
-                '<label for="lib2">Pesquisa de Desempenho 90 dias - Colaborador</label>' +
-                '</div>' +
-                '<div class="checkbox-group">' +
-                '<input type="checkbox" id="lib3" value="experiencia_45_empresa"' + (tiposLiberados['experiencia_45_empresa'] ? ' checked' : '') + '>' +
-                '<label for="lib3">Pesquisa de Experiência 45 dias - Empresa</label>' +
-                '</div>' +
-                '<div class="checkbox-group">' +
-                '<input type="checkbox" id="lib4" value="desempenho_90_empresa"' + (tiposLiberados['desempenho_90_empresa'] ? ' checked' : '') + '>' +
-                '<label for="lib4">Pesquisa de Desempenho 90 dias - Empresa</label>' +
-                '</div>' +
+            if (liberacoesList.length > 0) {
+                historicoHtml = '<div style="margin-bottom:15px;"><strong>Histórico de liberações:</strong></div>';
+                historicoHtml += '<div class="table-wrapper"><table class="table" style="font-size:13px;"><thead><tr><th>Pesquisa</th><th>Data</th><th>Status</th><th>Ação</th></tr></thead><tbody>';
+                liberacoesList.sort((a, b) => {
+                    const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
+                    const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                    return db2 - da;
+                });
+                liberacoesList.forEach(l => {
+                    const nomeP = SURVEY_TEMPLATES[l.tipo_pesquisa] ? SURVEY_TEMPLATES[l.tipo_pesquisa].nome : l.tipo_pesquisa;
+                    const dataLib = l.data_liberacao ? new Date(l.data_liberacao).toLocaleDateString('pt-BR') : 'N/A';
+                    const statusLib = l.respondida ? '<span style="color:green;">Respondida</span>' : '<span style="color:orange;">Pendente</span>';
+                    historicoHtml += '<tr><td>' + nomeP + '</td><td>' + dataLib + '</td><td>' + statusLib + '</td>';
+                    historicoHtml += '<td><button class="btn btn-danger btn-small" onclick="removeLiberacao(\'' + l.id + '\',\'' + userId + '\',\'' + userName.replace(/'/g, "\\'") + '\')">Remover</button></td></tr>';
+                });
+                historicoHtml += '</tbody></table></div><hr style="margin:15px 0;">';
+            }
+
+            const html = historicoHtml +
+                '<div class="pdi-form-section">' +
+                '<label><strong>Enviar nova pesquisa:</strong></label>' +
+                '<select id="libTipoPesquisa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-top:5px;">' +
+                '<option value="">-- Selecione o tipo --</option>' +
+                '<option value="experiencia_45_colab">Pesquisa de Experiência 45 dias - Colaborador</option>' +
+                '<option value="desempenho_90_colab">Avaliação 360° - Autoavaliação (90 dias)</option>' +
+                '<option value="experiencia_45_empresa">Avaliação 360° - Pelo Gestor (45 dias)</option>' +
+                '<option value="desempenho_90_empresa">Avaliação 360° - Pelo Gestor (90 dias)</option>' +
+                '</select>' +
                 '</div>';
+
             openModal('Liberar Pesquisas para ' + userName, html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'saveLiberacaoMultipla("' + userId + '")', class: 'btn-primary' }
+                { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Enviar Pesquisa', onclick: 'enviarNovaLiberacao("' + userId + '","' + userName.replace(/"/g, '\\"') + '")', class: 'btn-primary' }
             ]);
         }
 
-        async function saveLiberacaoMultipla(userId) {
-            const todosTipos = ['experiencia_45_colab', 'desempenho_90_colab', 'experiencia_45_empresa', 'desempenho_90_empresa'];
-            const marcados = [];
-            if (document.getElementById('lib1').checked) marcados.push('experiencia_45_colab');
-            if (document.getElementById('lib2').checked) marcados.push('desempenho_90_colab');
-            if (document.getElementById('lib3').checked) marcados.push('experiencia_45_empresa');
-            if (document.getElementById('lib4').checked) marcados.push('desempenho_90_empresa');
+        async function enviarNovaLiberacao(userId, userName) {
+            const tipo = document.getElementById('libTipoPesquisa').value;
+            if (!tipo) { alert('Selecione um tipo de pesquisa'); return; }
 
             try {
-                for (const tipo of todosTipos) {
-                    const existing = await db.collection('liberacoes')
-                        .where('colaborador_id', '==', userId)
-                        .where('tipo_pesquisa', '==', tipo)
-                        .get();
-
-                    if (marcados.includes(tipo)) {
-                        // Adicionar se não existe
-                        if (existing.empty) {
-                            await db.collection('liberacoes').add({
-                                colaborador_id: userId,
-                                tipo_pesquisa: tipo,
-                                liberado_por: currentUser.email,
-                                data_liberacao: new Date()
-                            });
-                        }
-                    } else {
-                        // Remover se existe
-                        existing.forEach(doc => {
-                            db.collection('liberacoes').doc(doc.id).delete();
-                        });
-                    }
-                }
+                await db.collection('liberacoes').add({
+                    colaborador_id: userId,
+                    tipo_pesquisa: tipo,
+                    liberado_por: currentUser.email,
+                    liberado_por_nome: currentUser.nome,
+                    data_liberacao: new Date(),
+                    respondida: false
+                });
                 invalidateCache('liberacoes:');
-                alert('Pesquisas atualizadas com sucesso!');
+                alert('Pesquisa liberada com sucesso para ' + userName + '!');
                 closeModal();
-                loadLiberacoes();
+                // Reabrir o formulário para mostrar histórico atualizado
+                openLiberacaoForm(userId, userName);
             } catch (error) {
-                console.error('Erro ao liberar pesquisas:', error);
+                console.error('Erro ao liberar pesquisa:', error);
                 alert('Erro ao liberar: ' + error.message);
+            }
+        }
+
+        async function removeLiberacao(libId, userId, userName) {
+            if (!confirm('Remover esta liberação?')) return;
+            try {
+                await db.collection('liberacoes').doc(libId).delete();
+                invalidateCache('liberacoes:');
+                closeModal();
+                openLiberacaoForm(userId, userName);
+            } catch(error) {
+                console.error('Erro ao remover liberação:', error);
+                alert('Erro: ' + error.message);
             }
         }
 
@@ -2258,9 +2492,8 @@
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const subordinados = await db.collection('usuarios')
-                    .where('lider', '==', currentUser.nome)
-                    .get();
+                const subordinados = await cachedGet('usuarios:subordinados:' + currentUser.id, () =>
+                    db.collection('usuarios').where('gestor_id', '==', currentUser.id).get());
 
                 let html = '';
                 if (subordinados.empty) {
@@ -2401,7 +2634,7 @@
             try {
                 const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
                 let html = '<div class="table-wrapper"><table class="table">';
-                html += '<thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead>';
+                html += '<thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Gestor</th><th>Status</th><th>Ações</th></tr></thead>';
                 html += '<tbody>';
 
                 usuarios.forEach(doc => {
@@ -2410,9 +2643,11 @@
                     html += '<td>' + u.nome + '</td>';
                     html += '<td>' + u.email + '</td>';
                     html += '<td>' + (u.perfil || 'N/A') + '</td>';
+                    html += '<td>' + (u.lider || 'N/A') + '</td>';
                     html += '<td>' + (u.ativo ? 'Ativo' : 'Inativo') + '</td>';
                     html += '<td class="actions-cell">';
                     html += '<button class="btn btn-primary btn-small" onclick="openEditUsuario(\'' + doc.id + '\')">Editar</button> ';
+                    html += '<button class="btn btn-small" style="background:#0984E3;color:white;" onclick="resetSenhaUsuario(\'' + doc.id + '\',\'' + u.email.replace(/'/g, "\\'") + '\',\'' + u.nome.replace(/'/g, "\\'") + '\')">Resetar Senha</button> ';
                     html += '<button class="btn btn-danger btn-small" onclick="deleteUsuario(\'' + doc.id + '\')">Deletar</button>';
                     html += '</td>';
                     html += '</tr>';
@@ -2426,7 +2661,17 @@
             }
         }
 
-        function openNewUserForm() {
+        async function openNewUserForm() {
+            // Busca gestores para dropdown
+            const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
+            let gestorOptions = '<option value="">-- Sem gestor --</option>';
+            usuarios.forEach(doc => {
+                const u = doc.data();
+                if (u.perfil === 'gestor' || u.perfil === 'admin' || u.perfil === 'analista' || u.perfil === 'diretoria') {
+                    gestorOptions += '<option value="' + doc.id + '" data-nome="' + (u.nome || '').replace(/"/g, '&quot;') + '">' + u.nome + ' (' + u.perfil + ')</option>';
+                }
+            });
+
             const html = `
                 <div class="pdi-form-section">
                     <label>Nome:</label>
@@ -2437,7 +2682,15 @@
                     <input type="email" id="newUserEmail" placeholder="email@empresa.com">
                 </div>
                 <div class="pdi-form-section">
-                    <label>Perfil:</label>
+                    <label>Cargo:</label>
+                    <input type="text" id="newUserCargo" placeholder="Ex: Analista de RH">
+                </div>
+                <div class="pdi-form-section">
+                    <label>Setor:</label>
+                    <input type="text" id="newUserSetor" placeholder="Ex: Recursos Humanos">
+                </div>
+                <div class="pdi-form-section">
+                    <label>Perfil de Acesso:</label>
                     <select id="newUserPerfil">
                         <option value="colaborador">Colaborador</option>
                         <option value="gestor">Gestor</option>
@@ -2446,8 +2699,8 @@
                     </select>
                 </div>
                 <div class="pdi-form-section">
-                    <label>Líder:</label>
-                    <input type="text" id="newUserLider" placeholder="Nome do líder">
+                    <label>Gestor Responsável:</label>
+                    <select id="newUserGestor">${gestorOptions}</select>
                 </div>
             `;
             openModal('Novo Usuário', html, [
@@ -2460,7 +2713,11 @@
             const nome = document.getElementById('newUserName').value;
             const email = document.getElementById('newUserEmail').value;
             const perfil = document.getElementById('newUserPerfil').value;
-            const lider = document.getElementById('newUserLider').value || null;
+            const gestorSelect = document.getElementById('newUserGestor');
+            const gestorId = gestorSelect.value || null;
+            const gestorNome = gestorSelect.selectedOptions[0] ? gestorSelect.selectedOptions[0].getAttribute('data-nome') || null : null;
+            const cargo = document.getElementById('newUserCargo') ? document.getElementById('newUserCargo').value || '' : '';
+            const setor = document.getElementById('newUserSetor') ? document.getElementById('newUserSetor').value || '' : '';
 
             if (!nome || !email) {
                 alert('Preencha todos os campos obrigatórios');
@@ -2474,13 +2731,26 @@
                     email: email,
                     senha: hashSenha(password),
                     perfil: perfil,
-                    lider: lider,
+                    gestor_id: gestorId,
+                    lider: gestorNome,
                     ativo: true,
+                    provisoria: true,
                     data_criacao: new Date()
                 });
                 invalidateCache('usuarios:');
 
-                alert('Usuário criado com sucesso! Senha temporária: ' + password);
+                // Envia senha provisória por email via EmailJS
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                        to_email: email,
+                        to_name: nome,
+                        message: 'Sua conta foi criada no Zukkin RH. Sua senha provisória é: ' + password + '\nAcesse: https://zukkinrh.github.io/entrevista-onboarding/ e redefina sua senha no primeiro acesso.'
+                    });
+                    alert('Usuário criado! Senha provisória enviada para ' + email);
+                } catch(emailErr) {
+                    console.warn('Erro ao enviar email:', emailErr);
+                    alert('Usuário criado com sucesso! Senha provisória: ' + password + '\n(Não foi possível enviar por email)');
+                }
                 closeModal();
                 loadUsuarios();
             } catch (error) {
@@ -2491,8 +2761,19 @@
 
         async function openEditUsuario(userId) {
             try {
-                const doc = await db.collection('usuarios').doc(userId).get();
-                const u = doc.data();
+                const docSnap = await db.collection('usuarios').doc(userId).get();
+                const u = docSnap.data();
+
+                // Busca gestores para dropdown
+                const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
+                let gestorOptions = '<option value="">-- Sem gestor --</option>';
+                usuarios.forEach(d => {
+                    const uu = d.data();
+                    if ((uu.perfil === 'gestor' || uu.perfil === 'admin' || uu.perfil === 'analista' || uu.perfil === 'diretoria') && d.id !== userId) {
+                        const sel = (u.gestor_id === d.id) ? 'selected' : '';
+                        gestorOptions += '<option value="' + d.id + '" data-nome="' + (uu.nome || '').replace(/"/g, '&quot;') + '" ' + sel + '>' + uu.nome + ' (' + uu.perfil + ')</option>';
+                    }
+                });
 
                 const html = `
                     <div class="pdi-form-section">
@@ -2504,6 +2785,14 @@
                         <input type="email" id="editUserEmail" value="${u.email}">
                     </div>
                     <div class="pdi-form-section">
+                        <label>Cargo:</label>
+                        <input type="text" id="editUserCargo" value="${u.cargo || ''}">
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Setor:</label>
+                        <input type="text" id="editUserSetor" value="${u.setor || ''}">
+                    </div>
+                    <div class="pdi-form-section">
                         <label>Perfil:</label>
                         <select id="editUserPerfil">
                             <option value="colaborador" ${u.perfil === 'colaborador' ? 'selected' : ''}>Colaborador</option>
@@ -2511,6 +2800,10 @@
                             <option value="analista" ${u.perfil === 'analista' ? 'selected' : ''}>Analista</option>
                             <option value="diretoria" ${u.perfil === 'diretoria' ? 'selected' : ''}>Diretoria</option>
                         </select>
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Gestor Responsável:</label>
+                        <select id="editUserGestor">${gestorOptions}</select>
                     </div>
                     <div class="pdi-form-section">
                         <label>Status:</label>
@@ -2535,12 +2828,21 @@
             const email = document.getElementById('editUserEmail').value;
             const perfil = document.getElementById('editUserPerfil').value;
             const ativo = document.getElementById('editUserStatus').value === 'true';
+            const gestorSelect = document.getElementById('editUserGestor');
+            const gestorId = gestorSelect ? gestorSelect.value || null : null;
+            const gestorNome = gestorSelect && gestorSelect.selectedOptions[0] ? gestorSelect.selectedOptions[0].getAttribute('data-nome') || null : null;
+            const cargo = document.getElementById('editUserCargo') ? document.getElementById('editUserCargo').value || '' : '';
+            const setor = document.getElementById('editUserSetor') ? document.getElementById('editUserSetor').value || '' : '';
 
             try {
                 await db.collection('usuarios').doc(userId).update({
                     nome: nome,
                     email: email,
                     perfil: perfil,
+                    cargo: cargo,
+                    setor: setor,
+                    gestor_id: gestorId,
+                    lider: gestorNome,
                     ativo: ativo
                 });
                 invalidateCache('usuarios:');
@@ -2567,6 +2869,34 @@
             } catch (error) {
                 console.error('Erro ao deletar usuário:', error);
                 alert('Erro ao deletar: ' + error.message);
+            }
+        }
+
+        async function resetSenhaUsuario(userId, email, nome) {
+            if (!confirm('Resetar a senha de ' + nome + '?\nUma nova senha provisória será gerada e enviada para ' + email)) return;
+            try {
+                const newPassword = generatePassword();
+                await db.collection('usuarios').doc(userId).update({
+                    senha: hashSenha(newPassword),
+                    provisoria: true
+                });
+                invalidateCache('usuarios:');
+
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                        to_email: email,
+                        to_name: nome,
+                        message: 'Sua senha foi resetada no Zukkin RH. Sua nova senha provisória é: ' + newPassword + '\nAcesse: https://zukkinrh.github.io/entrevista-onboarding/ e redefina sua senha no próximo acesso.'
+                    });
+                    alert('Senha resetada e enviada para ' + email);
+                } catch(emailErr) {
+                    console.warn('Erro ao enviar email:', emailErr);
+                    alert('Senha resetada! Nova senha provisória: ' + newPassword + '\n(Não foi possível enviar por email)');
+                }
+                loadUsuarios();
+            } catch (error) {
+                console.error('Erro ao resetar senha:', error);
+                alert('Erro ao resetar senha: ' + error.message);
             }
         }
 
@@ -2602,7 +2932,7 @@
 
         async function loadPDIColaborador() {
             const container = document.getElementById('pdiContainer');
-            container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button><div id="pdiList"></div>';
+            container.innerHTML = '<div id="pdiList"></div>';
 
             try {
                 const pdis = await cachedGet('pdis:user:' + currentUser.id, () =>
@@ -2649,8 +2979,8 @@
                 const [myPdis, subordinados] = await Promise.all([
                     cachedGet('pdis:user:' + currentUser.id, () =>
                         db.collection('pdis').where('colaborador_id', '==', currentUser.id).get()),
-                    cachedGet('usuarios:subordinados:' + currentUser.nome, () =>
-                        db.collection('usuarios').where('lider', '==', currentUser.nome).get())
+                    cachedGet('usuarios:subordinados:' + currentUser.id, () =>
+                        db.collection('usuarios').where('gestor_id', '==', currentUser.id).get())
                 ]);
 
                 const subordinadoIds = [];
@@ -2941,9 +3271,72 @@
             }
         }
 
-        function editPDI(pdiId) {
-            closeModal();
-            // Open edit form
+        async function editPDI(pdiId) {
+            try {
+                const docSnap = await db.collection('pdis').doc(pdiId).get();
+                const pdi = docSnap.data();
+
+                // Permissão: admin, gestor do colaborador, ou o próprio colaborador
+                const canEdit = currentUser.perfil === 'admin' ||
+                    currentUser.id === pdi.colaborador_id ||
+                    currentUser.id === pdi.criador_id ||
+                    currentUser.perfil === 'gestor' || currentUser.perfil === 'analista';
+
+                if (!canEdit) {
+                    alert('Você não tem permissão para editar este PDI.');
+                    return;
+                }
+
+                const html = `
+                    <div class="pdi-form-section">
+                        <label>Título:</label>
+                        <input type="text" id="editPdiTitulo" value="${pdi.titulo}">
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Descrição:</label>
+                        <textarea id="editPdiDescricao">${pdi.descricao || ''}</textarea>
+                    </div>
+                    <div class="pdi-form-section">
+                        <label>Status:</label>
+                        <select id="editPdiStatus">
+                            <option value="pendente" ${pdi.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+                            <option value="em_andamento" ${pdi.status === 'em_andamento' ? 'selected' : ''}>Em Andamento</option>
+                            <option value="concluido" ${pdi.status === 'concluido' ? 'selected' : ''}>Concluído</option>
+                        </select>
+                    </div>
+                `;
+                closeModal();
+                openModal('Editar PDI', html, [
+                    { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: 'Salvar', onclick: 'saveEditPDI("' + pdiId + '")', class: 'btn-primary' }
+                ]);
+            } catch(error) {
+                console.error('Erro ao abrir edição PDI:', error);
+                alert('Erro: ' + error.message);
+            }
+        }
+
+        async function saveEditPDI(pdiId) {
+            const titulo = document.getElementById('editPdiTitulo').value;
+            const descricao = document.getElementById('editPdiDescricao').value;
+            const status = document.getElementById('editPdiStatus').value;
+
+            if (!titulo) { alert('Título é obrigatório'); return; }
+
+            try {
+                await db.collection('pdis').doc(pdiId).update({
+                    titulo: titulo,
+                    descricao: descricao,
+                    status: status
+                });
+                invalidateCache('pdis:');
+                alert('PDI atualizado com sucesso!');
+                closeModal();
+                loadPDI();
+            } catch(error) {
+                console.error('Erro ao salvar PDI:', error);
+                alert('Erro: ' + error.message);
+            }
         }
 
         async function deletePDI(pdiId) {
