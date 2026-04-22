@@ -940,9 +940,115 @@
                 font-size: 12px;
             }
         }
+
+        /* ===== Toast Notifications ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            min-width: 320px;
+            max-width: 440px;
+            padding: 14px 20px 14px 16px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.18);
+            animation: toastIn .35s ease-out;
+            position: relative;
+        }
+        .toast.toast-out { animation: toastOut .3s ease-in forwards; }
+        .toast-success { background: linear-gradient(135deg, #2e7d32, #43a047); }
+        .toast-error   { background: linear-gradient(135deg, #c62828, #e53935); }
+        .toast-info    { background: linear-gradient(135deg, #1565c0, #1e88e5); }
+        .toast-warn    { background: linear-gradient(135deg, #e65100, #fb8c00); }
+        .toast-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+        .toast-body { flex: 1; }
+        .toast-title { font-weight: 700; margin-bottom: 2px; }
+        .toast-msg { opacity: .92; font-size: 13px; }
+        .toast-close {
+            position: absolute; top: 8px; right: 10px;
+            background: none; border: none; color: rgba(255,255,255,.7);
+            font-size: 18px; cursor: pointer; padding: 0; line-height: 1;
+        }
+        .toast-close:hover { color: #fff; }
+        @keyframes toastIn { from { opacity:0; transform:translateX(60px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes toastOut { to { opacity:0; transform:translateX(60px); } }
+
+        /* ===== Tela de Redefinição de Senha ===== */
+        .reset-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .reset-card {
+            background: #fff; border-radius: 16px; padding: 40px;
+            box-shadow: 0 12px 40px rgba(0,0,0,.12);
+            max-width: 440px; width: 92%;
+        }
+        .reset-card .logo { color: var(--primary); font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .reset-card .subtitle { color: #636E72; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
+        .reset-card .field { margin-bottom: 18px; position: relative; }
+        .reset-card .field label { display: block; font-weight: 600; font-size: 13px; color: #333; margin-bottom: 6px; }
+        .reset-card .field input {
+            width: 100%; padding: 12px 42px 12px 14px; border: 2px solid #e0e0e0;
+            border-radius: 8px; font-size: 14px; transition: border-color .2s;
+            box-sizing: border-box; outline: none;
+        }
+        .reset-card .field input:focus { border-color: var(--primary); }
+        .reset-card .eye-btn {
+            position: absolute; right: 12px; top: 35px;
+            background: none; border: none; color: #999; cursor: pointer; font-size: 16px; padding: 4px;
+        }
+        .reset-card .eye-btn:hover { color: #333; }
+        .strength-bar { height: 4px; border-radius: 2px; background: #e0e0e0; margin-top: 8px; overflow: hidden; }
+        .strength-bar-fill { height: 100%; border-radius: 2px; transition: width .3s, background .3s; width: 0%; }
+        .strength-text { font-size: 11px; margin-top: 4px; color: #999; }
+        .reset-card .btn-submit {
+            width: 100%; padding: 14px; border: none; border-radius: 8px;
+            background: var(--primary); color: #fff; font-size: 15px;
+            font-weight: 700; cursor: pointer; transition: background .2s;
+            margin-top: 8px;
+        }
+        .reset-card .btn-submit:hover { background: var(--primary-dark); }
+        .reset-card .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* ===== Confirm Dialog ===== */
+        .confirm-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,.45); display: flex; align-items: center;
+            justify-content: center; z-index: 99998; animation: fadeIn .2s;
+        }
+        .confirm-box {
+            background: #fff; border-radius: 14px; padding: 30px; max-width: 400px;
+            width: 90%; box-shadow: 0 12px 40px rgba(0,0,0,.2); text-align: center;
+        }
+        .confirm-box .confirm-icon { font-size: 44px; margin-bottom: 12px; }
+        .confirm-box .confirm-title { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 8px; }
+        .confirm-box .confirm-msg { font-size: 14px; color: #636E72; line-height: 1.5; margin-bottom: 24px; }
+        .confirm-box .confirm-actions { display: flex; gap: 10px; }
+        .confirm-box .confirm-actions button { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
+        .confirm-box .btn-cancel-confirm { background: #f0f0f0; color: #333; }
+        .confirm-box .btn-cancel-confirm:hover { background: #e0e0e0; }
+        .confirm-box .btn-confirm-action { background: var(--primary); color: #fff; }
+        .confirm-box .btn-confirm-action:hover { background: var(--primary-dark); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+    <div class="toast-container" id="toastContainer"></div>
     <div id="loginScreen" class="login-container">
         <div class="login-box">
             <h1>Zukkin RH</h1>
@@ -1276,6 +1382,56 @@
         const EMAILJS_SERVICE_ID = 'service_7q0c1os';
         const EMAILJS_TEMPLATE_ID = 'template_2y018wf';
         emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        // ── Toast & Confirm Utilities ──
+        function showToast(type, title, msg, duration) {
+            duration = duration || 4000;
+            const icons = { success: '✓', error: '✕', info: 'ℹ', warn: '⚠' };
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML =
+                '<span class="toast-icon">' + (icons[type] || 'ℹ') + '</span>' +
+                '<div class="toast-body"><div class="toast-title">' + title + '</div>' +
+                (msg ? '<div class="toast-msg">' + msg + '</div>' : '') + '</div>' +
+                '<span class="toast-close" onclick="this.parentElement.remove()">&times;</span>';
+            container.appendChild(toast);
+            setTimeout(function() {
+                toast.classList.add('toast-out');
+                setTimeout(function() { toast.remove(); }, 350);
+            }, duration);
+        }
+
+        function showConfirm(icon, title, msg, confirmText, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.innerHTML =
+                '<div class="confirm-box">' +
+                    '<div class="confirm-icon">' + icon + '</div>' +
+                    '<div class="confirm-title">' + title + '</div>' +
+                    '<div class="confirm-msg">' + msg + '</div>' +
+                    '<div class="confirm-actions">' +
+                        '<button class="btn-cancel-confirm" id="confirmCancelBtn">Cancelar</button>' +
+                        '<button class="btn-confirm-action" id="confirmOkBtn">' + (confirmText || 'Confirmar') + '</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(overlay);
+            overlay.querySelector('#confirmCancelBtn').onclick = function() { overlay.remove(); };
+            overlay.querySelector('#confirmOkBtn').onclick = function() { overlay.remove(); onConfirm(); };
+        }
+
+        function checkPasswordStrength(password) {
+            var score = 0;
+            if (password.length >= 6) score++;
+            if (password.length >= 10) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+            var labels = ['Muito fraca', 'Fraca', 'Razoável', 'Boa', 'Forte', 'Excelente'];
+            var colors = ['#e53935', '#e53935', '#fb8c00', '#f9a825', '#43a047', '#2e7d32'];
+            var pct = Math.min(100, (score / 5) * 100);
+            return { score: score, label: labels[score], color: colors[score], pct: pct };
+        }
 
         // Global variables
         let currentUser = null;
@@ -1619,16 +1775,17 @@
                         return;
                     }
 
-                    alert('Senha incorreta');
+                    showToast('error', 'Senha incorreta', 'Verifique sua senha e tente novamente.');
                     return;
                 }
             } catch (error) {
                 console.error('Erro ao consultar usuário:', error);
                 // Timeout ou erro de rede — cai no fallback admin se for o admin
                 if (!(email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD)) {
-                    alert(error.message === 'TIMEOUT'
+                    showToast('error', 'Erro no login',
+                        error.message === 'TIMEOUT'
                         ? 'Servidor demorou para responder. Tente novamente.'
-                        : 'Erro ao fazer login: ' + error.message);
+                        : error.message);
                     return;
                 }
             }
@@ -1662,7 +1819,7 @@
                 return;
             }
 
-            alert('Usuário não encontrado');
+            showToast('error', 'Não encontrado', 'Usuário não encontrado. Verifique o email digitado.');
         }
 
         // Converte qualquer valor de data (Firestore Timestamp, string ISO, Date, {seconds}) para string pt-BR
@@ -1738,7 +1895,7 @@
                     db.collection('usuarios').where('email', '==', email).get(), 6000
                 );
                 if (users.empty) {
-                    alert('Email não encontrado');
+                    showToast('error', 'Não encontrado', 'Nenhum usuário com este email.');
                     return;
                 }
                 const userData = users.docs[0].data();
@@ -1756,15 +1913,15 @@
                         subject: 'Zukkin RH - Recuperação de Senha',
                         nova_senha: newPassword
                     });
-                    alert('Nova senha enviada para ' + email + '! Verifique seu email.');
+                    showToast('success', 'Email enviado!', 'Nova senha enviada para ' + email + '. Verifique sua caixa de entrada.');
                 } catch(emailErr) {
                     console.warn('Erro ao enviar email:', emailErr);
-                    alert('Senha redefinida! Nova senha provisória: ' + newPassword + '\n(Não foi possível enviar por email)');
+                    showToast('warn', 'Senha redefinida', 'Nova senha provisória: ' + newPassword + ' (não foi possível enviar por email)');
                 }
                 closeModal();
             } catch (error) {
                 console.error('Erro ao recuperar senha:', error);
-                alert('Erro: ' + error.message);
+                showToast('error', 'Erro', error.message);
             }
         }
 
@@ -1781,47 +1938,66 @@
         }
 
         function showChangePasswordScreen(userId) {
-            // Esconde tudo e mostra apenas o formulário de redefinição
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'none';
 
-            // Cria overlay dedicado (fora do appScreen)
             let overlay = document.getElementById('changePassOverlay');
             if (!overlay) {
                 overlay = document.createElement('div');
                 overlay.id = 'changePassOverlay';
                 document.body.appendChild(overlay);
             }
-            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;z-index:9999;';
-            overlay.innerHTML = `
-                <div style="max-width: 420px; width:90%; padding: 35px; background: white; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                    <h2 style="color: var(--primary); margin-bottom: 10px;">Redefinir Senha</h2>
-                    <p style="color: #636E72; margin-bottom: 20px;">Sua senha é provisória. Por favor, defina uma nova senha para continuar.</p>
-                    <div style="margin-bottom:15px;">
-                        <label for="newPass" style="display:block;margin-bottom:5px;font-weight:600;">Nova Senha:</label>
-                        <input type="password" id="newPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box;">
-                    </div>
-                    <div style="margin-bottom:20px;">
-                        <label for="confirmPass" style="display:block;margin-bottom:5px;font-weight:600;">Confirmar Senha:</label>
-                        <input type="password" id="confirmPass" placeholder="Repita a nova senha" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box;">
-                    </div>
-                    <button class="btn btn-primary" onclick="saveNewPassword('${userId}')" style="width:100%;padding:12px;font-size:15px;">Salvar Nova Senha</button>
-                </div>
-            `;
+            overlay.className = 'reset-overlay';
+            overlay.style.display = 'flex';
+            overlay.innerHTML =
+                '<div class="reset-card">' +
+                    '<div class="logo">🔒 Zukkin RH</div>' +
+                    '<div class="subtitle">Sua senha é provisória. Defina uma nova senha segura para continuar acessando o sistema.</div>' +
+                    '<div class="field">' +
+                        '<label>Nova Senha</label>' +
+                        '<input type="password" id="newPass" placeholder="Mínimo 6 caracteres" oninput="updateStrengthBar(this.value)">' +
+                        '<span class="eye-btn" onclick="togglePassVis(\'newPass\', this)">👁</span>' +
+                        '<div class="strength-bar"><div class="strength-bar-fill" id="strengthFill"></div></div>' +
+                        '<div class="strength-text" id="strengthLabel"></div>' +
+                    '</div>' +
+                    '<div class="field">' +
+                        '<label>Confirmar Senha</label>' +
+                        '<input type="password" id="confirmPass" placeholder="Repita a nova senha">' +
+                        '<span class="eye-btn" onclick="togglePassVis(\'confirmPass\', this)">👁</span>' +
+                    '</div>' +
+                    '<button class="btn-submit" id="btnSaveNewPass" onclick="saveNewPassword(\'' + userId + '\')">Salvar Nova Senha</button>' +
+                '</div>';
+        }
+
+        function togglePassVis(fieldId, btn) {
+            var inp = document.getElementById(fieldId);
+            if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+            else { inp.type = 'password'; btn.textContent = '👁'; }
+        }
+
+        function updateStrengthBar(val) {
+            var s = checkPasswordStrength(val);
+            var fill = document.getElementById('strengthFill');
+            var label = document.getElementById('strengthLabel');
+            if (fill) { fill.style.width = s.pct + '%'; fill.style.background = s.color; }
+            if (label) { label.textContent = val ? s.label : ''; label.style.color = s.color; }
         }
 
         async function saveNewPassword(userId) {
-            const newPass = document.getElementById('newPass').value;
-            const confirmPass = document.getElementById('confirmPass').value;
+            var newPass = document.getElementById('newPass').value;
+            var confirmPass = document.getElementById('confirmPass').value;
 
             if (newPass.length < 6) {
-                alert('A senha deve ter no mínimo 6 caracteres.');
+                showToast('error', 'Senha inválida', 'A senha deve ter no mínimo 6 caracteres.');
                 return;
             }
             if (newPass !== confirmPass) {
-                alert('As senhas não coincidem.');
+                showToast('error', 'Senhas diferentes', 'As senhas digitadas não coincidem.');
                 return;
             }
+
+            var btn = document.getElementById('btnSaveNewPass');
+            if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
 
             try {
                 await db.collection('usuarios').doc(userId).update({
@@ -1832,15 +2008,15 @@
                 currentUser.provisoria = false;
                 lsSet('session', currentUser);
 
-                // Remove overlay e mostra o app normalmente
-                const overlay = document.getElementById('changePassOverlay');
+                var overlay = document.getElementById('changePassOverlay');
                 if (overlay) overlay.remove();
 
-                alert('Senha atualizada com sucesso!');
+                showToast('success', 'Senha atualizada!', 'Sua nova senha foi salva com sucesso.');
                 showAppScreen();
             } catch (error) {
                 console.error('Erro ao atualizar senha:', error);
-                alert('Erro ao atualizar senha: ' + error.message);
+                showToast('error', 'Erro ao salvar', error.message);
+                if (btn) { btn.disabled = false; btn.textContent = 'Salvar Nova Senha'; }
             }
         }
 
@@ -2201,12 +2377,12 @@
                     invalidateCache('liberacoes:');
                 } catch(_) {}
 
-                alert('Questionário salvo com sucesso!');
+                showToast('success', 'Salvo!', 'Questionário salvo com sucesso.');
                 closeModal();
                 loadQuestionnaires();
             } catch (error) {
                 console.error('Erro ao salvar questionário:', error);
-                alert('Erro ao salvar: ' + error.message);
+                showToast('error', 'Erro ao salvar', error.message);
             }
         }
 
@@ -2260,12 +2436,12 @@
                     invalidateCache('liberacoes:');
                 } catch(_) {}
 
-                alert('Avaliação salva com sucesso!');
+                showToast('success', 'Salvo!', 'Avaliação salva com sucesso.');
                 closeModal();
                 loadEvaluationsForCollaborator();
             } catch (error) {
                 console.error('Erro ao salvar avaliação:', error);
-                alert('Erro ao salvar: ' + error.message);
+                showToast('error', 'Erro ao salvar', error.message);
             }
         }
 
@@ -2506,16 +2682,17 @@
         }
 
         async function excluirLiberacao(libId) {
-            if (!confirm('Tem certeza que deseja excluir esta liberação?')) return;
-            try {
-                await db.collection('liberacoes').doc(libId).delete();
-                invalidateCache('liberacoes:');
-                alert('Liberação excluída com sucesso!');
-                loadLiberacoes();
-            } catch(error) {
-                console.error('Erro ao excluir liberação:', error);
-                alert('Erro: ' + error.message);
-            }
+            showConfirm('🗑️', 'Excluir liberação', 'Tem certeza que deseja excluir esta liberação? Esta ação não pode ser desfeita.', 'Excluir', async function() {
+                try {
+                    await db.collection('liberacoes').doc(libId).delete();
+                    invalidateCache('liberacoes:');
+                    showToast('success', 'Excluída', 'Liberação removida com sucesso.');
+                    loadLiberacoes();
+                } catch(error) {
+                    console.error('Erro ao excluir liberação:', error);
+                    showToast('error', 'Erro', error.message);
+                }
+            });
         }
 
         async function openLiberacaoForm(userId, userName) {
@@ -2569,7 +2746,7 @@
 
         async function enviarNovaLiberacao(userId, userName) {
             const tipo = document.getElementById('libTipoPesquisa').value;
-            if (!tipo) { alert('Selecione um tipo de pesquisa'); return; }
+            if (!tipo) { showToast('warn', 'Atenção', 'Selecione um tipo de pesquisa.'); return; }
 
             try {
                 await db.collection('liberacoes').add({
@@ -2581,27 +2758,27 @@
                     respondida: false
                 });
                 invalidateCache('liberacoes:');
-                alert('Pesquisa liberada com sucesso para ' + userName + '!');
+                showToast('success', 'Liberada!', 'Pesquisa liberada para ' + userName);
                 closeModal();
-                // Reabrir o formulário para mostrar histórico atualizado
                 openLiberacaoForm(userId, userName);
             } catch (error) {
                 console.error('Erro ao liberar pesquisa:', error);
-                alert('Erro ao liberar: ' + error.message);
+                showToast('error', 'Erro ao liberar', error.message);
             }
         }
 
         async function removeLiberacao(libId, userId, userName) {
-            if (!confirm('Remover esta liberação?')) return;
-            try {
-                await db.collection('liberacoes').doc(libId).delete();
-                invalidateCache('liberacoes:');
-                closeModal();
-                openLiberacaoForm(userId, userName);
-            } catch(error) {
-                console.error('Erro ao remover liberação:', error);
-                alert('Erro: ' + error.message);
-            }
+            showConfirm('🗑️', 'Remover liberação', 'Tem certeza que deseja remover esta liberação?', 'Remover', async function() {
+                try {
+                    await db.collection('liberacoes').doc(libId).delete();
+                    invalidateCache('liberacoes:');
+                    closeModal();
+                    openLiberacaoForm(userId, userName);
+                } catch(error) {
+                    console.error('Erro ao remover liberação:', error);
+                    showToast('error', 'Erro', error.message);
+                }
+            });
         }
 
         function getLiberacoesForm() {
@@ -2609,7 +2786,7 @@
         }
 
         function saveLiberacao() {
-            alert('Use a função de gerenciar para cada usuário.');
+            showToast('info', 'Dica', 'Use o botão "Gerenciar" para liberar pesquisas a cada usuário.');
             closeModal();
         }
 
@@ -2917,7 +3094,7 @@
             const setor = document.getElementById('newUserSetor') ? document.getElementById('newUserSetor').value || '' : '';
 
             if (!nome || !email) {
-                alert('Preencha todos os campos obrigatórios');
+                showToast('warn', 'Campos obrigatórios', 'Preencha nome e email para continuar.');
                 return;
             }
 
@@ -2936,7 +3113,6 @@
                 });
                 invalidateCache('usuarios:');
 
-                // Envia senha provisória por email via EmailJS
                 try {
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                         to_email: email,
@@ -2944,16 +3120,16 @@
                         subject: 'Zukkin RH - Sua conta foi criada',
                         nova_senha: password
                     });
-                    alert('Usuário criado! Senha provisória enviada para ' + email);
+                    showToast('success', 'Usuário criado!', 'Senha provisória enviada para ' + email);
                 } catch(emailErr) {
                     console.warn('Erro ao enviar email:', emailErr);
-                    alert('Usuário criado com sucesso! Senha provisória: ' + password + '\n(Não foi possível enviar por email)');
+                    showToast('warn', 'Usuário criado', 'Senha provisória: ' + password + ' (email não enviado)');
                 }
                 closeModal();
                 loadUsuarios();
             } catch (error) {
                 console.error('Erro ao criar usuário:', error);
-                alert('Erro ao criar usuário: ' + error.message);
+                showToast('error', 'Erro ao criar', error.message);
             }
         }
 
@@ -3017,7 +3193,7 @@
                 ]);
             } catch (error) {
                 console.error('Erro ao abrir formulário de edição:', error);
-                alert('Erro: ' + error.message);
+                showToast('error', 'Erro', error.message);
             }
         }
 
@@ -3045,58 +3221,57 @@
                 });
                 invalidateCache('usuarios:');
 
-                alert('Usuário atualizado com sucesso!');
+                showToast('success', 'Atualizado!', 'Dados do usuário salvos com sucesso.');
                 closeModal();
                 loadUsuarios();
             } catch (error) {
                 console.error('Erro ao atualizar usuário:', error);
-                alert('Erro ao atualizar: ' + error.message);
+                showToast('error', 'Erro ao atualizar', error.message);
             }
         }
 
         async function deleteUsuario(userId) {
-            if (!confirm('Tem certeza que deseja deletar este usuário?')) {
-                return;
-            }
-
-            try {
-                await db.collection('usuarios').doc(userId).delete();
-                invalidateCache('usuarios:');
-                alert('Usuário deletado com sucesso!');
-                loadUsuarios();
-            } catch (error) {
-                console.error('Erro ao deletar usuário:', error);
-                alert('Erro ao deletar: ' + error.message);
-            }
+            showConfirm('⚠️', 'Deletar usuário', 'Tem certeza que deseja deletar este usuário? Esta ação é irreversível.', 'Deletar', async function() {
+                try {
+                    await db.collection('usuarios').doc(userId).delete();
+                    invalidateCache('usuarios:');
+                    showToast('success', 'Usuário deletado', 'O usuário foi removido com sucesso.');
+                    loadUsuarios();
+                } catch (error) {
+                    console.error('Erro ao deletar usuário:', error);
+                    showToast('error', 'Erro ao deletar', error.message);
+                }
+            });
         }
 
         async function resetSenhaUsuario(userId, email, nome) {
-            if (!confirm('Resetar a senha de ' + nome + '?\nUma nova senha provisória será gerada e enviada para ' + email)) return;
-            try {
-                const newPassword = generatePassword();
-                await db.collection('usuarios').doc(userId).update({
-                    senha: hashSenha(newPassword),
-                    provisoria: true
-                });
-                invalidateCache('usuarios:');
-
+            showConfirm('🔑', 'Resetar senha', 'Uma nova senha provisória será gerada e enviada para <strong>' + email + '</strong>.<br>O usuário precisará redefini-la no próximo acesso.', 'Resetar Senha', async function() {
                 try {
-                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                        to_email: email,
-                        to_name: nome,
-                        subject: 'Zukkin RH - Reset de Senha',
-                        nova_senha: newPassword
+                    const newPassword = generatePassword();
+                    await db.collection('usuarios').doc(userId).update({
+                        senha: hashSenha(newPassword),
+                        provisoria: true
                     });
-                    alert('Senha resetada e enviada para ' + email);
-                } catch(emailErr) {
-                    console.warn('Erro ao enviar email:', emailErr);
-                    alert('Senha resetada! Nova senha provisória: ' + newPassword + '\n(Não foi possível enviar por email)');
+                    invalidateCache('usuarios:');
+
+                    try {
+                        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                            to_email: email,
+                            to_name: nome,
+                            subject: 'Zukkin RH - Reset de Senha',
+                            nova_senha: newPassword
+                        });
+                        showToast('success', 'Senha resetada!', 'Nova senha enviada para ' + email);
+                    } catch(emailErr) {
+                        console.warn('Erro ao enviar email:', emailErr);
+                        showToast('warn', 'Senha resetada', 'Nova senha: ' + newPassword + ' (email não enviado)');
+                    }
+                    loadUsuarios();
+                } catch (error) {
+                    console.error('Erro ao resetar senha:', error);
+                    showToast('error', 'Erro ao resetar', error.message);
                 }
-                loadUsuarios();
-            } catch (error) {
-                console.error('Erro ao resetar senha:', error);
-                alert('Erro ao resetar senha: ' + error.message);
-            }
+            });
         }
 
         async function toggleUsuario(userId, currentStatus) {
@@ -3357,7 +3532,7 @@
             const status = document.getElementById('pdiStatus').value;
 
             if (!titulo || !colaboradorId) {
-                alert('Preencha todos os campos obrigatórios');
+                showToast('warn', 'Campos obrigatórios', 'Preencha título e colaborador.');
                 return;
             }
 
@@ -3373,12 +3548,12 @@
                 });
                 invalidateCache('pdis:');
 
-                alert('PDI criado com sucesso!');
+                showToast('success', 'PDI criado!', 'Plano de desenvolvimento registrado com sucesso.');
                 closeModal();
                 loadPDI();
             } catch (error) {
                 console.error('Erro ao criar PDI:', error);
-                alert('Erro ao criar PDI: ' + error.message);
+                showToast('error', 'Erro ao criar PDI', error.message);
             }
         }
 
@@ -3433,7 +3608,7 @@
                 ]);
             } catch (error) {
                 console.error('Erro ao visualizar PDI:', error);
-                alert('Erro ao visualizar PDI: ' + error.message);
+                showToast('error', 'Erro', error.message);
             }
         }
 
@@ -3441,7 +3616,7 @@
             const texto = document.getElementById('novaAtualizacao').value;
 
             if (!texto.trim()) {
-                alert('Digite uma atualização');
+                showToast('warn', 'Atenção', 'Digite uma atualização antes de salvar.');
                 return;
             }
 
@@ -3461,12 +3636,12 @@
                 });
                 invalidateCache('pdis:');
 
-                alert('Atualização adicionada com sucesso!');
+                showToast('success', 'Adicionada!', 'Atualização registrada com sucesso.');
                 closeModal();
                 viewPDI(pdiId);
             } catch (error) {
                 console.error('Erro ao adicionar atualização:', error);
-                alert('Erro: ' + error.message);
+                showToast('error', 'Erro', error.message);
             }
         }
 
@@ -3482,7 +3657,7 @@
                     currentUser.perfil === 'gestor' || currentUser.perfil === 'analista';
 
                 if (!canEdit) {
-                    alert('Você não tem permissão para editar este PDI.');
+                    showToast('error', 'Sem permissão', 'Você não tem permissão para editar este PDI.');
                     return;
                 }
 
@@ -3511,7 +3686,7 @@
                 ]);
             } catch(error) {
                 console.error('Erro ao abrir edição PDI:', error);
-                alert('Erro: ' + error.message);
+                showToast('error', 'Erro', error.message);
             }
         }
 
@@ -3520,7 +3695,7 @@
             const descricao = document.getElementById('editPdiDescricao').value;
             const status = document.getElementById('editPdiStatus').value;
 
-            if (!titulo) { alert('Título é obrigatório'); return; }
+            if (!titulo) { showToast('warn', 'Atenção', 'Título é obrigatório.'); return; }
 
             try {
                 await db.collection('pdis').doc(pdiId).update({
@@ -3529,29 +3704,27 @@
                     status: status
                 });
                 invalidateCache('pdis:');
-                alert('PDI atualizado com sucesso!');
+                showToast('success', 'PDI atualizado!', 'Alterações salvas com sucesso.');
                 closeModal();
                 loadPDI();
             } catch(error) {
                 console.error('Erro ao salvar PDI:', error);
-                alert('Erro: ' + error.message);
+                showToast('error', 'Erro ao salvar', error.message);
             }
         }
 
         async function deletePDI(pdiId) {
-            if (!confirm('Tem certeza que deseja deletar este PDI?')) {
-                return;
-            }
-
-            try {
-                await db.collection('pdis').doc(pdiId).delete();
-                invalidateCache('pdis:');
-                alert('PDI deletado com sucesso!');
-                loadPDI();
-            } catch (error) {
-                console.error('Erro ao deletar PDI:', error);
-                alert('Erro ao deletar: ' + error.message);
-            }
+            showConfirm('⚠️', 'Deletar PDI', 'Tem certeza que deseja deletar este plano de desenvolvimento? Esta ação é irreversível.', 'Deletar', async function() {
+                try {
+                    await db.collection('pdis').doc(pdiId).delete();
+                    invalidateCache('pdis:');
+                    showToast('success', 'PDI deletado', 'Plano removido com sucesso.');
+                    loadPDI();
+                } catch (error) {
+                    console.error('Erro ao deletar PDI:', error);
+                    showToast('error', 'Erro ao deletar', error.message);
+                }
+            });
         }
 
         function closePDIForm() {
