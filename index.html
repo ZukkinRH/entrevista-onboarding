@@ -1665,6 +1665,32 @@
             alert('Usuário não encontrado');
         }
 
+        // Converte qualquer valor de data (Firestore Timestamp, string ISO, Date, {seconds}) para string pt-BR
+        function formatDate(val) {
+            if (!val) return 'N/A';
+            try {
+                // Firestore Timestamp com .toDate()
+                if (typeof val.toDate === 'function') return val.toDate().toLocaleDateString('pt-BR');
+                // Objeto com seconds (Timestamp serializado no cache)
+                if (val.seconds) return new Date(val.seconds * 1000).toLocaleDateString('pt-BR');
+                // String ISO ou Date
+                const d = new Date(val);
+                if (isNaN(d.getTime())) return 'N/A';
+                return d.toLocaleDateString('pt-BR');
+            } catch(_) { return 'N/A'; }
+        }
+
+        // Converte qualquer valor de data para Date object (para ordenação)
+        function toDate(val) {
+            if (!val) return new Date(0);
+            try {
+                if (typeof val.toDate === 'function') return val.toDate();
+                if (val.seconds) return new Date(val.seconds * 1000);
+                const d = new Date(val);
+                return isNaN(d.getTime()) ? new Date(0) : d;
+            } catch(_) { return new Date(0); }
+        }
+
         function hashSenha(senha) {
             return CryptoJS.SHA256(senha).toString();
         }
@@ -2135,8 +2161,8 @@
                     const libsList = [];
                     libs.forEach(doc => libsList.push({ id: doc.id, ...doc.data() }));
                     libsList.sort((a, b) => {
-                        const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
-                        const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                        const da = toDate(a.data_liberacao);
+                        const db2 = toDate(b.data_liberacao);
                         return db2 - da;
                     });
                     for (const lib of libsList) {
@@ -2194,8 +2220,8 @@
                     const libsList = [];
                     libs.forEach(doc => libsList.push({ id: doc.id, ...doc.data() }));
                     libsList.sort((a, b) => {
-                        const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
-                        const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                        const da = toDate(a.data_liberacao);
+                        const db2 = toDate(b.data_liberacao);
                         return db2 - da;
                     });
                     for (const lib of libsList) {
@@ -2278,7 +2304,7 @@
                     recentActivity.push({
                         nome: data.usuario_nome,
                         tipo: data.tipo_pesquisa,
-                        data: data.data_resposta ? new Date(data.data_resposta).toLocaleDateString('pt-BR') : 'N/A'
+                        data: formatDate(data.data_resposta)
                     });
                 });
 
@@ -2347,7 +2373,7 @@
                     const chave = (r.colaborador_id || r.usuario_id) + '|' + r.tipo_pesquisa;
                     if (!respostasPorUserTipo[chave]) respostasPorUserTipo[chave] = [];
                     respostasPorUserTipo[chave].push({
-                        data: r.data_resposta ? new Date(r.data_resposta).toLocaleDateString('pt-BR') : 'N/A'
+                        data: formatDate(r.data_resposta)
                     });
                 });
 
@@ -2362,8 +2388,8 @@
                 // Ordenar liberações de cada usuário por data (mais recente primeiro)
                 for (const uid in liberacoesPorUsuario) {
                     liberacoesPorUsuario[uid].sort((a, b) => {
-                        const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
-                        const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                        const da = toDate(a.data_liberacao);
+                        const db2 = toDate(b.data_liberacao);
                         return db2 - da;
                     });
                 }
@@ -2414,10 +2440,10 @@
                         html += '<tbody>';
                         libs.forEach(l => {
                             const nomeP = SURVEY_TEMPLATES[l.tipo_pesquisa] ? SURVEY_TEMPLATES[l.tipo_pesquisa].nome : l.tipo_pesquisa;
-                            const dataLib = l.data_liberacao ? new Date(l.data_liberacao).toLocaleDateString('pt-BR') : 'N/A';
+                            const dataLib = formatDate(l.data_liberacao);
                             const foiRespondida = l.respondida;
                             const statusHtml = foiRespondida
-                                ? '<span style="color:#2e7d32;font-weight:600;">✅ Respondida' + (l.data_resposta ? ' em ' + new Date(l.data_resposta).toLocaleDateString('pt-BR') : '') + '</span>'
+                                ? '<span style="color:#2e7d32;font-weight:600;">✅ Respondida' + (l.data_resposta ? ' em ' + formatDate(l.data_resposta) : '') + '</span>'
                                 : '<span style="color:#e65100;font-weight:600;">⏳ Pendente</span>';
                             const enviadoPor = l.liberado_por_nome || l.liberado_por || 'N/A';
 
@@ -2485,13 +2511,13 @@
                 historicoHtml = '<div style="margin-bottom:15px;"><strong>Histórico de liberações:</strong></div>';
                 historicoHtml += '<div class="table-wrapper"><table class="table" style="font-size:13px;"><thead><tr><th>Pesquisa</th><th>Data</th><th>Status</th><th>Ação</th></tr></thead><tbody>';
                 liberacoesList.sort((a, b) => {
-                    const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
-                    const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                    const da = toDate(a.data_liberacao);
+                    const db2 = toDate(b.data_liberacao);
                     return db2 - da;
                 });
                 liberacoesList.forEach(l => {
                     const nomeP = SURVEY_TEMPLATES[l.tipo_pesquisa] ? SURVEY_TEMPLATES[l.tipo_pesquisa].nome : l.tipo_pesquisa;
-                    const dataLib = l.data_liberacao ? new Date(l.data_liberacao).toLocaleDateString('pt-BR') : 'N/A';
+                    const dataLib = formatDate(l.data_liberacao);
                     const statusLib = l.respondida ? '<span style="color:green;">Respondida</span>' : '<span style="color:orange;">Pendente</span>';
                     historicoHtml += '<tr><td>' + nomeP + '</td><td>' + dataLib + '</td><td>' + statusLib + '</td>';
                     historicoHtml += '<td><button class="btn btn-danger btn-small" onclick="removeLiberacao(\'' + l.id + '\',\'' + userId + '\',\'' + userName.replace(/'/g, "\\'") + '\')">Remover</button></td></tr>';
@@ -2584,7 +2610,7 @@
                         html += '<td>' + p.avaliador_nome + '</td>';
                         html += '<td>' + p.colaborador_id + '</td>';
                         html += '<td>' + p.tipo_pesquisa + '</td>';
-                        html += '<td>' + (p.data_avaliacao ? new Date(p.data_avaliacao).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '<td>' + (formatDate(p.data_avaliacao)) + '</td>';
                         html += '</tr>';
                     });
 
@@ -2691,7 +2717,7 @@
                         const r = doc.data();
                         html += '<tr>';
                         html += '<td>' + r.tipo_pesquisa + '</td>';
-                        html += '<td>' + (r.data_resposta ? new Date(r.data_resposta).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '<td>' + (formatDate(r.data_resposta)) + '</td>';
                         html += '</tr>';
                     });
 
@@ -2726,7 +2752,7 @@
                         html += '<td>' + p.avaliador_nome + '</td>';
                         html += '<td>' + p.colaborador_id + '</td>';
                         html += '<td>' + p.tipo_pesquisa + '</td>';
-                        html += '<td>' + (p.data_avaliacao ? new Date(p.data_avaliacao).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '<td>' + (formatDate(p.data_avaliacao)) + '</td>';
                         html += '</tr>';
                     });
 
@@ -2760,7 +2786,7 @@
                         html += '<tr>';
                         html += '<td>' + l.colaborador_id + '</td>';
                         html += '<td>' + l.tipo_pesquisa + '</td>';
-                        html += '<td>' + (l.data_liberacao ? new Date(l.data_liberacao).toLocaleDateString('pt-BR') : 'N/A') + '</td>';
+                        html += '<td>' + (formatDate(l.data_liberacao)) + '</td>';
                         html += '</tr>';
                     });
 
@@ -3346,7 +3372,7 @@
                         <strong>Status:</strong> <span class="badge badge-${pdi.status}">${pdi.status}</span>
                     </div>
                     <div class="pdi-form-section">
-                        <strong>Data de Criação:</strong> ${pdi.data_criacao ? new Date(pdi.data_criacao).toLocaleDateString('pt-BR') : 'N/A'}
+                        <strong>Data de Criação:</strong> ${formatDate(pdi.data_criacao)}
                     </div>
                 `;
 
@@ -3357,7 +3383,7 @@
                     if (pdi.atualizacoes && pdi.atualizacoes.length > 0) {
                         pdi.atualizacoes.forEach(update => {
                             html += '<div class="update-item">';
-                            html += '<strong>' + update.autor + '</strong> - ' + (update.data ? new Date(update.data).toLocaleDateString('pt-BR') : '') + '<br>';
+                            html += '<strong>' + update.autor + '</strong> - ' + (update.data ? formatDate(update.data) : '') + '<br>';
                             html += update.texto;
                             html += '</div>';
                         });
