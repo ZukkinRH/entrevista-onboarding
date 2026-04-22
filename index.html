@@ -12,6 +12,7 @@
     <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary: #D42027;
@@ -1048,6 +1049,24 @@
         .confirm-box .confirm-actions { display: flex; gap: 10px; }
         .confirm-box .confirm-actions button { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
         .confirm-box .btn-cancel-confirm { background: #f0f0f0; color: #333; }
+
+        /* Import Preview */
+        .import-preview-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+        .import-preview-table th { background: var(--primary); color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+        .import-preview-table td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+        .import-preview-table tr:nth-child(even) { background: #f9f9f9; }
+        .import-preview-table .row-error { background: #fff5f5; }
+        .import-preview-table .cell-error { color: #c62828; font-weight: 600; }
+        .import-preview-table .cell-ok { color: #2e7d32; }
+        .import-stats { display: flex; gap: 16px; margin: 12px 0; flex-wrap: wrap; }
+        .import-stat { padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+        .import-stat-ok { background: #e8f5e9; color: #2e7d32; }
+        .import-stat-err { background: #ffebee; color: #c62828; }
+        .import-stat-total { background: #e3f2fd; color: #1565c0; }
+        .import-progress { margin: 16px 0; }
+        .import-progress-bar { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .import-progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width .3s; width: 0%; }
+        .import-progress-text { font-size: 12px; color: #636E72; margin-top: 6px; text-align: center; }
         .confirm-box .btn-cancel-confirm:hover { background: #e0e0e0; }
         .confirm-box .btn-confirm-action { background: var(--primary); color: #fff; }
         .confirm-box .btn-confirm-action:hover { background: var(--primary-dark); }
@@ -1155,7 +1174,12 @@
 
             <!-- Usuários Tab -->
             <div id="usuariosTab" class="tab-content">
-                <button class="btn btn-primary" onclick="openNewUserForm()">+ Novo Usuário</button>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+                    <button class="btn btn-primary" onclick="openNewUserForm()">+ Novo Usuário</button>
+                    <button class="btn btn-secondary" onclick="openImportPlanilha()" style="display:inline-flex;align-items:center;gap:6px;">📊 Importar Planilha</button>
+                    <button class="btn btn-secondary" onclick="downloadModeloPlanilha()" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:8px 12px;">⬇ Baixar Modelo</button>
+                </div>
+                <input type="file" id="xlsxFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleXlsxUpload(event)">
                 <div id="usuariosContainer"></div>
             </div>
 
@@ -3138,6 +3162,226 @@
                 console.error('Erro ao criar usuário:', error);
                 showToast('error', 'Erro ao criar', error.message);
             }
+        }
+
+        // ── Importação em Massa via Excel ──
+        let importParsedRows = [];
+        let importGestorMap = {};
+
+        function openImportPlanilha() {
+            document.getElementById('xlsxFileInput').click();
+        }
+
+        function downloadModeloPlanilha() {
+            var ws_data = [['Nome', 'Email', 'Perfil', 'Gestor']];
+            ws_data.push(['Maria Silva', 'maria@empresa.com', 'colaborador', 'João Souza']);
+            ws_data.push(['Pedro Santos', 'pedro@empresa.com', 'gestor', '']);
+            var ws = XLSX.utils.aoa_to_sheet(ws_data);
+            ws['!cols'] = [{wch:25},{wch:30},{wch:15},{wch:25}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Usuarios');
+            XLSX.writeFile(wb, 'modelo_cadastro_usuarios.xlsx');
+            showToast('info', 'Modelo baixado', 'Preencha a planilha e use "Importar Planilha".');
+        }
+
+        async function handleXlsxUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            event.target.value = '';
+
+            try {
+                var data = await file.arrayBuffer();
+                var wb = XLSX.read(data, { type: 'array' });
+                var ws = wb.Sheets[wb.SheetNames[0]];
+                var rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+                if (rows.length === 0) {
+                    showToast('error', 'Planilha vazia', 'Nenhuma linha de dados encontrada.');
+                    return;
+                }
+
+                // Normalizar cabeçalhos
+                var normalized = rows.map(function(r) {
+                    var obj = {};
+                    Object.keys(r).forEach(function(k) {
+                        obj[k.trim().toLowerCase()] = ('' + r[k]).trim();
+                    });
+                    return obj;
+                });
+
+                // Verificar colunas obrigatórias
+                var first = Object.keys(normalized[0]);
+                var required = ['nome', 'email', 'perfil', 'gestor'];
+                var missing = required.filter(function(c) { return first.indexOf(c) === -1; });
+                if (missing.length > 0) {
+                    showToast('error', 'Colunas faltando', 'A planilha precisa ter: ' + missing.join(', '));
+                    return;
+                }
+
+                // Buscar gestores existentes para validar
+                var usuarios = await cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); });
+                importGestorMap = {};
+                usuarios.forEach(function(doc) {
+                    var u = doc.data();
+                    if (u.perfil === 'gestor' || u.perfil === 'admin' || u.perfil === 'analista' || u.perfil === 'diretoria') {
+                        importGestorMap[u.nome.toLowerCase().trim()] = { id: doc.id, nome: u.nome };
+                    }
+                });
+
+                // Buscar emails existentes
+                var existingEmails = {};
+                usuarios.forEach(function(doc) {
+                    var u = doc.data();
+                    if (u.email) existingEmails[u.email.toLowerCase().trim()] = true;
+                });
+
+                // Validar cada linha
+                var perfisValidos = ['colaborador', 'gestor', 'analista', 'diretoria', 'admin'];
+                importParsedRows = normalized.map(function(r, idx) {
+                    var errors = [];
+                    if (!r.nome) errors.push('Nome vazio');
+                    if (!r.email) errors.push('Email vazio');
+                    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email)) errors.push('Email inválido');
+                    else if (existingEmails[r.email.toLowerCase()]) errors.push('Email já cadastrado');
+                    if (!r.perfil) errors.push('Perfil vazio');
+                    else if (perfisValidos.indexOf(r.perfil.toLowerCase()) === -1) errors.push('Perfil inválido');
+                    var gestorMatch = null;
+                    if (r.gestor) {
+                        gestorMatch = importGestorMap[r.gestor.toLowerCase().trim()] || null;
+                        if (!gestorMatch) errors.push('Gestor não encontrado');
+                    }
+                    return {
+                        nome: r.nome,
+                        email: r.email,
+                        perfil: r.perfil ? r.perfil.toLowerCase() : '',
+                        gestor: r.gestor,
+                        gestorMatch: gestorMatch,
+                        cargo: r.cargo || '',
+                        setor: r.setor || '',
+                        errors: errors,
+                        row: idx + 2
+                    };
+                });
+
+                showImportPreview();
+            } catch(e) {
+                console.error('Erro ao ler planilha:', e);
+                showToast('error', 'Erro na leitura', 'Não foi possível ler o arquivo. Verifique se é um .xlsx válido.');
+            }
+        }
+
+        function showImportPreview() {
+            var valid = importParsedRows.filter(function(r) { return r.errors.length === 0; });
+            var invalid = importParsedRows.filter(function(r) { return r.errors.length > 0; });
+
+            var html = '<div class="import-stats">';
+            html += '<span class="import-stat import-stat-total">📋 Total: ' + importParsedRows.length + '</span>';
+            html += '<span class="import-stat import-stat-ok">✓ Válidos: ' + valid.length + '</span>';
+            if (invalid.length > 0) html += '<span class="import-stat import-stat-err">✕ Com erros: ' + invalid.length + '</span>';
+            html += '</div>';
+
+            html += '<div style="max-height:350px;overflow-y:auto;border:1px solid #eee;border-radius:8px;">';
+            html += '<table class="import-preview-table"><thead><tr><th>#</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Gestor</th><th>Status</th></tr></thead><tbody>';
+
+            importParsedRows.forEach(function(r) {
+                var cls = r.errors.length > 0 ? ' class="row-error"' : '';
+                html += '<tr' + cls + '>';
+                html += '<td>' + r.row + '</td>';
+                html += '<td>' + (r.nome || '<span class="cell-error">—</span>') + '</td>';
+                html += '<td>' + (r.email || '<span class="cell-error">—</span>') + '</td>';
+                html += '<td>' + (r.perfil || '<span class="cell-error">—</span>') + '</td>';
+                html += '<td>' + (r.gestorMatch ? '<span class="cell-ok">' + r.gestorMatch.nome + '</span>' : (r.gestor ? '<span class="cell-error">' + r.gestor + ' (?)</span>' : '—')) + '</td>';
+                html += '<td>' + (r.errors.length === 0 ? '<span class="cell-ok">✓ OK</span>' : '<span class="cell-error">' + r.errors.join(', ') + '</span>') + '</td>';
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+
+            html += '<div class="import-progress" id="importProgressArea" style="display:none;">';
+            html += '<div class="import-progress-bar"><div class="import-progress-fill" id="importProgressFill"></div></div>';
+            html += '<div class="import-progress-text" id="importProgressText">Preparando...</div>';
+            html += '</div>';
+
+            if (invalid.length > 0) {
+                html += '<p style="color:#c62828;font-size:13px;margin-top:8px;">⚠ Linhas com erro serão ignoradas. Apenas os ' + valid.length + ' registros válidos serão importados.</p>';
+            }
+
+            var buttons = [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' }
+            ];
+            if (valid.length > 0) {
+                buttons.push({ text: 'Importar ' + valid.length + ' usuários', onclick: 'executarImportacao()', class: 'btn-primary' });
+            }
+            openModal('📊 Preview da Importação — ' + importParsedRows.length + ' linhas', html, buttons);
+        }
+
+        async function executarImportacao() {
+            var valid = importParsedRows.filter(function(r) { return r.errors.length === 0; });
+            if (valid.length === 0) { showToast('warn', 'Nada para importar', 'Nenhuma linha válida.'); return; }
+
+            // Disable buttons
+            var modalBtns = document.querySelectorAll('.modal-footer button');
+            modalBtns.forEach(function(b) { b.disabled = true; });
+
+            var progressArea = document.getElementById('importProgressArea');
+            var progressFill = document.getElementById('importProgressFill');
+            var progressText = document.getElementById('importProgressText');
+            if (progressArea) progressArea.style.display = 'block';
+
+            var success = 0;
+            var failed = 0;
+
+            for (var i = 0; i < valid.length; i++) {
+                var r = valid[i];
+                var pct = Math.round(((i + 1) / valid.length) * 100);
+                if (progressFill) progressFill.style.width = pct + '%';
+                if (progressText) progressText.textContent = 'Cadastrando ' + (i + 1) + ' de ' + valid.length + '... (' + r.nome + ')';
+
+                try {
+                    var password = generatePassword();
+                    await db.collection('usuarios').add({
+                        nome: r.nome,
+                        email: r.email,
+                        senha: hashSenha(password),
+                        perfil: r.perfil,
+                        gestor_id: r.gestorMatch ? r.gestorMatch.id : null,
+                        lider: r.gestorMatch ? r.gestorMatch.nome : null,
+                        cargo: r.cargo,
+                        setor: r.setor,
+                        ativo: true,
+                        provisoria: true,
+                        data_criacao: new Date()
+                    });
+
+                    // Envia email (sem bloquear se falhar)
+                    try {
+                        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                            to_email: r.email,
+                            to_name: r.nome,
+                            subject: 'Zukkin RH - Sua conta foi criada',
+                            nova_senha: password
+                        });
+                    } catch(_) {}
+
+                    success++;
+                } catch(e) {
+                    console.error('Erro ao importar ' + r.nome + ':', e);
+                    failed++;
+                }
+            }
+
+            invalidateCache('usuarios:');
+
+            if (progressText) progressText.textContent = 'Concluído!';
+
+            setTimeout(function() {
+                closeModal();
+                if (failed === 0) {
+                    showToast('success', 'Importação concluída!', success + ' usuários cadastrados com sucesso. Senhas provisórias enviadas por email.');
+                } else {
+                    showToast('warn', 'Importação parcial', success + ' cadastrados com sucesso, ' + failed + ' falharam.');
+                }
+                loadUsuarios();
+            }, 800);
         }
 
         async function openEditUsuario(userId) {
