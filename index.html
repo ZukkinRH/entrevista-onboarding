@@ -1741,15 +1741,30 @@
                     alert('Email não encontrado');
                     return;
                 }
+                const userData = users.docs[0].data();
                 const newPassword = generatePassword();
                 await withTimeout(users.docs[0].ref.update({
-                    senha: hashSenha(newPassword)
+                    senha: hashSenha(newPassword),
+                    provisoria: true
                 }), 6000);
-                alert('Nova senha enviada para ' + email + ': ' + newPassword);
+                invalidateCache('usuarios:');
+
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                        to_email: email,
+                        to_name: userData.nome || email,
+                        subject: 'Zukkin RH - Recuperação de Senha',
+                        nova_senha: newPassword
+                    });
+                    alert('Nova senha enviada para ' + email + '! Verifique seu email.');
+                } catch(emailErr) {
+                    console.warn('Erro ao enviar email:', emailErr);
+                    alert('Senha redefinida! Nova senha provisória: ' + newPassword + '\n(Não foi possível enviar por email)');
+                }
                 closeModal();
             } catch (error) {
-                console.error('Erro ao enviar email:', error);
-                alert('Erro ao enviar email: ' + error.message);
+                console.error('Erro ao recuperar senha:', error);
+                alert('Erro: ' + error.message);
             }
         }
 
@@ -1766,28 +1781,33 @@
         }
 
         function showChangePasswordScreen(userId) {
-            const html = `
-                <div style="max-width: 400px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                    <h2 style="color: var(--primary); margin-bottom: 10px;">Redefinir Senha</h2>
-                    <p style="color: #636E72; margin-bottom: 20px;">Sua senha é provisória. Por favor, defina uma nova senha para continuar.</p>
-                    <div class="form-group">
-                        <label for="newPass">Nova Senha:</label>
-                        <input type="password" id="newPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;">
-                    </div>
-                    <div class="form-group" style="margin-top:10px;">
-                        <label for="confirmPass">Confirmar Senha:</label>
-                        <input type="password" id="confirmPass" placeholder="Repita a nova senha" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;">
-                    </div>
-                    <button class="btn btn-primary" onclick="saveNewPassword('${userId}')" style="width:100%;margin-top:15px;padding:12px;">Salvar Nova Senha</button>
-                </div>
-            `;
+            // Esconde tudo e mostra apenas o formulário de redefinição
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'none';
-            // Usa o mainContent como tela temporária
-            const mainContent = document.querySelector('.main-content') || document.getElementById('appScreen');
-            document.getElementById('appScreen').style.display = 'flex';
-            document.querySelector('.sidebar').style.display = 'none';
-            document.querySelector('.main-content').innerHTML = html;
+
+            // Cria overlay dedicado (fora do appScreen)
+            let overlay = document.getElementById('changePassOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'changePassOverlay';
+                document.body.appendChild(overlay);
+            }
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;z-index:9999;';
+            overlay.innerHTML = `
+                <div style="max-width: 420px; width:90%; padding: 35px; background: white; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <h2 style="color: var(--primary); margin-bottom: 10px;">Redefinir Senha</h2>
+                    <p style="color: #636E72; margin-bottom: 20px;">Sua senha é provisória. Por favor, defina uma nova senha para continuar.</p>
+                    <div style="margin-bottom:15px;">
+                        <label for="newPass" style="display:block;margin-bottom:5px;font-weight:600;">Nova Senha:</label>
+                        <input type="password" id="newPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box;">
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label for="confirmPass" style="display:block;margin-bottom:5px;font-weight:600;">Confirmar Senha:</label>
+                        <input type="password" id="confirmPass" placeholder="Repita a nova senha" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box;">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveNewPassword('${userId}')" style="width:100%;padding:12px;font-size:15px;">Salvar Nova Senha</button>
+                </div>
+            `;
         }
 
         async function saveNewPassword(userId) {
@@ -1811,8 +1831,12 @@
                 invalidateCache('usuarios:');
                 currentUser.provisoria = false;
                 lsSet('session', currentUser);
+
+                // Remove overlay e mostra o app normalmente
+                const overlay = document.getElementById('changePassOverlay');
+                if (overlay) overlay.remove();
+
                 alert('Senha atualizada com sucesso!');
-                document.querySelector('.sidebar').style.display = '';
                 showAppScreen();
             } catch (error) {
                 console.error('Erro ao atualizar senha:', error);
@@ -2917,7 +2941,8 @@
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                         to_email: email,
                         to_name: nome,
-                        message: 'Sua conta foi criada no Zukkin RH. Sua senha provisória é: ' + password + '\nAcesse: https://zukkinrh.github.io/entrevista-onboarding/ e redefina sua senha no primeiro acesso.'
+                        subject: 'Zukkin RH - Sua conta foi criada',
+                        nova_senha: password
                     });
                     alert('Usuário criado! Senha provisória enviada para ' + email);
                 } catch(emailErr) {
@@ -3059,7 +3084,8 @@
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                         to_email: email,
                         to_name: nome,
-                        message: 'Sua senha foi resetada no Zukkin RH. Sua nova senha provisória é: ' + newPassword + '\nAcesse: https://zukkinrh.github.io/entrevista-onboarding/ e redefina sua senha no próximo acesso.'
+                        subject: 'Zukkin RH - Reset de Senha',
+                        nova_senha: newPassword
                     });
                     alert('Senha resetada e enviada para ' + email);
                 } catch(emailErr) {
