@@ -2124,6 +2124,33 @@
                 });
                 invalidateCache('respostas:');
 
+                // Marcar liberação como respondida
+                try {
+                    const libs = await db.collection('liberacoes')
+                        .where('colaborador_id', '==', currentUser.id)
+                        .where('tipo_pesquisa', '==', tipo)
+                        .get();
+                    // Marca a mais recente não-respondida
+                    let marcou = false;
+                    const libsList = [];
+                    libs.forEach(doc => libsList.push({ id: doc.id, ...doc.data() }));
+                    libsList.sort((a, b) => {
+                        const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
+                        const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                        return db2 - da;
+                    });
+                    for (const lib of libsList) {
+                        if (!lib.respondida && !marcou) {
+                            await db.collection('liberacoes').doc(lib.id).update({
+                                respondida: true,
+                                data_resposta: new Date()
+                            });
+                            marcou = true;
+                        }
+                    }
+                    invalidateCache('liberacoes:');
+                } catch(_) {}
+
                 alert('Questionário salvo com sucesso!');
                 closeModal();
                 loadQuestionnaires();
@@ -2157,6 +2184,31 @@
                     data_avaliacao: new Date()
                 });
                 invalidateCache('pesquisas:');
+
+                // Marcar liberação como respondida
+                try {
+                    const libs = await db.collection('liberacoes')
+                        .where('colaborador_id', '==', collaboratorId)
+                        .where('tipo_pesquisa', '==', tipo)
+                        .get();
+                    const libsList = [];
+                    libs.forEach(doc => libsList.push({ id: doc.id, ...doc.data() }));
+                    libsList.sort((a, b) => {
+                        const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
+                        const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                        return db2 - da;
+                    });
+                    for (const lib of libsList) {
+                        if (!lib.respondida) {
+                            await db.collection('liberacoes').doc(lib.id).update({
+                                respondida: true,
+                                data_resposta: new Date()
+                            });
+                            break;
+                        }
+                    }
+                    invalidateCache('liberacoes:');
+                } catch(_) {}
 
                 alert('Avaliação salva com sucesso!');
                 closeModal();
@@ -2283,41 +2335,130 @@
 
             try {
                 // Queries em paralelo + cache
-                const [usuarios, liberacoes] = await Promise.all([
+                const [usuarios, liberacoes, respostas] = await Promise.all([
                     cachedGet('usuarios:all', () => db.collection('usuarios').get()),
-                    cachedGet('liberacoes:all', () => db.collection('liberacoes').get())
+                    cachedGet('liberacoes:all', () => db.collection('liberacoes').get()),
+                    cachedGet('respostas:all', () => db.collection('respostas').get())
                 ]);
 
+                // Mapear respostas por colaborador+tipo para saber quais foram respondidas
+                const respostasPorUserTipo = {};
+                respostas.forEach(doc => {
+                    const r = doc.data();
+                    const chave = (r.colaborador_id || r.usuario_id) + '|' + r.tipo_pesquisa;
+                    if (!respostasPorUserTipo[chave]) respostasPorUserTipo[chave] = [];
+                    respostasPorUserTipo[chave].push({
+                        data: r.data_resposta ? new Date(r.data_resposta).toLocaleDateString('pt-BR') : 'N/A'
+                    });
+                });
+
+                // Agrupar liberações por usuário
                 const liberacoesPorUsuario = {};
                 liberacoes.forEach(doc => {
                     const data = doc.data();
-                    liberacoesPorUsuario[data.colaborador_id] = liberacoesPorUsuario[data.colaborador_id] || [];
-                    liberacoesPorUsuario[data.colaborador_id].push(doc.id);
+                    if (!liberacoesPorUsuario[data.colaborador_id]) liberacoesPorUsuario[data.colaborador_id] = [];
+                    liberacoesPorUsuario[data.colaborador_id].push({ id: doc.id, ...data });
                 });
 
-                let html = '<div class="table-wrapper"><table class="table">';
-                html += '<thead><tr><th>Usuário</th><th>Perfil</th><th>Gestor</th><th>Pesquisas Liberadas</th><th>Ações</th></tr></thead>';
+                // Mapa de usuários por ID
+                const usuariosMap = {};
+                usuarios.forEach(doc => { usuariosMap[doc.id] = doc.data(); });
+
+                // Seção 1: tabela resumida por usuário
+                let html = '<h3 style="margin-bottom:15px;">Visão por Colaborador</h3>';
+                html += '<div class="table-wrapper"><table class="table">';
+                html += '<thead><tr><th>Usuário</th><th>Perfil</th><th>Gestor</th><th>Enviadas</th><th>Respondidas</th><th>Pendentes</th><th>Ações</th></tr></thead>';
                 html += '<tbody>';
 
                 usuarios.forEach(doc => {
                     const u = doc.data();
                     const perfil = u.perfil || 'sem perfil';
-                    const liberadas = liberacoesPorUsuario[doc.id] ? liberacoesPorUsuario[doc.id].length : 0;
+                    const libs = liberacoesPorUsuario[doc.id] || [];
+                    const totalEnviadas = libs.length;
+                    let totalRespondidas = 0;
+                    libs.forEach(l => {
+                        const chave = doc.id + '|' + l.tipo_pesquisa;
+                        if (l.respondida || (respostasPorUserTipo[chave] && respostasPorUserTipo[chave].length > 0)) {
+                            totalRespondidas++;
+                        }
+                    });
+                    const totalPendentes = totalEnviadas - totalRespondidas;
 
                     html += '<tr>';
                     html += '<td>' + u.nome + '</td>';
                     html += '<td><span class="badge badge-primary">' + perfil + '</span></td>';
                     html += '<td>' + (u.lider || 'N/A') + '</td>';
-                    html += '<td>' + liberadas + ' pesquisa(s)</td>';
+                    html += '<td>' + totalEnviadas + '</td>';
+                    html += '<td style="color:green;font-weight:bold;">' + totalRespondidas + '</td>';
+                    html += '<td style="color:' + (totalPendentes > 0 ? 'orange' : '#636E72') + ';font-weight:bold;">' + totalPendentes + '</td>';
                     html += '<td><button class="btn btn-primary btn-small" onclick="openLiberacaoForm(\'' + doc.id + '\', \'' + (u.nome || '').replace(/'/g, "\\'") + '\')">Gerenciar</button></td>';
                     html += '</tr>';
                 });
 
                 html += '</tbody></table></div>';
+
+                // Seção 2: histórico completo de todas as liberações
+                html += '<h3 style="margin-top:30px;margin-bottom:15px;">Histórico Completo de Envios</h3>';
+
+                const todasLiberacoes = [];
+                liberacoes.forEach(doc => {
+                    const l = doc.data();
+                    todasLiberacoes.push({ id: doc.id, ...l });
+                });
+                todasLiberacoes.sort((a, b) => {
+                    const da = a.data_liberacao ? new Date(a.data_liberacao) : new Date(0);
+                    const db2 = b.data_liberacao ? new Date(b.data_liberacao) : new Date(0);
+                    return db2 - da;
+                });
+
+                if (todasLiberacoes.length === 0) {
+                    html += '<div class="alert alert-info">Nenhuma pesquisa enviada ainda.</div>';
+                } else {
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Colaborador</th><th>Pesquisa</th><th>Data Envio</th><th>Enviado Por</th><th>Status</th><th>Ações</th></tr></thead>';
+                    html += '<tbody>';
+
+                    todasLiberacoes.forEach(l => {
+                        const nomeColab = usuariosMap[l.colaborador_id] ? usuariosMap[l.colaborador_id].nome : l.colaborador_id;
+                        const nomeP = SURVEY_TEMPLATES[l.tipo_pesquisa] ? SURVEY_TEMPLATES[l.tipo_pesquisa].nome : l.tipo_pesquisa;
+                        const dataLib = l.data_liberacao ? new Date(l.data_liberacao).toLocaleDateString('pt-BR') : 'N/A';
+                        const chave = l.colaborador_id + '|' + l.tipo_pesquisa;
+                        const foiRespondida = l.respondida || (respostasPorUserTipo[chave] && respostasPorUserTipo[chave].length > 0);
+                        const statusHtml = foiRespondida
+                            ? '<span style="color:green;font-weight:bold;">✅ Respondida</span>'
+                            : '<span style="color:orange;font-weight:bold;">⏳ Pendente</span>';
+                        const enviadoPor = l.liberado_por_nome || l.liberado_por || 'N/A';
+
+                        html += '<tr>';
+                        html += '<td>' + nomeColab + '</td>';
+                        html += '<td>' + nomeP + '</td>';
+                        html += '<td>' + dataLib + '</td>';
+                        html += '<td>' + enviadoPor + '</td>';
+                        html += '<td>' + statusHtml + '</td>';
+                        html += '<td><button class="btn btn-danger btn-small" onclick="excluirLiberacao(\'' + l.id + '\')">Excluir</button></td>';
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table></div>';
+                }
+
                 container.innerHTML = html;
             } catch (error) {
                 console.error('Erro ao carregar liberações:', error);
                 container.innerHTML = '<div class="alert alert-error">Erro ao carregar liberações</div>';
+            }
+        }
+
+        async function excluirLiberacao(libId) {
+            if (!confirm('Tem certeza que deseja excluir esta liberação?')) return;
+            try {
+                await db.collection('liberacoes').doc(libId).delete();
+                invalidateCache('liberacoes:');
+                alert('Liberação excluída com sucesso!');
+                loadLiberacoes();
+            } catch(error) {
+                console.error('Erro ao excluir liberação:', error);
+                alert('Erro: ' + error.message);
             }
         }
 
