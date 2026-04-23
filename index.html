@@ -1235,7 +1235,11 @@
 
             <!-- Liberar Pesquisas Tab -->
             <div id="liberacoesTab" class="tab-content">
-                <button class="btn btn-primary" onclick="openModal('Liberar Pesquisa', getLiberacoesForm(), [{text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary'}, {text: 'Liberar', onclick: 'saveLiberacao()', class: 'btn-primary'}])">+ Nova Liberação</button>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
+                    <button class="btn btn-primary" onclick="openModal('Liberar Pesquisa', getLiberacoesForm(), [{text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary'}, {text: 'Liberar', onclick: 'saveLiberacao()', class: 'btn-primary'}])">+ Nova Liberação</button>
+                    <button class="btn btn-secondary" onclick="liberarClimaModal()" style="display:inline-flex;align-items:center;gap:6px;">🌤️ Pesquisa de Clima</button>
+                </div>
+                <div id="climaLiberacoesArea"></div>
                 <div id="liberacoesContainer"></div>
             </div>
 
@@ -1558,7 +1562,6 @@
                 { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
                 { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
                 { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
-                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
                 { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
                 { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
@@ -1588,7 +1591,6 @@
             analista: [
                 { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
                 { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
-                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
                 { id: 'pdiTab', label: 'PDI', key: 'pdi' }
@@ -2846,6 +2848,9 @@
             const container = document.getElementById('liberacoesContainer');
             container.innerHTML = '<div class="loading"></div>';
 
+            // Renderizar painel de clima no topo
+            renderClimaPanel();
+
             try {
                 const [usuarios, liberacoes, respostas] = await Promise.all([
                     cachedGet('usuarios:all', () => db.collection('usuarios').get()),
@@ -3796,6 +3801,47 @@
         // ══════════════════════════════════════════════
         // ══  PESQUISA DE CLIMA ORGANIZACIONAL  ══════
         // ══════════════════════════════════════════════
+        async function renderClimaPanel() {
+            var area = document.getElementById('climaLiberacoesArea');
+            if (!area) return;
+            try {
+                var [climaLibs, climaRes] = await Promise.all([
+                    cachedGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); }),
+                    cachedGet('clima_res:all', function() { return db.collection('clima_respostas').get(); })
+                ]);
+                var libList = [];
+                climaLibs.forEach(function(doc) { libList.push({ id: doc.id, ...doc.data() }); });
+                libList.sort(function(a, b) { return (b.ano || 0) - (a.ano || 0); });
+
+                var totalPorAno = {};
+                climaRes.forEach(function(doc) {
+                    var a = doc.data().ano || 0;
+                    totalPorAno[a] = (totalPorAno[a] || 0) + 1;
+                });
+
+                if (libList.length === 0) { area.innerHTML = ''; return; }
+
+                var html = '<div class="dash-section" style="margin-bottom:20px;">';
+                html += '<div class="dash-section-title">🌤️ Pesquisas de Clima</div>';
+                libList.forEach(function(lib) {
+                    var ativa = lib.ativa !== false;
+                    var total = totalPorAno[lib.ano] || 0;
+                    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;">';
+                    html += '<div><strong>Clima ' + lib.ano + '</strong> ' + (ativa ? '<span style="background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:10px;">Ativa</span>' : '<span style="background:#f0f0f0;color:#999;font-size:11px;padding:2px 8px;border-radius:10px;">Encerrada</span>') + ' <span style="color:#636E72;font-size:12px;margin-left:8px;">' + total + ' resposta(s)</span></div>';
+                    html += '<div style="display:flex;gap:6px;">';
+                    html += '<button class="btn btn-secondary" onclick="verResultadosClima(' + lib.ano + ')" style="font-size:12px;padding:6px 10px;">📊 Resultados</button>';
+                    if (ativa) html += '<button class="btn btn-secondary" onclick="encerrarClima(\'' + lib.id + '\')" style="font-size:12px;padding:6px 10px;color:#c62828;">🔒 Encerrar</button>';
+                    else html += '<button class="btn btn-secondary" onclick="reabrirClima(\'' + lib.id + '\')" style="font-size:12px;padding:6px 10px;color:#2e7d32;">🔓 Reabrir</button>';
+                    html += '</div></div>';
+                });
+                html += '</div>';
+                area.innerHTML = html;
+            } catch(e) {
+                console.error('Erro ao renderizar clima:', e);
+                area.innerHTML = '';
+            }
+        }
+
         var CLIMA_TEMPLATE = {
             titulo: 'Pesquisa de Clima Organizacional',
             descricao: 'A pesquisa de clima organizacional avalia a percepção dos colaboradores sobre o ambiente de trabalho. Suas respostas são totalmente anônimas e confidenciais.',
@@ -3966,11 +4012,16 @@
                 invalidateCache('clima_lib:');
                 showToast('success', 'Pesquisa liberada!', 'Pesquisa de Clima ' + ano + ' está ativa.');
                 closeModal();
-                loadClima();
+                refreshClimaPanels();
             } catch(e) {
                 console.error('Erro:', e);
                 showToast('error', 'Erro', e.message);
             }
+        }
+
+        function refreshClimaPanels() {
+            if (document.getElementById('climaContainer')) loadClima();
+            if (document.getElementById('climaLiberacoesArea')) renderClimaPanel();
         }
 
         async function encerrarClima(libId) {
@@ -3979,7 +4030,7 @@
                     await db.collection('clima_liberacoes').doc(libId).update({ ativa: false });
                     invalidateCache('clima_lib:');
                     showToast('success', 'Encerrada', 'Pesquisa de clima encerrada.');
-                    loadClima();
+                    refreshClimaPanels();
                 } catch(e) { showToast('error', 'Erro', e.message); }
             });
         }
@@ -3989,7 +4040,7 @@
                 await db.collection('clima_liberacoes').doc(libId).update({ ativa: true });
                 invalidateCache('clima_lib:');
                 showToast('success', 'Reaberta', 'Pesquisa de clima reaberta.');
-                loadClima();
+                refreshClimaPanels();
             } catch(e) { showToast('error', 'Erro', e.message); }
         }
 
@@ -4071,7 +4122,7 @@
                 invalidateCache('clima_res:');
                 closeModal();
                 showToast('success', 'Enviada!', 'Sua resposta foi registrada de forma anônima. Obrigado!');
-                loadClima();
+                refreshClimaPanels();
             } catch(e) {
                 console.error('Erro:', e);
                 showToast('error', 'Erro ao enviar', e.message);
