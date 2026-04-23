@@ -13,6 +13,7 @@
     <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --primary: #D42027;
@@ -857,22 +858,77 @@
         .stat-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 22px 20px;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform .2s, box-shadow .2s;
         }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .stat-card .stat-icon {
+            width: 52px; height: 52px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
+        }
+        .stat-card .stat-icon.blue { background: #e3f2fd; color: #1565c0; }
+        .stat-card .stat-icon.green { background: #e8f5e9; color: #2e7d32; }
+        .stat-card .stat-icon.orange { background: #fff3e0; color: #e65100; }
+        .stat-card .stat-icon.red { background: #ffebee; color: #c62828; }
+        .stat-card .stat-icon.purple { background: #f3e5f5; color: #7b1fa2; }
+        .stat-card .stat-info { flex: 1; }
 
         .stat-card h3 {
-            color: var(--primary);
-            font-size: 28px;
-            margin: 10px 0;
+            color: var(--dark);
+            font-size: 26px;
+            margin: 0 0 2px 0;
+            line-height: 1;
         }
 
         .stat-card p {
             color: #636E72;
-            font-size: 14px;
+            font-size: 13px;
+            margin: 0;
         }
+
+        .dash-section {
+            background: white; border-radius: 12px; padding: 24px;
+            border: 1px solid var(--border); box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .dash-section-title {
+            font-size: 16px; font-weight: 700; color: var(--dark);
+            margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .dash-charts-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin-bottom: 20px;
+        }
+        .dash-chart-card {
+            background: white; border-radius: 12px; padding: 20px;
+            border: 1px solid var(--border); box-shadow: var(--shadow);
+        }
+        .dash-chart-card h4 {
+            font-size: 14px; font-weight: 600; color: #636E72;
+            margin-bottom: 12px;
+        }
+        .activity-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: var(--primary); color: #fff; display: flex;
+            align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; flex-shrink: 0;
+        }
+        .activity-info { flex: 1; }
+        .activity-info .activity-name { font-weight: 600; font-size: 14px; color: var(--dark); }
+        .activity-info .activity-detail { font-size: 12px; color: #636E72; margin-top: 2px; }
+        .activity-date { font-size: 12px; color: #aaa; white-space: nowrap; }
+        .dash-empty { text-align: center; padding: 30px; color: #aaa; font-size: 14px; }
 
         .form-section {
             margin-bottom: 25px;
@@ -1118,6 +1174,24 @@
             <!-- Dashboard Tab -->
             <div id="dashboardTab" class="tab-content active">
                 <div class="grid" id="dashboardStats"></div>
+                <div class="dash-charts-row" id="dashboardCharts">
+                    <div class="dash-chart-card">
+                        <h4>📊 Distribuição por Perfil</h4>
+                        <canvas id="chartPerfil" height="220"></canvas>
+                    </div>
+                    <div class="dash-chart-card">
+                        <h4>📈 Pesquisas por Mês</h4>
+                        <canvas id="chartPesquisasMes" height="220"></canvas>
+                    </div>
+                    <div class="dash-chart-card">
+                        <h4>🎯 Status dos PDIs</h4>
+                        <canvas id="chartPdiStatus" height="220"></canvas>
+                    </div>
+                    <div class="dash-chart-card">
+                        <h4>📋 Liberações vs Respostas</h4>
+                        <canvas id="chartLiberacoes" height="220"></canvas>
+                    </div>
+                </div>
                 <div id="dashboardContent"></div>
             </div>
 
@@ -2499,85 +2573,241 @@
             });
         }
 
+        // Guarda instâncias dos gráficos para destruir antes de re-criar
+        var dashCharts = {};
+        function destroyCharts() {
+            Object.keys(dashCharts).forEach(function(k) {
+                if (dashCharts[k]) { dashCharts[k].destroy(); dashCharts[k] = null; }
+            });
+        }
+
+        var PESQUISA_LABELS = {
+            experiencia_45_colab: 'Experiência 45d (Colab)',
+            desempenho_90_colab: 'Desempenho 90d (Colab)',
+            experiencia_45_empresa: 'Experiência 45d (Empresa)',
+            desempenho_90_empresa: 'Desempenho 90d (Empresa)'
+        };
+
         async function loadDashboard() {
-            const statsContainer = document.getElementById('dashboardStats');
-            const contentContainer = document.getElementById('dashboardContent');
+            var statsContainer = document.getElementById('dashboardStats');
+            var contentContainer = document.getElementById('dashboardContent');
             statsContainer.innerHTML = '<div class="loading"></div>';
             contentContainer.innerHTML = '';
+            destroyCharts();
 
             try {
-                // Queries em paralelo (antes: ~4x mais lento, sequencial)
-                const [usuarios, pesquisas, pdis, respostas] = await Promise.all([
-                    cachedGet('usuarios:all', () => db.collection('usuarios').get()),
-                    cachedGet('pesquisas:all', () => db.collection('pesquisas').get()),
-                    cachedGet('pdis:all', () => db.collection('pdis').get()),
-                    cachedGet('respostas:recent', () => db.collection('respostas').orderBy('data_resposta', 'desc').limit(5).get())
+                var [usuarios, pesquisas, pdis, liberacoes] = await Promise.all([
+                    cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); }),
+                    cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
+                    cachedGet('pdis:all', function() { return db.collection('pdis').get(); }),
+                    cachedGet('liberacoes:all', function() { return db.collection('liberacoes').get(); })
                 ]);
 
-                const totalUsers = usuarios.size;
-                const perfisCount = {};
-                usuarios.forEach(doc => {
-                    const perfil = doc.data().perfil || 'sem perfil';
+                // ── KPI Data ──
+                var totalUsers = usuarios.size;
+                var activeUsers = 0;
+                var perfisCount = {};
+                usuarios.forEach(function(doc) {
+                    var u = doc.data();
+                    if (u.ativo !== false) activeUsers++;
+                    var perfil = u.perfil || 'sem perfil';
                     perfisCount[perfil] = (perfisCount[perfil] || 0) + 1;
                 });
 
-                const totalSurveys = pesquisas.size;
+                var totalSurveys = pesquisas.size;
+                var totalLiberacoes = liberacoes.size;
+                var libRespondidas = 0;
+                var libPendentes = 0;
+                liberacoes.forEach(function(doc) {
+                    var l = doc.data();
+                    if (l.respondida) libRespondidas++;
+                    else libPendentes++;
+                });
 
-                const pdiByStatus = {};
-                pdis.forEach(doc => {
-                    const status = doc.data().status || 'pendente';
+                var pdiByStatus = {};
+                var totalPdis = pdis.size;
+                pdis.forEach(function(doc) {
+                    var status = doc.data().status || 'pendente';
                     pdiByStatus[status] = (pdiByStatus[status] || 0) + 1;
                 });
 
-                const recentActivity = [];
-                respostas.forEach(doc => {
-                    const data = doc.data();
-                    recentActivity.push({
-                        nome: data.usuario_nome,
+                // Pesquisas por mês (últimos 6 meses)
+                var pesquisasPorMes = {};
+                var now = new Date();
+                for (var m = 5; m >= 0; m--) {
+                    var d = new Date(now.getFullYear(), now.getMonth() - m, 1);
+                    var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                    pesquisasPorMes[key] = 0;
+                }
+                pesquisas.forEach(function(doc) {
+                    var data = doc.data();
+                    var dt = toDate(data.data_avaliacao || data.data_resposta);
+                    var key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
+                    if (pesquisasPorMes.hasOwnProperty(key)) pesquisasPorMes[key]++;
+                });
+
+                // Liberações por tipo
+                var libPorTipo = {};
+                var resPorTipo = {};
+                liberacoes.forEach(function(doc) {
+                    var l = doc.data();
+                    var t = l.tipo_pesquisa || 'outro';
+                    libPorTipo[t] = (libPorTipo[t] || 0) + 1;
+                    if (l.respondida) resPorTipo[t] = (resPorTipo[t] || 0) + 1;
+                });
+
+                // Atividades recentes (das pesquisas)
+                var recentList = [];
+                pesquisas.forEach(function(doc) {
+                    var data = doc.data();
+                    recentList.push({
+                        nome: data.avaliador_nome || data.usuario_nome || 'Usuário',
                         tipo: data.tipo_pesquisa,
-                        data: formatDate(data.data_resposta)
+                        data: toDate(data.data_avaliacao || data.data_resposta)
                     });
                 });
+                recentList.sort(function(a, b) { return b.data - a.data; });
+                recentList = recentList.slice(0, 8);
 
-                let html = '<div class="stat-card">';
-                html += '<p>Total de Usuários</p>';
-                html += '<h3>' + totalUsers + '</h3>';
-                html += '</div>';
+                // ── KPI Cards ──
+                var taxaResposta = totalLiberacoes > 0 ? Math.round((libRespondidas / totalLiberacoes) * 100) : 0;
 
-                html += '<div class="stat-card">';
-                html += '<p>Pesquisas Completas</p>';
-                html += '<h3>' + totalSurveys + '</h3>';
-                html += '</div>';
-
-                html += '<div class="stat-card">';
-                html += '<p>PDIs Concluídos</p>';
-                html += '<h3>' + (pdiByStatus['concluido'] || 0) + '</h3>';
-                html += '</div>';
-
-                html += '<div class="stat-card">';
-                html += '<p>PDIs em Andamento</p>';
-                html += '<h3>' + (pdiByStatus['em_andamento'] || 0) + '</h3>';
-                html += '</div>';
-
+                var html = '';
+                html += '<div class="stat-card"><div class="stat-icon blue">👥</div><div class="stat-info"><h3>' + totalUsers + '</h3><p>Usuários Cadastrados (' + activeUsers + ' ativos)</p></div></div>';
+                html += '<div class="stat-card"><div class="stat-icon green">📝</div><div class="stat-info"><h3>' + totalSurveys + '</h3><p>Pesquisas Respondidas</p></div></div>';
+                html += '<div class="stat-card"><div class="stat-icon orange">📊</div><div class="stat-info"><h3>' + taxaResposta + '%</h3><p>Taxa de Resposta (' + libRespondidas + '/' + totalLiberacoes + ')</p></div></div>';
+                html += '<div class="stat-card"><div class="stat-icon purple">🎯</div><div class="stat-info"><h3>' + totalPdis + '</h3><p>PDIs (' + (pdiByStatus['concluido'] || 0) + ' concluídos, ' + (pdiByStatus['em_andamento'] || 0) + ' em andamento)</p></div></div>';
                 statsContainer.innerHTML = html;
 
-                let contentHtml = '<h3>Distribuição por Perfil</h3>';
-                for (const [perfil, count] of Object.entries(perfisCount)) {
-                    contentHtml += '<p>' + perfil + ': ' + count + '</p>';
-                }
+                // ── Charts ──
+                var chartColors = ['#D42027', '#1565c0', '#2e7d32', '#e65100', '#7b1fa2', '#00838f', '#c62828', '#ad1457'];
+                var chartColorsSoft = ['rgba(212,32,39,0.8)', 'rgba(21,101,192,0.8)', 'rgba(46,125,50,0.8)', 'rgba(230,81,0,0.8)', 'rgba(123,31,162,0.8)', 'rgba(0,131,143,0.8)'];
 
-                contentHtml += '<h3 style="margin-top: 30px;">Últimas Atividades</h3>';
-                contentHtml += '<div class="table-wrapper"><table class="table">';
-                contentHtml += '<thead><tr><th>Usuário</th><th>Tipo de Pesquisa</th><th>Data</th></tr></thead>';
-                contentHtml += '<tbody>';
-                recentActivity.forEach(activity => {
-                    contentHtml += '<tr>';
-                    contentHtml += '<td>' + activity.nome + '</td>';
-                    contentHtml += '<td>' + activity.tipo + '</td>';
-                    contentHtml += '<td>' + activity.data + '</td>';
-                    contentHtml += '</tr>';
+                // 1) Perfil Doughnut
+                var perfilLabels = Object.keys(perfisCount).map(function(p) { return p.charAt(0).toUpperCase() + p.slice(1); });
+                var perfilValues = Object.values(perfisCount);
+                dashCharts.perfil = new Chart(document.getElementById('chartPerfil'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: perfilLabels,
+                        datasets: [{ data: perfilValues, backgroundColor: chartColors.slice(0, perfilLabels.length), borderWidth: 2, borderColor: '#fff' }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } }
+                        },
+                        cutout: '60%'
+                    }
                 });
-                contentHtml += '</tbody></table></div>';
+
+                // 2) Pesquisas por Mês (Bar)
+                var mesesLabels = Object.keys(pesquisasPorMes).map(function(k) {
+                    var parts = k.split('-');
+                    var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                    return meses[parseInt(parts[1]) - 1] + '/' + parts[0].slice(2);
+                });
+                var mesesValues = Object.values(pesquisasPorMes);
+                dashCharts.pesquisasMes = new Chart(document.getElementById('chartPesquisasMes'), {
+                    type: 'bar',
+                    data: {
+                        labels: mesesLabels,
+                        datasets: [{
+                            label: 'Pesquisas',
+                            data: mesesValues,
+                            backgroundColor: 'rgba(212,32,39,0.75)',
+                            borderColor: '#D42027',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            barPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+                            x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+                        }
+                    }
+                });
+
+                // 3) PDI Status (Doughnut)
+                var statusLabels = { pendente: 'Pendente', em_andamento: 'Em Andamento', concluido: 'Concluído', cancelado: 'Cancelado' };
+                var statusColors = { pendente: '#fb8c00', em_andamento: '#1565c0', concluido: '#2e7d32', cancelado: '#c62828' };
+                var pdiLabels = []; var pdiValues = []; var pdiColors = [];
+                Object.keys(pdiByStatus).forEach(function(s) {
+                    pdiLabels.push(statusLabels[s] || s);
+                    pdiValues.push(pdiByStatus[s]);
+                    pdiColors.push(statusColors[s] || '#999');
+                });
+                if (pdiLabels.length === 0) { pdiLabels = ['Nenhum PDI']; pdiValues = [1]; pdiColors = ['#e0e0e0']; }
+                dashCharts.pdiStatus = new Chart(document.getElementById('chartPdiStatus'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: pdiLabels,
+                        datasets: [{ data: pdiValues, backgroundColor: pdiColors, borderWidth: 2, borderColor: '#fff' }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } }
+                        },
+                        cutout: '60%'
+                    }
+                });
+
+                // 4) Liberações vs Respostas (Grouped Bar)
+                var tipoKeys = Object.keys(libPorTipo);
+                var tipoLabels2 = tipoKeys.map(function(t) { return PESQUISA_LABELS[t] || t; });
+                var libVals = tipoKeys.map(function(t) { return libPorTipo[t] || 0; });
+                var resVals = tipoKeys.map(function(t) { return resPorTipo[t] || 0; });
+                if (tipoKeys.length === 0) { tipoLabels2 = ['Sem dados']; libVals = [0]; resVals = [0]; }
+                dashCharts.liberacoes = new Chart(document.getElementById('chartLiberacoes'), {
+                    type: 'bar',
+                    data: {
+                        labels: tipoLabels2,
+                        datasets: [
+                            { label: 'Liberadas', data: libVals, backgroundColor: 'rgba(21,101,192,0.75)', borderRadius: 6, barPercentage: 0.5 },
+                            { label: 'Respondidas', data: resVals, backgroundColor: 'rgba(46,125,50,0.75)', borderRadius: 6, barPercentage: 0.5 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+                            x: { ticks: { font: { size: 10 }, maxRotation: 20 }, grid: { display: false } }
+                        }
+                    }
+                });
+
+                // ── Recent Activity ──
+                var contentHtml = '<div class="dash-section">';
+                contentHtml += '<div class="dash-section-title">🕐 Atividades Recentes</div>';
+                if (recentList.length === 0) {
+                    contentHtml += '<div class="dash-empty">Nenhuma atividade registrada ainda.</div>';
+                } else {
+                    recentList.forEach(function(a) {
+                        var initials = (a.nome || '?').split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
+                        var tipoLabel = PESQUISA_LABELS[a.tipo] || a.tipo || 'Pesquisa';
+                        contentHtml += '<div class="activity-item">';
+                        contentHtml += '<div class="activity-avatar">' + initials + '</div>';
+                        contentHtml += '<div class="activity-info"><div class="activity-name">' + a.nome + '</div>';
+                        contentHtml += '<div class="activity-detail">Respondeu: ' + tipoLabel + '</div></div>';
+                        contentHtml += '<div class="activity-date">' + formatDate(a.data) + '</div>';
+                        contentHtml += '</div>';
+                    });
+                }
+                contentHtml += '</div>';
+
+                // ── Summary row: Pendências ──
+                if (libPendentes > 0) {
+                    contentHtml += '<div class="dash-section" style="background:linear-gradient(135deg,#fff8e1,#fff3e0);border-color:#ffcc02;">';
+                    contentHtml += '<div class="dash-section-title">⚠️ Pendências</div>';
+                    contentHtml += '<p style="color:#e65100;font-size:14px;margin:0;">' + libPendentes + ' pesquisa(s) liberada(s) aguardando resposta dos colaboradores.</p>';
+                    contentHtml += '</div>';
+                }
 
                 contentContainer.innerHTML = contentHtml;
             } catch (error) {
