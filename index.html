@@ -902,9 +902,10 @@
             margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
         }
         .dash-charts-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 20px; margin-bottom: 20px;
         }
+        @media (max-width: 900px) { .dash-charts-row { grid-template-columns: 1fr; } }
         .dash-chart-card {
             background: white; border-radius: 12px; padding: 20px;
             border: 1px solid var(--border); box-shadow: var(--shadow);
@@ -912,6 +913,9 @@
         .dash-chart-card h4 {
             font-size: 14px; font-weight: 600; color: #636E72;
             margin-bottom: 12px;
+        }
+        .dash-chart-card .chart-wrap {
+            position: relative; width: 100%; height: 250px;
         }
         .activity-item {
             display: flex; align-items: center; gap: 12px;
@@ -1177,19 +1181,19 @@
                 <div class="dash-charts-row" id="dashboardCharts">
                     <div class="dash-chart-card">
                         <h4>📊 Distribuição por Perfil</h4>
-                        <canvas id="chartPerfil" height="220"></canvas>
+                        <div class="chart-wrap"><canvas id="chartPerfil"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
                         <h4>📈 Pesquisas por Mês</h4>
-                        <canvas id="chartPesquisasMes" height="220"></canvas>
+                        <div class="chart-wrap"><canvas id="chartPesquisasMes"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
                         <h4>🎯 Status dos PDIs</h4>
-                        <canvas id="chartPdiStatus" height="220"></canvas>
+                        <div class="chart-wrap"><canvas id="chartPdiStatus"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
                         <h4>📋 Liberações vs Respostas</h4>
-                        <canvas id="chartLiberacoes" height="220"></canvas>
+                        <div class="chart-wrap"><canvas id="chartLiberacoes"></canvas></div>
                     </div>
                 </div>
                 <div id="dashboardContent"></div>
@@ -2596,11 +2600,12 @@
             destroyCharts();
 
             try {
-                var [usuarios, pesquisas, pdis, liberacoes] = await Promise.all([
+                var [usuarios, pesquisas, pdis, liberacoes, respostas] = await Promise.all([
                     cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); }),
                     cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
                     cachedGet('pdis:all', function() { return db.collection('pdis').get(); }),
-                    cachedGet('liberacoes:all', function() { return db.collection('liberacoes').get(); })
+                    cachedGet('liberacoes:all', function() { return db.collection('liberacoes').get(); }),
+                    cachedGet('respostas:all', function() { return db.collection('respostas').get(); })
                 ]);
 
                 // ── KPI Data ──
@@ -2614,7 +2619,7 @@
                     perfisCount[perfil] = (perfisCount[perfil] || 0) + 1;
                 });
 
-                var totalSurveys = pesquisas.size;
+                var totalSurveys = pesquisas.size + respostas.size;
                 var totalLiberacoes = liberacoes.size;
                 var libRespondidas = 0;
                 var libPendentes = 0;
@@ -2639,12 +2644,17 @@
                     var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
                     pesquisasPorMes[key] = 0;
                 }
-                pesquisas.forEach(function(doc) {
-                    var data = doc.data();
-                    var dt = toDate(data.data_avaliacao || data.data_resposta);
-                    var key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
-                    if (pesquisasPorMes.hasOwnProperty(key)) pesquisasPorMes[key]++;
-                });
+                // Combinar pesquisas + respostas para contagem por mês
+                function countByMonth(snapshot) {
+                    snapshot.forEach(function(doc) {
+                        var data = doc.data();
+                        var dt = toDate(data.data_avaliacao || data.data_resposta);
+                        var key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
+                        if (pesquisasPorMes.hasOwnProperty(key)) pesquisasPorMes[key]++;
+                    });
+                }
+                countByMonth(pesquisas);
+                countByMonth(respostas);
 
                 // Liberações por tipo
                 var libPorTipo = {};
@@ -2656,16 +2666,20 @@
                     if (l.respondida) resPorTipo[t] = (resPorTipo[t] || 0) + 1;
                 });
 
-                // Atividades recentes (das pesquisas)
+                // Atividades recentes (pesquisas + respostas)
                 var recentList = [];
-                pesquisas.forEach(function(doc) {
-                    var data = doc.data();
-                    recentList.push({
-                        nome: data.avaliador_nome || data.usuario_nome || 'Usuário',
-                        tipo: data.tipo_pesquisa,
-                        data: toDate(data.data_avaliacao || data.data_resposta)
+                function pushRecent(snapshot) {
+                    snapshot.forEach(function(doc) {
+                        var data = doc.data();
+                        recentList.push({
+                            nome: data.avaliador_nome || data.usuario_nome || 'Usuário',
+                            tipo: data.tipo_pesquisa,
+                            data: toDate(data.data_avaliacao || data.data_resposta)
+                        });
                     });
-                });
+                }
+                pushRecent(pesquisas);
+                pushRecent(respostas);
                 recentList.sort(function(a, b) { return b.data - a.data; });
                 recentList = recentList.slice(0, 8);
 
