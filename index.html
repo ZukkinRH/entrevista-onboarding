@@ -1261,6 +1261,11 @@
                 <div id="usuariosContainer"></div>
             </div>
 
+            <!-- Pesquisa de Clima Tab -->
+            <div id="climaTab" class="tab-content">
+                <div id="climaContainer"></div>
+            </div>
+
             <!-- PDI Tab -->
             <div id="pdiTab" class="tab-content">
                 <div id="pdiContainer"></div>
@@ -1553,6 +1558,7 @@
                 { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
                 { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
                 { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
+                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
                 { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
                 { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
@@ -1561,24 +1567,28 @@
             gestor: [
                 { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
                 { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
+                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
                 { id: 'pdiTab', label: 'PDI', key: 'pdi' }
             ],
             diretoria: [
                 { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
+                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
                 { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
                 { id: 'pdiTab', label: 'PDI', key: 'pdi' }
             ],
             colaborador: [
                 { id: 'questionnairesTab', label: 'Minhas Pesquisas', key: 'questionarios' },
+                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
                 { id: 'pdiTab', label: 'Meu PDI', key: 'pdi' }
             ],
             analista: [
                 { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
                 { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
+                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
                 { id: 'pdiTab', label: 'PDI', key: 'pdi' }
@@ -1819,6 +1829,7 @@
             avaliadores: '📈',
             pesquisas_colab: '📄',
             respostas: '📁',
+            clima: '🌤️',
             pdi: '🎯'
         };
 
@@ -2189,6 +2200,7 @@
                 else if (tabId === 'respostasTab') loadRespostas();
                 else if (tabId === 'gestoresTab') loadAvaliadoresTab();
                 else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
+                else if (tabId === 'climaTab') loadClima();
                 else if (tabId === 'pdiTab') loadPDI();
             }
         }
@@ -3778,6 +3790,377 @@
                 loadUsuarios();
             } catch (error) {
                 console.error('Erro ao alternar status do usuário:', error);
+            }
+        }
+
+        // ══════════════════════════════════════════════
+        // ══  PESQUISA DE CLIMA ORGANIZACIONAL  ══════
+        // ══════════════════════════════════════════════
+        var CLIMA_TEMPLATE = {
+            titulo: 'Pesquisa de Clima Organizacional',
+            descricao: 'A pesquisa de clima organizacional avalia a percepção dos colaboradores sobre o ambiente de trabalho. Suas respostas são totalmente anônimas e confidenciais.',
+            secoes: [
+                {
+                    titulo: 'Dados Demográficos',
+                    descricao: 'Informações gerais (não identificam o respondente).',
+                    questoes: [
+                        { id: 'departamento', texto: 'Qual seu departamento?', tipo: 'select', opcoes: ['RH', 'Financeiro', 'Projetos', 'Qualidade', 'Operações', 'Desenvolvimento'] },
+                        { id: 'tempo_empresa', texto: 'Tempo de empresa:', tipo: 'select', opcoes: ['Menos de 6 meses', '6 meses a 1 ano', '1 a 3 anos', 'Mais de 3 anos'] }
+                    ]
+                },
+                {
+                    titulo: 'Ambiente de Trabalho 💻',
+                    descricao: 'Avalia conforto, segurança, bem-estar e qualidade das interações no dia a dia.',
+                    questoes: [
+                        { id: 'amb_fisico', texto: 'Como você avalia o ambiente físico (espaço, recursos, conforto)?', tipo: 'radio', opcoes: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'] },
+                        { id: 'amb_ideias', texto: 'Sinto-me à vontade para expressar ideias e opiniões.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
+                        { id: 'amb_seguranca', texto: 'Tenho segurança em expor minhas ideias, sugestões e críticas perante a equipe e demais áreas.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
+                        { id: 'amb_procedimentos', texto: 'Tenho claro quais são os procedimentos para exercer minhas atividades no dia a dia.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] }
+                    ]
+                },
+                {
+                    titulo: 'Relacionamento e Comunicação 📣',
+                    descricao: 'Avalia respeito mútuo, escuta ativa e clareza na comunicação entre equipes, líderes e colegas.',
+                    questoes: [
+                        { id: 'rel_equipe', texto: 'Minha relação com a equipe é:', tipo: 'radio', opcoes: ['Muito ruim', 'Ruim', 'Regular', 'Boa', 'Muito boa'] },
+                        { id: 'rel_comunicacao', texto: 'A comunicação na empresa é clara e eficiente.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
+                        { id: 'rel_diversidade', texto: 'Aqui, todas as pessoas são bem tratadas independentemente de: idade, cor, etnia, gênero e orientação sexual.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] }
+                    ]
+                },
+                {
+                    titulo: 'Liderança e Gestão 😊',
+                    descricao: 'Analisa como líderes se comunicam, tomam decisões e promovem um ambiente de trabalho positivo.',
+                    questoes: [
+                        { id: 'lid_apoio', texto: 'Meu líder apoia meu desenvolvimento e escuta minhas necessidades.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
+                        { id: 'lid_feedback', texto: 'O feedback que recebo é:', tipo: 'radio', opcoes: ['Inexistente', 'Insuficiente', 'Adequado', 'Claro e construtivo', 'Excelente'] },
+                        { id: 'lid_metas', texto: 'Meu gestor deixa claro metas e objetivos para atingimento dos resultados.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] }
+                    ]
+                },
+                {
+                    titulo: 'Motivação e Reconhecimento 🥇',
+                    descricao: 'Avalia práticas de reconhecimento, recompensas e fatores que estimulam o desempenho.',
+                    questoes: [
+                        { id: 'mot_reconhecimento', texto: 'Sinto que meu trabalho é reconhecido e valorizado.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
+                        { id: 'mot_motivacao', texto: 'Meu nível de motivação diária é:', tipo: 'radio', opcoes: ['Nada motivado', 'Pouco motivado', 'Neutro', 'Motivado', 'Muito motivado'] },
+                        { id: 'mot_disposicao', texto: 'Todos estão dispostos a dar mais de si para concluir um trabalho.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
+                        { id: 'mot_beneficios', texto: 'Estou satisfeito com os benefícios que recebo do Zukkin.', tipo: 'radio', opcoes: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'] }
+                    ]
+                },
+                {
+                    titulo: 'Satisfação Geral 👍',
+                    descricao: 'Mede a percepção sobre a experiência no ambiente de trabalho como um todo.',
+                    questoes: [
+                        { id: 'sat_geral', texto: 'Em geral, estou satisfeito em trabalhar na empresa.', tipo: 'radio', opcoes: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'] },
+                        { id: 'sat_recomenda', texto: 'Eu recomendaria a empresa como bom lugar para trabalhar.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Talvez', 'Provavelmente', 'Com certeza'] }
+                    ]
+                },
+                {
+                    titulo: 'Perguntas Abertas ✔️',
+                    descricao: 'Expresse livremente suas opiniões, sugestões e sentimentos.',
+                    questoes: [
+                        { id: 'aberta_positivo', texto: 'O que você considera mais positivo na empresa?', tipo: 'textarea', obrigatoria: true },
+                        { id: 'aberta_melhorar', texto: 'O que poderia ser melhorado?', tipo: 'textarea', obrigatoria: true },
+                        { id: 'aberta_sugestoes', texto: 'Outras sugestões, críticas ou elogios:', tipo: 'textarea', obrigatoria: false }
+                    ]
+                }
+            ]
+        };
+
+        async function loadClima() {
+            var container = document.getElementById('climaContainer');
+            container.innerHTML = '<div class="loading"></div>';
+            var isAdmin = currentUser.perfil === 'admin' || currentUser.perfil === 'analista';
+
+            try {
+                var liberacoes = await cachedGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); });
+                var libList = [];
+                liberacoes.forEach(function(doc) { libList.push({ id: doc.id, ...doc.data() }); });
+                libList.sort(function(a, b) { return (b.ano || 0) - (a.ano || 0); });
+
+                // Verifica se colaborador já respondeu alguma pesquisa ativa
+                var respostas = await cachedGet('clima_res:all', function() { return db.collection('clima_respostas').get(); });
+                var totalRespostasPorAno = {};
+                respostas.forEach(function(doc) {
+                    var r = doc.data();
+                    var a = r.ano || 0;
+                    totalRespostasPorAno[a] = (totalRespostasPorAno[a] || 0) + 1;
+                });
+
+                var html = '';
+
+                // Admin: botão para liberar nova pesquisa
+                if (isAdmin) {
+                    html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">';
+                    html += '<button class="btn btn-primary" onclick="liberarClimaModal()">+ Liberar Pesquisa de Clima</button>';
+                    html += '</div>';
+                }
+
+                // Pesquisas liberadas
+                if (libList.length === 0) {
+                    html += '<div class="dash-empty">Nenhuma pesquisa de clima liberada ainda.</div>';
+                } else {
+                    libList.forEach(function(lib) {
+                        var ativa = lib.ativa !== false;
+                        var totalResp = totalRespostasPorAno[lib.ano] || 0;
+                        html += '<div class="dash-section" style="' + (!ativa ? 'opacity:0.6;' : '') + '">';
+                        html += '<div class="dash-section-title">🌤️ Pesquisa de Clima ' + lib.ano + ' ' + (ativa ? '<span style="background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px;">Ativa</span>' : '<span style="background:#f0f0f0;color:#999;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px;">Encerrada</span>') + '</div>';
+                        html += '<p style="color:#636E72;font-size:13px;margin-bottom:12px;">Respostas recebidas: <strong>' + totalResp + '</strong></p>';
+
+                        if (isAdmin) {
+                            html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+                            html += '<button class="btn btn-secondary" onclick="verResultadosClima(' + lib.ano + ')" style="font-size:13px;padding:8px 14px;">📊 Ver Resultados</button>';
+                            if (ativa) {
+                                html += '<button class="btn btn-secondary" onclick="encerrarClima(\'' + lib.id + '\')" style="font-size:13px;padding:8px 14px;color:#c62828;">🔒 Encerrar</button>';
+                            } else {
+                                html += '<button class="btn btn-secondary" onclick="reabrirClima(\'' + lib.id + '\')" style="font-size:13px;padding:8px 14px;color:#2e7d32;">🔓 Reabrir</button>';
+                            }
+                            html += '</div>';
+                        } else {
+                            // Colaborador: botão para responder (se ativa)
+                            if (ativa) {
+                                html += '<button class="btn btn-primary" onclick="responderClima(' + lib.ano + ')" style="font-size:13px;padding:10px 18px;">📝 Responder Pesquisa</button>';
+                            }
+                        }
+                        html += '</div>';
+                    });
+                }
+
+                container.innerHTML = html;
+            } catch(e) {
+                console.error('Erro ao carregar clima:', e);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisa de clima.</div>';
+            }
+        }
+
+        function liberarClimaModal() {
+            var anoAtual = new Date().getFullYear();
+            var html = '<div class="pdi-form-section">';
+            html += '<label>Ano da Pesquisa:</label>';
+            html += '<select id="climaAno">';
+            for (var y = anoAtual + 1; y >= anoAtual - 2; y--) {
+                html += '<option value="' + y + '"' + (y === anoAtual ? ' selected' : '') + '>' + y + '</option>';
+            }
+            html += '</select></div>';
+            html += '<p style="color:#636E72;font-size:13px;margin-top:10px;">A pesquisa ficará disponível para todos os colaboradores responderem de forma anônima.</p>';
+            openModal('🌤️ Liberar Pesquisa de Clima', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Liberar', onclick: 'salvarLiberacaoClima()', class: 'btn-primary' }
+            ]);
+        }
+
+        async function salvarLiberacaoClima() {
+            var ano = parseInt(document.getElementById('climaAno').value);
+            try {
+                // Verifica se já existe para o ano
+                var existing = await db.collection('clima_liberacoes').where('ano', '==', ano).get();
+                if (!existing.empty) {
+                    showToast('warn', 'Já existe', 'Já existe uma pesquisa de clima para ' + ano + '.');
+                    return;
+                }
+                await db.collection('clima_liberacoes').add({
+                    ano: ano,
+                    ativa: true,
+                    criado_por: currentUser.email,
+                    data_criacao: new Date()
+                });
+                invalidateCache('clima_lib:');
+                showToast('success', 'Pesquisa liberada!', 'Pesquisa de Clima ' + ano + ' está ativa.');
+                closeModal();
+                loadClima();
+            } catch(e) {
+                console.error('Erro:', e);
+                showToast('error', 'Erro', e.message);
+            }
+        }
+
+        async function encerrarClima(libId) {
+            showConfirm('🔒', 'Encerrar pesquisa', 'Ao encerrar, nenhum colaborador poderá mais responder. Os resultados permanecem salvos.', 'Encerrar', async function() {
+                try {
+                    await db.collection('clima_liberacoes').doc(libId).update({ ativa: false });
+                    invalidateCache('clima_lib:');
+                    showToast('success', 'Encerrada', 'Pesquisa de clima encerrada.');
+                    loadClima();
+                } catch(e) { showToast('error', 'Erro', e.message); }
+            });
+        }
+
+        async function reabrirClima(libId) {
+            try {
+                await db.collection('clima_liberacoes').doc(libId).update({ ativa: true });
+                invalidateCache('clima_lib:');
+                showToast('success', 'Reaberta', 'Pesquisa de clima reaberta.');
+                loadClima();
+            } catch(e) { showToast('error', 'Erro', e.message); }
+        }
+
+        function responderClima(ano) {
+            var html = '<div style="background:#fff3e0;border-radius:8px;padding:12px;margin-bottom:20px;font-size:13px;color:#e65100;">';
+            html += '🔒 <strong>Resposta anônima</strong> — Suas respostas não serão identificadas. Nenhum dado pessoal é registrado.';
+            html += '</div>';
+
+            CLIMA_TEMPLATE.secoes.forEach(function(secao, si) {
+                html += '<div class="form-section" style="margin-bottom:24px;">';
+                html += '<h4 style="color:var(--primary);margin-bottom:4px;">' + secao.titulo + '</h4>';
+                html += '<p style="color:#636E72;font-size:12px;margin-bottom:14px;">' + secao.descricao + '</p>';
+
+                secao.questoes.forEach(function(q) {
+                    html += '<div style="margin-bottom:16px;">';
+                    html += '<label style="display:block;font-weight:600;font-size:13px;margin-bottom:6px;">' + q.texto + (q.obrigatoria !== false && q.tipo !== 'textarea' ? ' *' : (q.obrigatoria ? ' *' : '')) + '</label>';
+
+                    if (q.tipo === 'select') {
+                        html += '<select id="clima_' + q.id + '" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;">';
+                        html += '<option value="">Selecione...</option>';
+                        q.opcoes.forEach(function(op) { html += '<option value="' + op + '">' + op + '</option>'; });
+                        html += '</select>';
+                    } else if (q.tipo === 'radio') {
+                        html += '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+                        q.opcoes.forEach(function(op, oi) {
+                            html += '<label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;border:1px solid #ddd;border-radius:20px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="if(!this.querySelector(\'input\').checked)this.style.borderColor=\'#ddd\'">';
+                            html += '<input type="radio" name="clima_' + q.id + '" value="' + (oi + 1) + '" style="margin:0;" onclick="this.parentElement.style.borderColor=\'var(--primary)\'; this.parentElement.style.background=\'#fff5f5\'; var sibs=this.closest(\'div\').querySelectorAll(\'label\'); sibs.forEach(function(s){if(s!==this.parentElement){s.style.borderColor=\'#ddd\';s.style.background=\'transparent\';}}.bind(this));">';
+                            html += ' ' + op + '</label>';
+                        });
+                        html += '</div>';
+                    } else if (q.tipo === 'textarea') {
+                        html += '<textarea id="clima_' + q.id + '" placeholder="Digite sua resposta..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;min-height:70px;box-sizing:border-box;"></textarea>';
+                    }
+                    html += '</div>';
+                });
+                html += '</div>';
+            });
+
+            openModal('🌤️ Pesquisa de Clima ' + ano, html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Enviar Respostas', onclick: 'enviarRespostaClima(' + ano + ')', class: 'btn-primary' }
+            ]);
+        }
+
+        async function enviarRespostaClima(ano) {
+            var respostas = {};
+            var faltando = [];
+
+            CLIMA_TEMPLATE.secoes.forEach(function(secao) {
+                secao.questoes.forEach(function(q) {
+                    if (q.tipo === 'select') {
+                        var sel = document.getElementById('clima_' + q.id);
+                        respostas[q.id] = sel ? sel.value : '';
+                        if (!respostas[q.id]) faltando.push(q.texto);
+                    } else if (q.tipo === 'radio') {
+                        var checked = document.querySelector('input[name="clima_' + q.id + '"]:checked');
+                        respostas[q.id] = checked ? parseInt(checked.value) : null;
+                        if (!respostas[q.id]) faltando.push(q.texto);
+                    } else if (q.tipo === 'textarea') {
+                        var ta = document.getElementById('clima_' + q.id);
+                        respostas[q.id] = ta ? ta.value.trim() : '';
+                        if (q.obrigatoria && !respostas[q.id]) faltando.push(q.texto);
+                    }
+                });
+            });
+
+            if (faltando.length > 0) {
+                showToast('warn', 'Campos obrigatórios', 'Faltam ' + faltando.length + ' resposta(s) obrigatória(s).');
+                return;
+            }
+
+            try {
+                // ANÔNIMO: não grava currentUser.id, email, nome — nada identificável
+                await db.collection('clima_respostas').add({
+                    ano: ano,
+                    respostas: respostas,
+                    data_resposta: new Date()
+                });
+                invalidateCache('clima_res:');
+                closeModal();
+                showToast('success', 'Enviada!', 'Sua resposta foi registrada de forma anônima. Obrigado!');
+                loadClima();
+            } catch(e) {
+                console.error('Erro:', e);
+                showToast('error', 'Erro ao enviar', e.message);
+            }
+        }
+
+        async function verResultadosClima(ano) {
+            try {
+                var snapshot = await db.collection('clima_respostas').where('ano', '==', ano).get();
+                var respostas = [];
+                snapshot.forEach(function(doc) { respostas.push(doc.data().respostas); });
+
+                if (respostas.length === 0) {
+                    showToast('info', 'Sem dados', 'Nenhuma resposta registrada para ' + ano + '.');
+                    return;
+                }
+
+                var html = '<p style="font-size:14px;color:#636E72;margin-bottom:20px;">Total de respostas: <strong>' + respostas.length + '</strong></p>';
+
+                CLIMA_TEMPLATE.secoes.forEach(function(secao, si) {
+                    html += '<div style="margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #eee;">';
+                    html += '<h4 style="color:var(--primary);margin-bottom:12px;">' + secao.titulo + '</h4>';
+
+                    secao.questoes.forEach(function(q) {
+                        html += '<div style="margin-bottom:14px;">';
+                        html += '<p style="font-weight:600;font-size:13px;margin-bottom:6px;">' + q.texto + '</p>';
+
+                        if (q.tipo === 'select') {
+                            // Contagem por opção
+                            var counts = {};
+                            respostas.forEach(function(r) {
+                                var val = r[q.id] || 'Não respondeu';
+                                counts[val] = (counts[val] || 0) + 1;
+                            });
+                            html += '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+                            Object.keys(counts).forEach(function(k) {
+                                var pct = Math.round((counts[k] / respostas.length) * 100);
+                                html += '<span style="background:#f0f0f0;padding:4px 10px;border-radius:12px;font-size:12px;">' + k + ': <strong>' + counts[k] + '</strong> (' + pct + '%)</span>';
+                            });
+                            html += '</div>';
+                        } else if (q.tipo === 'radio') {
+                            // Média e distribuição
+                            var soma = 0; var n = 0; var dist = [0, 0, 0, 0, 0];
+                            respostas.forEach(function(r) {
+                                var val = r[q.id];
+                                if (val && val >= 1 && val <= 5) { soma += val; n++; dist[val - 1]++; }
+                            });
+                            var media = n > 0 ? (soma / n).toFixed(1) : 'N/A';
+                            var mediaColor = media >= 4 ? '#2e7d32' : media >= 3 ? '#fb8c00' : '#c62828';
+
+                            html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">';
+                            html += '<span style="font-size:22px;font-weight:700;color:' + mediaColor + ';">' + media + '</span>';
+                            html += '<span style="font-size:12px;color:#999;">/ 5.0 (média de ' + n + ' respostas)</span>';
+                            html += '</div>';
+
+                            // Barra de distribuição
+                            html += '<div style="display:flex;gap:3px;align-items:end;height:30px;">';
+                            q.opcoes.forEach(function(op, oi) {
+                                var pct = n > 0 ? Math.round((dist[oi] / n) * 100) : 0;
+                                var h = Math.max(4, pct * 0.3);
+                                html += '<div title="' + op + ': ' + dist[oi] + ' (' + pct + '%)" style="flex:1;height:' + h + 'px;background:' + (oi < 2 ? '#ffcdd2' : oi === 2 ? '#fff9c4' : '#c8e6c9') + ';border-radius:3px;"></div>';
+                            });
+                            html += '</div>';
+                            html += '<div style="display:flex;gap:3px;font-size:9px;color:#999;margin-top:2px;">';
+                            q.opcoes.forEach(function(op) { html += '<div style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + op + '</div>'; });
+                            html += '</div>';
+                        } else if (q.tipo === 'textarea') {
+                            var textos = respostas.filter(function(r) { return r[q.id] && r[q.id].trim(); }).map(function(r) { return r[q.id]; });
+                            if (textos.length === 0) {
+                                html += '<p style="color:#aaa;font-size:12px;">Nenhuma resposta.</p>';
+                            } else {
+                                html += '<div style="max-height:200px;overflow-y:auto;background:#f9f9f9;border-radius:8px;padding:10px;">';
+                                textos.forEach(function(t, ti) {
+                                    html += '<div style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#333;">"' + t.replace(/</g, '&lt;') + '"</div>';
+                                });
+                                html += '</div>';
+                            }
+                        }
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                });
+
+                openModal('📊 Resultados — Clima ' + ano + ' (' + respostas.length + ' respostas)', html, [
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }
+                ]);
+            } catch(e) {
+                console.error('Erro:', e);
+                showToast('error', 'Erro', e.message);
             }
         }
 
