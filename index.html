@@ -3083,27 +3083,66 @@
         }
 
         async function loadPesquisas() {
-            const container = document.getElementById('pesquisasContainer');
+            var container = document.getElementById('pesquisasContainer');
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const pesquisas = await cachedGet('pesquisas:all', () => db.collection('pesquisas').get());
-                let html = '';
+                var [respostasSnap, pesquisasSnap, usuariosSnap] = await Promise.all([
+                    cachedGet('respostas:all', function() { return db.collection('respostas').get(); }),
+                    cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
+                    cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); })
+                ]);
 
-                if (pesquisas.empty) {
-                    html = '<div class="alert alert-info">Nenhuma pesquisa realizada ainda.</div>';
+                // Mapa de IDs para nomes
+                var nomeMap = {};
+                usuariosSnap.forEach(function(doc) { nomeMap[doc.id] = doc.data().nome || doc.data().email; });
+
+                // Combinar todas as respostas
+                var todas = [];
+                respostasSnap.forEach(function(doc) {
+                    var r = doc.data();
+                    todas.push({
+                        id: doc.id,
+                        collection: 'respostas',
+                        respondente: r.usuario_nome || nomeMap[r.usuario_id] || 'Colaborador',
+                        colaborador: nomeMap[r.colaborador_id] || r.usuario_nome || 'N/A',
+                        tipo: r.tipo_pesquisa,
+                        data: toDate(r.data_resposta),
+                        respostas: r.respostas
+                    });
+                });
+                pesquisasSnap.forEach(function(doc) {
+                    var p = doc.data();
+                    todas.push({
+                        id: doc.id,
+                        collection: 'pesquisas',
+                        respondente: p.avaliador_nome || 'Avaliador',
+                        colaborador: nomeMap[p.colaborador_id] || p.colaborador_id || 'N/A',
+                        tipo: p.tipo_pesquisa,
+                        data: toDate(p.data_avaliacao || p.data_resposta),
+                        respostas: p.respostas
+                    });
+                });
+
+                todas.sort(function(a, b) { return b.data - a.data; });
+
+                var html = '';
+                if (todas.length === 0) {
+                    html = '<div class="alert alert-info">Nenhuma pesquisa respondida ainda.</div>';
                 } else {
+                    html += '<p style="color:#636E72;font-size:13px;margin-bottom:12px;">Total: <strong>' + todas.length + '</strong> resposta(s)</p>';
                     html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Avaliador</th><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead>';
+                    html += '<thead><tr><th>Respondente</th><th>Colaborador Avaliado</th><th>Tipo</th><th>Data</th><th>Ação</th></tr></thead>';
                     html += '<tbody>';
 
-                    pesquisas.forEach(doc => {
-                        const p = doc.data();
+                    todas.forEach(function(r) {
+                        var tipoLabel = PESQUISA_LABELS[r.tipo] || r.tipo || 'N/A';
                         html += '<tr>';
-                        html += '<td>' + p.avaliador_nome + '</td>';
-                        html += '<td>' + p.colaborador_id + '</td>';
-                        html += '<td>' + p.tipo_pesquisa + '</td>';
-                        html += '<td>' + (formatDate(p.data_avaliacao)) + '</td>';
+                        html += '<td>' + r.respondente + '</td>';
+                        html += '<td>' + r.colaborador + '</td>';
+                        html += '<td style="font-size:12px;">' + tipoLabel + '</td>';
+                        html += '<td>' + formatDate(r.data) + '</td>';
+                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + r.id + '\', \'' + r.collection + '\')">👁 Ver</button></td>';
                         html += '</tr>';
                     });
 
@@ -3114,6 +3153,47 @@
             } catch (error) {
                 console.error('Erro ao carregar pesquisas:', error);
                 container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
+            }
+        }
+
+        async function verRespostaDetalhe(docId, collectionName) {
+            try {
+                var doc = await db.collection(collectionName).doc(docId).get();
+                var data = doc.data();
+                var respostas = data.respostas || {};
+                var tipo = data.tipo_pesquisa;
+                var template = SURVEY_TEMPLATES[tipo];
+                var respondente = data.avaliador_nome || data.usuario_nome || 'Colaborador';
+
+                var html = '<p style="color:#636E72;font-size:13px;margin-bottom:16px;">Respondido por: <strong>' + respondente + '</strong> em ' + formatDate(data.data_avaliacao || data.data_resposta) + '</p>';
+
+                if (template) {
+                    template.secoes.forEach(function(secao) {
+                        html += '<div style="margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #eee;">';
+                        html += '<h4 style="color:var(--primary);margin-bottom:10px;">' + secao.titulo + '</h4>';
+                        secao.questoes.forEach(function(q) {
+                            var resp = respostas[q.id] || 'Não respondido';
+                            html += '<div style="margin-bottom:10px;">';
+                            html += '<p style="font-weight:600;font-size:13px;color:#333;">' + q.texto + '</p>';
+                            html += '<p style="font-size:13px;color:#636E72;background:#f9f9f9;padding:8px 12px;border-radius:6px;margin-top:4px;">' + resp + '</p>';
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                    });
+                } else {
+                    // Template desconhecido, mostra raw
+                    Object.keys(respostas).forEach(function(key) {
+                        html += '<div style="margin-bottom:8px;"><strong>' + key + ':</strong> ' + respostas[key] + '</div>';
+                    });
+                }
+
+                var tipoLabel = PESQUISA_LABELS[tipo] || tipo;
+                openModal('📋 ' + tipoLabel + ' — Detalhes', html, [
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }
+                ]);
+            } catch(e) {
+                console.error('Erro:', e);
+                showToast('error', 'Erro', e.message);
             }
         }
 
@@ -3190,27 +3270,32 @@
         }
 
         async function loadRespostas() {
-            const container = document.getElementById('respostasContainer');
+            var container = document.getElementById('respostasContainer');
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const respostas = await db.collection('respostas')
+                var respostas = await db.collection('respostas')
                     .where('usuario_id', '==', currentUser.id)
                     .get();
 
-                let html = '';
+                var html = '';
                 if (respostas.empty) {
                     html = '<div class="alert alert-info">Nenhuma resposta registrada.</div>';
                 } else {
+                    var lista = [];
+                    respostas.forEach(function(doc) { lista.push({ id: doc.id, ...doc.data() }); });
+                    lista.sort(function(a, b) { return toDate(b.data_resposta) - toDate(a.data_resposta); });
+
                     html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Tipo de Pesquisa</th><th>Data</th></tr></thead>';
+                    html += '<thead><tr><th>Tipo de Pesquisa</th><th>Data</th><th>Ação</th></tr></thead>';
                     html += '<tbody>';
 
-                    respostas.forEach(doc => {
-                        const r = doc.data();
+                    lista.forEach(function(r) {
+                        var tipoLabel = PESQUISA_LABELS[r.tipo_pesquisa] || r.tipo_pesquisa;
                         html += '<tr>';
-                        html += '<td>' + r.tipo_pesquisa + '</td>';
-                        html += '<td>' + (formatDate(r.data_resposta)) + '</td>';
+                        html += '<td>' + tipoLabel + '</td>';
+                        html += '<td>' + formatDate(r.data_resposta) + '</td>';
+                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + r.id + '\', \'respostas\')">👁 Ver</button></td>';
                         html += '</tr>';
                     });
 
@@ -3225,30 +3310,38 @@
         }
 
         async function loadAvaliadoresTab() {
-            const container = document.getElementById('gestoresContainer');
+            var container = document.getElementById('gestoresContainer');
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const pesquisas = await cachedGet('pesquisas:all', () => db.collection('pesquisas').get());
-                let html = '';
+                var [pesquisas, usuarios] = await Promise.all([
+                    cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
+                    cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); })
+                ]);
+                var nomeMap = {};
+                usuarios.forEach(function(doc) { nomeMap[doc.id] = doc.data().nome || doc.data().email; });
 
+                var html = '';
                 if (pesquisas.empty) {
                     html = '<div class="alert alert-info">Nenhuma avaliação realizada.</div>';
                 } else {
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Avaliador</th><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead>';
-                    html += '<tbody>';
+                    var lista = [];
+                    pesquisas.forEach(function(doc) { lista.push({ id: doc.id, ...doc.data() }); });
+                    lista.sort(function(a, b) { return toDate(b.data_avaliacao) - toDate(a.data_avaliacao); });
 
-                    pesquisas.forEach(doc => {
-                        const p = doc.data();
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Avaliador</th><th>Colaborador</th><th>Tipo</th><th>Data</th><th>Ação</th></tr></thead>';
+                    html += '<tbody>';
+                    lista.forEach(function(p) {
+                        var tipoLabel = PESQUISA_LABELS[p.tipo_pesquisa] || p.tipo_pesquisa;
                         html += '<tr>';
-                        html += '<td>' + p.avaliador_nome + '</td>';
-                        html += '<td>' + p.colaborador_id + '</td>';
-                        html += '<td>' + p.tipo_pesquisa + '</td>';
-                        html += '<td>' + (formatDate(p.data_avaliacao)) + '</td>';
+                        html += '<td>' + (p.avaliador_nome || 'N/A') + '</td>';
+                        html += '<td>' + (nomeMap[p.colaborador_id] || p.colaborador_id) + '</td>';
+                        html += '<td style="font-size:12px;">' + tipoLabel + '</td>';
+                        html += '<td>' + formatDate(p.data_avaliacao) + '</td>';
+                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + p.id + '\', \'pesquisas\')">👁 Ver</button></td>';
                         html += '</tr>';
                     });
-
                     html += '</tbody></table></div>';
                 }
 
