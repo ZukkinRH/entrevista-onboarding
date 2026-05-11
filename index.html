@@ -3801,14 +3801,22 @@
         // ══════════════════════════════════════════════
         // ══  PESQUISA DE CLIMA ORGANIZACIONAL  ══════
         // ══════════════════════════════════════════════
+        // Helper seguro para collections que podem não ter regras no Firestore
+        async function safeClimaGet(key, fetcher) {
+            try { return await cachedGet(key, fetcher); } catch(e) { console.warn('Clima collection indisponível:', key, e.message); return null; }
+        }
+        function emptySnap() { return { size: 0, empty: true, forEach: function(){}, docs: [] }; }
+
         async function renderClimaPanel() {
             var area = document.getElementById('climaLiberacoesArea');
             if (!area) return;
             try {
                 var [climaLibs, climaRes] = await Promise.all([
-                    cachedGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); }),
-                    cachedGet('clima_res:all', function() { return db.collection('clima_respostas').get(); })
+                    safeClimaGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); }),
+                    safeClimaGet('clima_res:all', function() { return db.collection('clima_respostas').get(); })
                 ]);
+                if (!climaLibs) climaLibs = emptySnap();
+                if (!climaRes) climaRes = emptySnap();
                 var libList = [];
                 climaLibs.forEach(function(doc) { libList.push({ id: doc.id, ...doc.data() }); });
                 libList.sort(function(a, b) { return (b.ano || 0) - (a.ano || 0); });
@@ -3918,13 +3926,14 @@
             var isAdmin = currentUser.perfil === 'admin' || currentUser.perfil === 'analista';
 
             try {
-                var liberacoes = await cachedGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); });
+                var liberacoes = await safeClimaGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); });
+                if (!liberacoes) liberacoes = emptySnap();
                 var libList = [];
                 liberacoes.forEach(function(doc) { libList.push({ id: doc.id, ...doc.data() }); });
                 libList.sort(function(a, b) { return (b.ano || 0) - (a.ano || 0); });
 
-                // Verifica se colaborador já respondeu alguma pesquisa ativa
-                var respostas = await cachedGet('clima_res:all', function() { return db.collection('clima_respostas').get(); });
+                var respostas = await safeClimaGet('clima_res:all', function() { return db.collection('clima_respostas').get(); });
+                if (!respostas) respostas = emptySnap();
                 var totalRespostasPorAno = {};
                 respostas.forEach(function(doc) {
                     var r = doc.data();
