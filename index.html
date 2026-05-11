@@ -2208,49 +2208,112 @@
         }
 
         async function loadQuestionnaires() {
-            const container = document.getElementById('questionnairesContainer');
+            var container = document.getElementById('questionnairesContainer');
             container.innerHTML = '<div class="loading"></div>';
 
-            try {
-                const liberacoes = await cachedGet('liberacoes:user:' + currentUser.id, () =>
-                    db.collection('liberacoes').where('colaborador_id', '==', currentUser.id).get());
+            // Colaborador: mostra seus questionários pendentes para responder
+            if (currentUser.perfil === 'colaborador') {
+                try {
+                    var liberacoes = await cachedGet('liberacoes:user:' + currentUser.id, function() {
+                        return db.collection('liberacoes').where('colaborador_id', '==', currentUser.id).get();
+                    });
+                    var liberadosTipos = {};
+                    liberacoes.forEach(function(doc) { liberadosTipos[doc.data().tipo_pesquisa] = true; });
 
-                const liberadosTipos = {};
-                liberacoes.forEach(doc => {
-                    liberadosTipos[doc.data().tipo_pesquisa] = true;
+                    if (Object.keys(liberadosTipos).length === 0) {
+                        container.innerHTML = '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
+                        return;
+                    }
+                    var html = '';
+                    ['experiencia_45_colab', 'desempenho_90_colab'].forEach(function(tipo) {
+                        if (liberadosTipos[tipo]) {
+                            var template = SURVEY_TEMPLATES[tipo];
+                            html += '<div class="card"><div class="card-header"><div>';
+                            html += '<div class="card-title">' + template.nome + '</div>';
+                            html += '<div style="font-size:12px;color:#636E72;margin-top:5px;">Responda as questões abaixo</div>';
+                            html += '</div><button class="btn btn-primary btn-small" onclick="openSurveyModal(\'' + tipo + '\')">Responder</button></div></div>';
+                        }
+                    });
+                    container.innerHTML = html || '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
+                } catch(e) {
+                    console.error('Erro:', e);
+                    container.innerHTML = '<div class="alert alert-error">Erro ao carregar questionários</div>';
+                }
+                return;
+            }
+
+            // Admin/Gestor/Analista: mostra respostas dos membros da equipe
+            try {
+                var [respostasSnap, pesquisasSnap, usuariosSnap] = await Promise.all([
+                    cachedGet('respostas:all', function() { return db.collection('respostas').get(); }),
+                    cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
+                    cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); })
+                ]);
+
+                // Mapas
+                var nomeMap = {};
+                var gestorMap = {};
+                usuariosSnap.forEach(function(doc) {
+                    var u = doc.data();
+                    nomeMap[doc.id] = u.nome || u.email;
+                    gestorMap[doc.id] = u.gestor_id || null;
                 });
 
-                if (Object.keys(liberadosTipos).length === 0) {
-                    container.innerHTML = '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
-                    return;
+                // Filtrar: admin vê tudo, gestor/analista vê só subordinados
+                function isMyTeam(userId) {
+                    if (currentUser.perfil === 'admin') return true;
+                    return gestorMap[userId] === currentUser.id;
                 }
 
-                let html = '';
-                const tiposOrdenados = ['experiencia_45_colab', 'desempenho_90_colab'];
-
-                for (const tipo of tiposOrdenados) {
-                    if (liberadosTipos[tipo]) {
-                        const template = SURVEY_TEMPLATES[tipo];
-                        html += '<div class="card" data-survey-type="' + tipo + '">';
-                        html += '<div class="card-header">';
-                        html += '<div>';
-                        html += '<div class="card-title">' + template.nome + '</div>';
-                        html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Responda as questões abaixo</div>';
-                        html += '</div>';
-                        html += '<button class="btn btn-primary btn-small" onclick="openSurveyModal(\'' + tipo + '\')">Responder</button>';
-                        html += '</div>';
-                        html += '</div>';
+                var todas = [];
+                respostasSnap.forEach(function(doc) {
+                    var r = doc.data();
+                    if (isMyTeam(r.colaborador_id || r.usuario_id)) {
+                        todas.push({
+                            id: doc.id, collection: 'respostas',
+                            respondente: r.usuario_nome || nomeMap[r.usuario_id] || 'Colaborador',
+                            tipo: r.tipo_pesquisa,
+                            data: toDate(r.data_resposta)
+                        });
                     }
-                }
+                });
+                pesquisasSnap.forEach(function(doc) {
+                    var p = doc.data();
+                    if (isMyTeam(p.colaborador_id)) {
+                        todas.push({
+                            id: doc.id, collection: 'pesquisas',
+                            respondente: p.avaliador_nome || nomeMap[p.avaliador_id] || 'Avaliador',
+                            colaborador: nomeMap[p.colaborador_id] || p.colaborador_id,
+                            tipo: p.tipo_pesquisa,
+                            data: toDate(p.data_avaliacao || p.data_resposta)
+                        });
+                    }
+                });
 
-                if (html === '') {
-                    container.innerHTML = '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
+                todas.sort(function(a, b) { return b.data - a.data; });
+
+                var html = '';
+                if (todas.length === 0) {
+                    html = '<div class="alert alert-info">Nenhuma resposta de pesquisa encontrada para sua equipe.</div>';
                 } else {
-                    container.innerHTML = html;
+                    html += '<p style="color:#636E72;font-size:13px;margin-bottom:12px;">Respostas da equipe: <strong>' + todas.length + '</strong></p>';
+                    html += '<div class="table-wrapper"><table class="table">';
+                    html += '<thead><tr><th>Respondente</th><th>Tipo</th><th>Data</th><th>Ação</th></tr></thead><tbody>';
+                    todas.forEach(function(r) {
+                        var tipoLabel = PESQUISA_LABELS[r.tipo] || r.tipo || 'N/A';
+                        html += '<tr>';
+                        html += '<td><strong>' + r.respondente + '</strong></td>';
+                        html += '<td style="font-size:12px;">' + tipoLabel + '</td>';
+                        html += '<td>' + formatDate(r.data) + '</td>';
+                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + r.id + '\',\'' + r.collection + '\')">👁 Ver</button></td>';
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table></div>';
                 }
-            } catch (error) {
+                container.innerHTML = html;
+            } catch(error) {
                 console.error('Erro ao carregar questionários:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar questionários</div>';
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar</div>';
             }
         }
 
