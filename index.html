@@ -476,6 +476,199 @@
             margin-top: 20px;
         }
 
+        .pdi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            position: relative;
+        }
+        .pdi-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        .pdi-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .pdi-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        .pdi-card-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #636E72;
+        }
+        .pdi-card-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .pdi-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .pdi-priority {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .pdi-priority-alta { background: #ffebee; color: #c62828; }
+        .pdi-priority-media { background: #fff8e1; color: #f57f17; }
+        .pdi-priority-baixa { background: #e8f5e9; color: #2e7d32; }
+        .pdi-competencia-tag {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            background: #e3f2fd;
+            color: #1565c0;
+            font-weight: 500;
+        }
+        .pdi-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 20px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pdi-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .pdi-detail-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .pdi-detail-item label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #636E72;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .pdi-detail-item p {
+            font-size: 14px;
+            color: var(--dark);
+            margin: 0;
+        }
+        .pdi-timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        .pdi-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        .pdi-timeline-item {
+            position: relative;
+            padding: 12px 0;
+            margin-bottom: 8px;
+        }
+        .pdi-timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 18px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+        }
+        .pdi-timeline-item .timeline-author {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--dark);
+        }
+        .pdi-timeline-item .timeline-date {
+            font-size: 11px;
+            color: #636E72;
+            margin-left: 8px;
+        }
+        .pdi-timeline-item .timeline-text {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+        .pdi-stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .pdi-stat {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            flex: 1;
+            min-width: 120px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .pdi-stat h4 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px;
+            color: var(--primary);
+        }
+        .pdi-stat p {
+            font-size: 12px;
+            color: #636E72;
+            margin: 0;
+        }
+        .pdi-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .pdi-filter-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: white;
+            color: #636E72;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pdi-filter-btn:hover, .pdi-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .badge-nao_iniciado {
+            background: #f0f0f0;
+            color: #636E72;
+        }
+
         .pdi-table {
             width: 100%;
             border-collapse: collapse;
@@ -1273,9 +1466,7 @@
             <div id="liberacoesTab" class="tab-content">
                 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
                     <button class="btn btn-primary" onclick="openModal('Liberar Pesquisa', getLiberacoesForm(), [{text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary'}, {text: 'Liberar', onclick: 'saveLiberacao()', class: 'btn-primary'}])">+ Nova Liberação</button>
-                    <button class="btn btn-secondary" onclick="liberarClimaModal()" style="display:inline-flex;align-items:center;gap:6px;">🌤️ Pesquisa de Clima</button>
                 </div>
-                <div id="climaLiberacoesArea"></div>
                 <div id="liberacoesContainer"></div>
             </div>
 
@@ -1299,11 +1490,6 @@
                 </div>
                 <input type="file" id="xlsxFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleXlsxUpload(event)">
                 <div id="usuariosContainer"></div>
-            </div>
-
-            <!-- Pesquisa de Clima Tab -->
-            <div id="climaTab" class="tab-content">
-                <div id="climaContainer"></div>
             </div>
 
             <!-- PDI Tab -->
@@ -1606,21 +1792,18 @@
             gestor: [
                 { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
                 { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
-                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
                 { id: 'pdiTab', label: 'PDI', key: 'pdi' }
             ],
             diretoria: [
                 { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
-                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
                 { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
                 { id: 'pdiTab', label: 'PDI', key: 'pdi' }
             ],
             colaborador: [
                 { id: 'questionnairesTab', label: 'Minhas Pesquisas', key: 'questionarios' },
-                { id: 'climaTab', label: 'Pesquisa de Clima', key: 'clima' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
                 { id: 'pdiTab', label: 'Meu PDI', key: 'pdi' }
             ],
@@ -1867,7 +2050,6 @@
             avaliadores: '📈',
             pesquisas_colab: '📄',
             respostas: '📁',
-            clima: '🌤️',
             pdi: '🎯'
         };
 
@@ -2238,7 +2420,6 @@
                 else if (tabId === 'respostasTab') loadRespostas();
                 else if (tabId === 'gestoresTab') loadAvaliadoresTab();
                 else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
-                else if (tabId === 'climaTab') loadClima();
                 else if (tabId === 'pdiTab') loadPDI();
             }
         }
@@ -2946,9 +3127,6 @@
         async function loadLiberacoes() {
             const container = document.getElementById('liberacoesContainer');
             container.innerHTML = '<div class="loading"></div>';
-
-            // Renderizar painel de clima no topo
-            renderClimaPanel();
 
             try {
                 const [usuarios, liberacoes, respostas] = await Promise.all([
@@ -3991,429 +4169,170 @@
         }
 
         // ══════════════════════════════════════════════
-        // ══  PESQUISA DE CLIMA ORGANIZACIONAL  ══════
+        // ══  PDI — PLANO DE DESENVOLVIMENTO INDIVIDUAL
         // ══════════════════════════════════════════════
-        // Helper seguro para collections que podem não ter regras no Firestore
-        async function safeClimaGet(key, fetcher) {
-            try { return await cachedGet(key, fetcher); } catch(e) { console.warn('Clima collection indisponível:', key, e.message); return null; }
-        }
-        function emptySnap() { return { size: 0, empty: true, forEach: function(){}, docs: [] }; }
 
-        async function renderClimaPanel() {
-            var area = document.getElementById('climaLiberacoesArea');
-            if (!area) return;
-            try {
-                var [climaLibs, climaRes] = await Promise.all([
-                    safeClimaGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); }),
-                    safeClimaGet('clima_res:all', function() { return db.collection('clima_respostas').get(); })
-                ]);
-                if (!climaLibs) climaLibs = emptySnap();
-                if (!climaRes) climaRes = emptySnap();
-                var libList = [];
-                climaLibs.forEach(function(doc) { libList.push({ id: doc.id, ...doc.data() }); });
-                libList.sort(function(a, b) { return (b.ano || 0) - (a.ano || 0); });
-
-                var totalPorAno = {};
-                climaRes.forEach(function(doc) {
-                    var a = doc.data().ano || 0;
-                    totalPorAno[a] = (totalPorAno[a] || 0) + 1;
-                });
-
-                if (libList.length === 0) { area.innerHTML = ''; return; }
-
-                var html = '<div class="dash-section" style="margin-bottom:20px;">';
-                html += '<div class="dash-section-title">🌤️ Pesquisas de Clima</div>';
-                libList.forEach(function(lib) {
-                    var ativa = lib.ativa !== false;
-                    var total = totalPorAno[lib.ano] || 0;
-                    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;">';
-                    html += '<div><strong>Clima ' + lib.ano + '</strong> ' + (ativa ? '<span style="background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:10px;">Ativa</span>' : '<span style="background:#f0f0f0;color:#999;font-size:11px;padding:2px 8px;border-radius:10px;">Encerrada</span>') + ' <span style="color:#636E72;font-size:12px;margin-left:8px;">' + total + ' resposta(s)</span></div>';
-                    html += '<div style="display:flex;gap:6px;">';
-                    html += '<button class="btn btn-secondary" onclick="verResultadosClima(' + lib.ano + ')" style="font-size:12px;padding:6px 10px;">📊 Resultados</button>';
-                    if (ativa) html += '<button class="btn btn-secondary" onclick="encerrarClima(\'' + lib.id + '\')" style="font-size:12px;padding:6px 10px;color:#c62828;">🔒 Encerrar</button>';
-                    else html += '<button class="btn btn-secondary" onclick="reabrirClima(\'' + lib.id + '\')" style="font-size:12px;padding:6px 10px;color:#2e7d32;">🔓 Reabrir</button>';
-                    html += '</div></div>';
-                });
-                html += '</div>';
-                area.innerHTML = html;
-            } catch(e) {
-                console.error('Erro ao renderizar clima:', e);
-                area.innerHTML = '';
-            }
-        }
-
-        var CLIMA_TEMPLATE = {
-            titulo: 'Pesquisa de Clima Organizacional',
-            descricao: 'A pesquisa de clima organizacional avalia a percepção dos colaboradores sobre o ambiente de trabalho. Suas respostas são totalmente anônimas e confidenciais.',
-            secoes: [
-                {
-                    titulo: 'Dados Demográficos',
-                    descricao: 'Informações gerais (não identificam o respondente).',
-                    questoes: [
-                        { id: 'departamento', texto: 'Qual seu departamento?', tipo: 'select', opcoes: ['RH', 'Financeiro', 'Projetos', 'Qualidade', 'Operações', 'Desenvolvimento'] },
-                        { id: 'tempo_empresa', texto: 'Tempo de empresa:', tipo: 'select', opcoes: ['Menos de 6 meses', '6 meses a 1 ano', '1 a 3 anos', 'Mais de 3 anos'] }
-                    ]
-                },
-                {
-                    titulo: 'Ambiente de Trabalho 💻',
-                    descricao: 'Avalia conforto, segurança, bem-estar e qualidade das interações no dia a dia.',
-                    questoes: [
-                        { id: 'amb_fisico', texto: 'Como você avalia o ambiente físico (espaço, recursos, conforto)?', tipo: 'radio', opcoes: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'] },
-                        { id: 'amb_ideias', texto: 'Sinto-me à vontade para expressar ideias e opiniões.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
-                        { id: 'amb_seguranca', texto: 'Tenho segurança em expor minhas ideias, sugestões e críticas perante a equipe e demais áreas.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
-                        { id: 'amb_procedimentos', texto: 'Tenho claro quais são os procedimentos para exercer minhas atividades no dia a dia.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] }
-                    ]
-                },
-                {
-                    titulo: 'Relacionamento e Comunicação 📣',
-                    descricao: 'Avalia respeito mútuo, escuta ativa e clareza na comunicação entre equipes, líderes e colegas.',
-                    questoes: [
-                        { id: 'rel_equipe', texto: 'Minha relação com a equipe é:', tipo: 'radio', opcoes: ['Muito ruim', 'Ruim', 'Regular', 'Boa', 'Muito boa'] },
-                        { id: 'rel_comunicacao', texto: 'A comunicação na empresa é clara e eficiente.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
-                        { id: 'rel_diversidade', texto: 'Aqui, todas as pessoas são bem tratadas independentemente de: idade, cor, etnia, gênero e orientação sexual.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] }
-                    ]
-                },
-                {
-                    titulo: 'Liderança e Gestão 😊',
-                    descricao: 'Analisa como líderes se comunicam, tomam decisões e promovem um ambiente de trabalho positivo.',
-                    questoes: [
-                        { id: 'lid_apoio', texto: 'Meu líder apoia meu desenvolvimento e escuta minhas necessidades.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
-                        { id: 'lid_feedback', texto: 'O feedback que recebo é:', tipo: 'radio', opcoes: ['Inexistente', 'Insuficiente', 'Adequado', 'Claro e construtivo', 'Excelente'] },
-                        { id: 'lid_metas', texto: 'Meu gestor deixa claro metas e objetivos para atingimento dos resultados.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] }
-                    ]
-                },
-                {
-                    titulo: 'Motivação e Reconhecimento 🥇',
-                    descricao: 'Avalia práticas de reconhecimento, recompensas e fatores que estimulam o desempenho.',
-                    questoes: [
-                        { id: 'mot_reconhecimento', texto: 'Sinto que meu trabalho é reconhecido e valorizado.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
-                        { id: 'mot_motivacao', texto: 'Meu nível de motivação diária é:', tipo: 'radio', opcoes: ['Nada motivado', 'Pouco motivado', 'Neutro', 'Motivado', 'Muito motivado'] },
-                        { id: 'mot_disposicao', texto: 'Todos estão dispostos a dar mais de si para concluir um trabalho.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Às vezes', 'Frequentemente', 'Sempre'] },
-                        { id: 'mot_beneficios', texto: 'Estou satisfeito com os benefícios que recebo do Zukkin.', tipo: 'radio', opcoes: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'] }
-                    ]
-                },
-                {
-                    titulo: 'Satisfação Geral 👍',
-                    descricao: 'Mede a percepção sobre a experiência no ambiente de trabalho como um todo.',
-                    questoes: [
-                        { id: 'sat_geral', texto: 'Em geral, estou satisfeito em trabalhar na empresa.', tipo: 'radio', opcoes: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'] },
-                        { id: 'sat_recomenda', texto: 'Eu recomendaria a empresa como bom lugar para trabalhar.', tipo: 'radio', opcoes: ['Nunca', 'Raramente', 'Talvez', 'Provavelmente', 'Com certeza'] }
-                    ]
-                },
-                {
-                    titulo: 'Perguntas Abertas ✔️',
-                    descricao: 'Expresse livremente suas opiniões, sugestões e sentimentos.',
-                    questoes: [
-                        { id: 'aberta_positivo', texto: 'O que você considera mais positivo na empresa?', tipo: 'textarea', obrigatoria: true },
-                        { id: 'aberta_melhorar', texto: 'O que poderia ser melhorado?', tipo: 'textarea', obrigatoria: true },
-                        { id: 'aberta_sugestoes', texto: 'Outras sugestões, críticas ou elogios:', tipo: 'textarea', obrigatoria: false }
-                    ]
-                }
-            ]
+        const PDI_STATUS = {
+            'nao_iniciado': { label: 'Não Iniciado', color: '#636E72', bg: '#f0f0f0', progress: 0 },
+            'em_andamento': { label: 'Em Andamento', color: '#1565c0', bg: '#e3f2fd', progress: 50 },
+            'concluido': { label: 'Concluído', color: '#2e7d32', bg: '#e8f5e9', progress: 100 },
+            'cancelado': { label: 'Cancelado', color: '#c62828', bg: '#ffebee', progress: 0 }
         };
 
-        async function loadClima() {
-            var container = document.getElementById('climaContainer');
-            container.innerHTML = '<div class="loading"></div>';
-            var isAdmin = currentUser.perfil === 'admin' || currentUser.perfil === 'analista';
+        const PDI_COMPETENCIAS = ['Comunicação', 'Liderança', 'Técnica', 'Gestão de Tempo', 'Trabalho em Equipe', 'Resolução de Problemas', 'Inovação', 'Outro'];
 
-            try {
-                var liberacoes = await safeClimaGet('clima_lib:all', function() { return db.collection('clima_liberacoes').get(); });
-                if (!liberacoes) liberacoes = emptySnap();
-                var libList = [];
-                liberacoes.forEach(function(doc) { libList.push({ id: doc.id, ...doc.data() }); });
-                libList.sort(function(a, b) { return (b.ano || 0) - (a.ano || 0); });
-
-                var respostas = await safeClimaGet('clima_res:all', function() { return db.collection('clima_respostas').get(); });
-                if (!respostas) respostas = emptySnap();
-                var totalRespostasPorAno = {};
-                respostas.forEach(function(doc) {
-                    var r = doc.data();
-                    var a = r.ano || 0;
-                    totalRespostasPorAno[a] = (totalRespostasPorAno[a] || 0) + 1;
-                });
-
-                var html = '';
-
-                // Admin: botão para liberar nova pesquisa
-                if (isAdmin) {
-                    html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">';
-                    html += '<button class="btn btn-primary" onclick="liberarClimaModal()">+ Liberar Pesquisa de Clima</button>';
-                    html += '</div>';
-                }
-
-                // Pesquisas liberadas
-                if (libList.length === 0) {
-                    html += '<div class="dash-empty">Nenhuma pesquisa de clima liberada ainda.</div>';
-                } else {
-                    libList.forEach(function(lib) {
-                        var ativa = lib.ativa !== false;
-                        var totalResp = totalRespostasPorAno[lib.ano] || 0;
-                        html += '<div class="dash-section" style="' + (!ativa ? 'opacity:0.6;' : '') + '">';
-                        html += '<div class="dash-section-title">🌤️ Pesquisa de Clima ' + lib.ano + ' ' + (ativa ? '<span style="background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px;">Ativa</span>' : '<span style="background:#f0f0f0;color:#999;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px;">Encerrada</span>') + '</div>';
-                        html += '<p style="color:#636E72;font-size:13px;margin-bottom:12px;">Respostas recebidas: <strong>' + totalResp + '</strong></p>';
-
-                        if (isAdmin) {
-                            html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
-                            html += '<button class="btn btn-secondary" onclick="verResultadosClima(' + lib.ano + ')" style="font-size:13px;padding:8px 14px;">📊 Ver Resultados</button>';
-                            if (ativa) {
-                                html += '<button class="btn btn-secondary" onclick="encerrarClima(\'' + lib.id + '\')" style="font-size:13px;padding:8px 14px;color:#c62828;">🔒 Encerrar</button>';
-                            } else {
-                                html += '<button class="btn btn-secondary" onclick="reabrirClima(\'' + lib.id + '\')" style="font-size:13px;padding:8px 14px;color:#2e7d32;">🔓 Reabrir</button>';
-                            }
-                            html += '</div>';
-                        } else {
-                            // Colaborador: botão para responder (se ativa)
-                            if (ativa) {
-                                html += '<button class="btn btn-primary" onclick="responderClima(' + lib.ano + ')" style="font-size:13px;padding:10px 18px;">📝 Responder Pesquisa</button>';
-                            }
-                        }
-                        html += '</div>';
-                    });
-                }
-
-                container.innerHTML = html;
-            } catch(e) {
-                console.error('Erro ao carregar clima:', e);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisa de clima.</div>';
-            }
+        function pdiStatusInfo(status) {
+            return PDI_STATUS[status] || PDI_STATUS['nao_iniciado'];
         }
 
-        function liberarClimaModal() {
-            var anoAtual = new Date().getFullYear();
-            var html = '<div class="pdi-form-section">';
-            html += '<label>Ano da Pesquisa:</label>';
-            html += '<select id="climaAno">';
-            for (var y = anoAtual + 1; y >= anoAtual - 2; y--) {
-                html += '<option value="' + y + '"' + (y === anoAtual ? ' selected' : '') + '>' + y + '</option>';
-            }
-            html += '</select></div>';
-            html += '<p style="color:#636E72;font-size:13px;margin-top:10px;">A pesquisa ficará disponível para todos os colaboradores responderem de forma anônima.</p>';
-            openModal('🌤️ Liberar Pesquisa de Clima', html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Liberar', onclick: 'salvarLiberacaoClima()', class: 'btn-primary' }
-            ]);
+        function pdiPrazoClass(prazo) {
+            if (!prazo) return '';
+            var d = prazo.toDate ? prazo.toDate() : new Date(prazo);
+            var now = new Date(); now.setHours(0,0,0,0); d.setHours(0,0,0,0);
+            var diff = (d - now) / (1000 * 60 * 60 * 24);
+            if (diff < 0) return 'overdue';
+            if (diff <= 14) return 'upcoming';
+            return 'ok';
         }
 
-        async function salvarLiberacaoClima() {
-            var ano = parseInt(document.getElementById('climaAno').value);
-            try {
-                // Verifica se já existe para o ano
-                var existing = await db.collection('clima_liberacoes').where('ano', '==', ano).get();
-                if (!existing.empty) {
-                    showToast('warn', 'Já existe', 'Já existe uma pesquisa de clima para ' + ano + '.');
-                    return;
-                }
-                await db.collection('clima_liberacoes').add({
-                    ano: ano,
-                    ativa: true,
-                    criado_por: currentUser.email,
-                    data_criacao: new Date()
-                });
-                invalidateCache('clima_lib:');
-                showToast('success', 'Pesquisa liberada!', 'Pesquisa de Clima ' + ano + ' está ativa.');
-                closeModal();
-                refreshClimaPanels();
-            } catch(e) {
-                console.error('Erro:', e);
-                showToast('error', 'Erro', e.message);
-            }
+        function pdiPrazoLabel(prazo) {
+            if (!prazo) return '—';
+            var d = prazo.toDate ? prazo.toDate() : new Date(prazo);
+            return formatDate(d);
         }
 
-        function refreshClimaPanels() {
-            if (document.getElementById('climaContainer')) loadClima();
-            if (document.getElementById('climaLiberacoesArea')) renderClimaPanel();
-        }
+        function renderPDICard(pdi, id, showColab) {
+            var si = pdiStatusInfo(pdi.status);
+            var prazoC = pdiPrazoClass(pdi.prazo);
+            var prazoColor = prazoC === 'overdue' ? '#c62828' : prazoC === 'upcoming' ? '#f57f17' : '#2e7d32';
+            var prioClass = pdi.prioridade === 'Alta' ? 'pdi-priority-alta' : pdi.prioridade === 'Média' ? 'pdi-priority-media' : 'pdi-priority-baixa';
+            var canDelete = currentUser.perfil === 'admin' || currentUser.id === pdi.criador_id;
 
-        async function encerrarClima(libId) {
-            showConfirm('🔒', 'Encerrar pesquisa', 'Ao encerrar, nenhum colaborador poderá mais responder. Os resultados permanecem salvos.', 'Encerrar', async function() {
-                try {
-                    await db.collection('clima_liberacoes').doc(libId).update({ ativa: false });
-                    invalidateCache('clima_lib:');
-                    showToast('success', 'Encerrada', 'Pesquisa de clima encerrada.');
-                    refreshClimaPanels();
-                } catch(e) { showToast('error', 'Erro', e.message); }
-            });
-        }
-
-        async function reabrirClima(libId) {
-            try {
-                await db.collection('clima_liberacoes').doc(libId).update({ ativa: true });
-                invalidateCache('clima_lib:');
-                showToast('success', 'Reaberta', 'Pesquisa de clima reaberta.');
-                refreshClimaPanels();
-            } catch(e) { showToast('error', 'Erro', e.message); }
-        }
-
-        function responderClima(ano) {
-            var html = '<div style="background:#fff3e0;border-radius:8px;padding:12px;margin-bottom:20px;font-size:13px;color:#e65100;">';
-            html += '🔒 <strong>Resposta anônima</strong> — Suas respostas não serão identificadas. Nenhum dado pessoal é registrado.';
+            var html = '<div class="pdi-card">';
+            html += '<div class="pdi-card-header">';
+            html += '<div style="flex:1;">';
+            html += '<div class="pdi-card-title">' + (pdi.titulo || 'Sem título') + '</div>';
+            html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
+            if (pdi.prioridade) html += '<span class="pdi-priority ' + prioClass + '">' + pdi.prioridade + '</span>';
+            if (pdi.competencia) html += '<span class="pdi-competencia-tag">' + pdi.competencia + '</span>';
+            html += '<span class="badge" style="background:' + si.bg + ';color:' + si.color + ';">' + si.label + '</span>';
+            html += '</div>';
+            html += '</div>';
             html += '</div>';
 
-            CLIMA_TEMPLATE.secoes.forEach(function(secao, si) {
-                html += '<div class="form-section" style="margin-bottom:24px;">';
-                html += '<h4 style="color:var(--primary);margin-bottom:4px;">' + secao.titulo + '</h4>';
-                html += '<p style="color:#636E72;font-size:12px;margin-bottom:14px;">' + secao.descricao + '</p>';
+            // Progress bar
+            html += '<div class="progress-bar"><div class="progress-bar-fill" style="width:' + si.progress + '%;background:' + si.color + ';"></div></div>';
 
-                secao.questoes.forEach(function(q) {
-                    html += '<div style="margin-bottom:16px;">';
-                    html += '<label style="display:block;font-weight:600;font-size:13px;margin-bottom:6px;">' + q.texto + (q.obrigatoria !== false && q.tipo !== 'textarea' ? ' *' : (q.obrigatoria ? ' *' : '')) + '</label>';
+            // Meta info
+            html += '<div class="pdi-card-meta">';
+            if (showColab && pdi.colaborador_nome) html += '<span>👤 ' + pdi.colaborador_nome + '</span>';
+            html += '<span>📅 Criado: ' + formatDate(pdi.data_criacao) + '</span>';
+            if (pdi.prazo) html += '<span style="color:' + prazoColor + ';">⏰ Prazo: ' + pdiPrazoLabel(pdi.prazo) + (prazoC === 'overdue' ? ' (Atrasado)' : '') + '</span>';
+            if (pdi.competencia) html += '<span>📚 ' + pdi.competencia + '</span>';
+            html += '</div>';
 
-                    if (q.tipo === 'select') {
-                        html += '<select id="clima_' + q.id + '" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;">';
-                        html += '<option value="">Selecione...</option>';
-                        q.opcoes.forEach(function(op) { html += '<option value="' + op + '">' + op + '</option>'; });
-                        html += '</select>';
-                    } else if (q.tipo === 'radio') {
-                        html += '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
-                        q.opcoes.forEach(function(op, oi) {
-                            html += '<label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;border:1px solid #ddd;border-radius:20px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="if(!this.querySelector(\'input\').checked)this.style.borderColor=\'#ddd\'">';
-                            html += '<input type="radio" name="clima_' + q.id + '" value="' + (oi + 1) + '" style="margin:0;" onclick="this.parentElement.style.borderColor=\'var(--primary)\'; this.parentElement.style.background=\'#fff5f5\'; var sibs=this.closest(\'div\').querySelectorAll(\'label\'); sibs.forEach(function(s){if(s!==this.parentElement){s.style.borderColor=\'#ddd\';s.style.background=\'transparent\';}}.bind(this));">';
-                            html += ' ' + op + '</label>';
-                        });
-                        html += '</div>';
-                    } else if (q.tipo === 'textarea') {
-                        html += '<textarea id="clima_' + q.id + '" placeholder="Digite sua resposta..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;min-height:70px;box-sizing:border-box;"></textarea>';
-                    }
-                    html += '</div>';
-                });
-                html += '</div>';
-            });
-
-            openModal('🌤️ Pesquisa de Clima ' + ano, html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Enviar Respostas', onclick: 'enviarRespostaClima(' + ano + ')', class: 'btn-primary' }
-            ]);
+            // Actions
+            html += '<div class="pdi-card-actions">';
+            html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + id + '\')">Visualizar</button>';
+            html += '<button class="btn btn-secondary btn-small" onclick="editPDI(\'' + id + '\')">Editar</button>';
+            if (canDelete) html += '<button class="btn btn-secondary btn-small" onclick="deletePDI(\'' + id + '\')" style="color:#c62828;">Excluir</button>';
+            html += '</div>';
+            html += '</div>';
+            return html;
         }
 
-        async function enviarRespostaClima(ano) {
-            var respostas = {};
-            var faltando = [];
+        var _pdiFilter = 'todos';
 
-            CLIMA_TEMPLATE.secoes.forEach(function(secao) {
-                secao.questoes.forEach(function(q) {
-                    if (q.tipo === 'select') {
-                        var sel = document.getElementById('clima_' + q.id);
-                        respostas[q.id] = sel ? sel.value : '';
-                        if (!respostas[q.id]) faltando.push(q.texto);
-                    } else if (q.tipo === 'radio') {
-                        var checked = document.querySelector('input[name="clima_' + q.id + '"]:checked');
-                        respostas[q.id] = checked ? parseInt(checked.value) : null;
-                        if (!respostas[q.id]) faltando.push(q.texto);
-                    } else if (q.tipo === 'textarea') {
-                        var ta = document.getElementById('clima_' + q.id);
-                        respostas[q.id] = ta ? ta.value.trim() : '';
-                        if (q.obrigatoria && !respostas[q.id]) faltando.push(q.texto);
-                    }
-                });
+        function setPDIFilter(f) {
+            _pdiFilter = f;
+            document.querySelectorAll('.pdi-filter-btn').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-filter') === f);
             });
-
-            if (faltando.length > 0) {
-                showToast('warn', 'Campos obrigatórios', 'Faltam ' + faltando.length + ' resposta(s) obrigatória(s).');
-                return;
-            }
-
-            try {
-                // ANÔNIMO: não grava currentUser.id, email, nome — nada identificável
-                await db.collection('clima_respostas').add({
-                    ano: ano,
-                    respostas: respostas,
-                    data_resposta: new Date()
-                });
-                invalidateCache('clima_res:');
-                closeModal();
-                showToast('success', 'Enviada!', 'Sua resposta foi registrada de forma anônima. Obrigado!');
-                refreshClimaPanels();
-            } catch(e) {
-                console.error('Erro:', e);
-                showToast('error', 'Erro ao enviar', e.message);
-            }
-        }
-
-        async function verResultadosClima(ano) {
-            try {
-                var snapshot = await db.collection('clima_respostas').where('ano', '==', ano).get();
-                var respostas = [];
-                snapshot.forEach(function(doc) { respostas.push(doc.data().respostas); });
-
-                if (respostas.length === 0) {
-                    showToast('info', 'Sem dados', 'Nenhuma resposta registrada para ' + ano + '.');
-                    return;
+            // Re-render cards visibility
+            document.querySelectorAll('.pdi-card[data-status]').forEach(function(card) {
+                if (f === 'todos' || card.getAttribute('data-status') === f) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
                 }
+            });
+        }
 
-                var html = '<p style="font-size:14px;color:#636E72;margin-bottom:20px;">Total de respostas: <strong>' + respostas.length + '</strong></p>';
+        function renderPDIFilters() {
+            var filters = [
+                { key: 'todos', label: 'Todos' },
+                { key: 'nao_iniciado', label: 'Não Iniciado' },
+                { key: 'em_andamento', label: 'Em Andamento' },
+                { key: 'concluido', label: 'Concluído' },
+                { key: 'cancelado', label: 'Cancelado' }
+            ];
+            var html = '<div class="pdi-filters">';
+            filters.forEach(function(f) {
+                html += '<button class="pdi-filter-btn' + (f.key === _pdiFilter ? ' active' : '') + '" data-filter="' + f.key + '" onclick="setPDIFilter(\'' + f.key + '\')">' + f.label + '</button>';
+            });
+            html += '</div>';
+            return html;
+        }
 
-                CLIMA_TEMPLATE.secoes.forEach(function(secao, si) {
-                    html += '<div style="margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #eee;">';
-                    html += '<h4 style="color:var(--primary);margin-bottom:12px;">' + secao.titulo + '</h4>';
+        function renderPDIStats(pdis) {
+            var total = pdis.length;
+            var counts = { nao_iniciado: 0, em_andamento: 0, concluido: 0, cancelado: 0 };
+            var overdue = 0;
+            var now = new Date(); now.setHours(0,0,0,0);
+            pdis.forEach(function(p) {
+                var s = p.status || 'nao_iniciado';
+                if (counts[s] !== undefined) counts[s]++;
+                if (p.prazo && s !== 'concluido' && s !== 'cancelado') {
+                    var d = p.prazo.toDate ? p.prazo.toDate() : new Date(p.prazo);
+                    d.setHours(0,0,0,0);
+                    if (d < now) overdue++;
+                }
+            });
+            var html = '<div class="pdi-stats-bar">';
+            html += '<div class="pdi-stat"><h4>' + total + '</h4><p>Total</p></div>';
+            html += '<div class="pdi-stat"><h4 style="color:#636E72;">' + counts.nao_iniciado + '</h4><p>Não Iniciado</p></div>';
+            html += '<div class="pdi-stat"><h4 style="color:#1565c0;">' + counts.em_andamento + '</h4><p>Em Andamento</p></div>';
+            html += '<div class="pdi-stat"><h4 style="color:#2e7d32;">' + counts.concluido + '</h4><p>Concluído</p></div>';
+            html += '<div class="pdi-stat"><h4 style="color:#c62828;">' + overdue + '</h4><p>Atrasados</p></div>';
+            html += '</div>';
+            return html;
+        }
 
-                    secao.questoes.forEach(function(q) {
-                        html += '<div style="margin-bottom:14px;">';
-                        html += '<p style="font-weight:600;font-size:13px;margin-bottom:6px;">' + q.texto + '</p>';
+        function renderPDICardWithStatus(pdi, id, showColab) {
+            var si = pdiStatusInfo(pdi.status);
+            var prazoC = pdiPrazoClass(pdi.prazo);
+            var prazoColor = prazoC === 'overdue' ? '#c62828' : prazoC === 'upcoming' ? '#f57f17' : '#2e7d32';
+            var prioClass = pdi.prioridade === 'Alta' ? 'pdi-priority-alta' : pdi.prioridade === 'Média' ? 'pdi-priority-media' : 'pdi-priority-baixa';
+            var canDelete = currentUser.perfil === 'admin' || currentUser.id === pdi.criador_id;
 
-                        if (q.tipo === 'select') {
-                            // Contagem por opção
-                            var counts = {};
-                            respostas.forEach(function(r) {
-                                var val = r[q.id] || 'Não respondeu';
-                                counts[val] = (counts[val] || 0) + 1;
-                            });
-                            html += '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
-                            Object.keys(counts).forEach(function(k) {
-                                var pct = Math.round((counts[k] / respostas.length) * 100);
-                                html += '<span style="background:#f0f0f0;padding:4px 10px;border-radius:12px;font-size:12px;">' + k + ': <strong>' + counts[k] + '</strong> (' + pct + '%)</span>';
-                            });
-                            html += '</div>';
-                        } else if (q.tipo === 'radio') {
-                            // Média e distribuição
-                            var soma = 0; var n = 0; var dist = [0, 0, 0, 0, 0];
-                            respostas.forEach(function(r) {
-                                var val = r[q.id];
-                                if (val && val >= 1 && val <= 5) { soma += val; n++; dist[val - 1]++; }
-                            });
-                            var media = n > 0 ? (soma / n).toFixed(1) : 'N/A';
-                            var mediaColor = media >= 4 ? '#2e7d32' : media >= 3 ? '#fb8c00' : '#c62828';
+            var html = '<div class="pdi-card" data-status="' + (pdi.status || 'nao_iniciado') + '"' + (_pdiFilter !== 'todos' && (pdi.status || 'nao_iniciado') !== _pdiFilter ? ' style="display:none;"' : '') + '>';
+            html += '<div class="pdi-card-header">';
+            html += '<div style="flex:1;">';
+            html += '<div class="pdi-card-title">' + (pdi.titulo || 'Sem título') + '</div>';
+            html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
+            if (pdi.prioridade) html += '<span class="pdi-priority ' + prioClass + '">' + pdi.prioridade + '</span>';
+            if (pdi.competencia) html += '<span class="pdi-competencia-tag">' + pdi.competencia + '</span>';
+            html += '<span class="badge" style="background:' + si.bg + ';color:' + si.color + ';">' + si.label + '</span>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
 
-                            html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">';
-                            html += '<span style="font-size:22px;font-weight:700;color:' + mediaColor + ';">' + media + '</span>';
-                            html += '<span style="font-size:12px;color:#999;">/ 5.0 (média de ' + n + ' respostas)</span>';
-                            html += '</div>';
+            html += '<div class="progress-bar"><div class="progress-bar-fill" style="width:' + si.progress + '%;background:' + si.color + ';"></div></div>';
 
-                            // Barra de distribuição
-                            html += '<div style="display:flex;gap:3px;align-items:end;height:30px;">';
-                            q.opcoes.forEach(function(op, oi) {
-                                var pct = n > 0 ? Math.round((dist[oi] / n) * 100) : 0;
-                                var h = Math.max(4, pct * 0.3);
-                                html += '<div title="' + op + ': ' + dist[oi] + ' (' + pct + '%)" style="flex:1;height:' + h + 'px;background:' + (oi < 2 ? '#ffcdd2' : oi === 2 ? '#fff9c4' : '#c8e6c9') + ';border-radius:3px;"></div>';
-                            });
-                            html += '</div>';
-                            html += '<div style="display:flex;gap:3px;font-size:9px;color:#999;margin-top:2px;">';
-                            q.opcoes.forEach(function(op) { html += '<div style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + op + '</div>'; });
-                            html += '</div>';
-                        } else if (q.tipo === 'textarea') {
-                            var textos = respostas.filter(function(r) { return r[q.id] && r[q.id].trim(); }).map(function(r) { return r[q.id]; });
-                            if (textos.length === 0) {
-                                html += '<p style="color:#aaa;font-size:12px;">Nenhuma resposta.</p>';
-                            } else {
-                                html += '<div style="max-height:200px;overflow-y:auto;background:#f9f9f9;border-radius:8px;padding:10px;">';
-                                textos.forEach(function(t, ti) {
-                                    html += '<div style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#333;">"' + t.replace(/</g, '&lt;') + '"</div>';
-                                });
-                                html += '</div>';
-                            }
-                        }
-                        html += '</div>';
-                    });
-                    html += '</div>';
-                });
+            html += '<div class="pdi-card-meta">';
+            if (showColab && pdi.colaborador_nome) html += '<span>👤 ' + pdi.colaborador_nome + '</span>';
+            html += '<span>📅 Criado: ' + formatDate(pdi.data_criacao) + '</span>';
+            if (pdi.prazo) html += '<span style="color:' + prazoColor + ';">⏰ Prazo: ' + pdiPrazoLabel(pdi.prazo) + (prazoC === 'overdue' ? ' (Atrasado)' : '') + '</span>';
+            if (pdi.competencia) html += '<span>📚 ' + pdi.competencia + '</span>';
+            html += '</div>';
 
-                openModal('📊 Resultados — Clima ' + ano + ' (' + respostas.length + ' respostas)', html, [
-                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }
-                ]);
-            } catch(e) {
-                console.error('Erro:', e);
-                showToast('error', 'Erro', e.message);
-            }
+            html += '<div class="pdi-card-actions">';
+            html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + id + '\')">Visualizar</button>';
+            html += '<button class="btn btn-secondary btn-small" onclick="editPDI(\'' + id + '\')">Editar</button>';
+            if (canDelete) html += '<button class="btn btn-secondary btn-small" onclick="deletePDI(\'' + id + '\')" style="color:#c62828;">Excluir</button>';
+            html += '</div>';
+            html += '</div>';
+            return html;
         }
 
         async function loadPDI() {
@@ -4436,40 +4355,23 @@
 
         async function loadPDIColaborador() {
             const container = document.getElementById('pdiContainer');
-            container.innerHTML = '<div id="pdiList"></div>';
-
             try {
                 const pdis = await cachedGet('pdis:user:' + currentUser.id, () =>
                     db.collection('pdis').where('colaborador_id', '==', currentUser.id).get());
 
-                const listContainer = document.getElementById('pdiList');
                 let html = '';
-
                 if (pdis.empty) {
-                    html = '<div class="alert alert-info">Nenhum PDI encontrado.</div>';
+                    html = '<div class="alert alert-info">Nenhum PDI encontrado para você.</div>';
                 } else {
-                    pdis.forEach(doc => {
-                        const pdi = doc.data();
-                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
-                        const progressClass = 'progress-' + progressValue;
-
-                        html += '<div class="card">';
-                        html += '<div class="card-header">';
-                        html += '<div>';
-                        html += '<div class="card-title">' + pdi.titulo + '</div>';
-                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
-                        html += '</div>';
-                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Visualizar</button>';
-                        html += '</div>';
-                        html += '<div class="progress-bar">';
-                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
-                        html += '</div>';
-                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
-                        html += '</div>';
+                    var pdiList = [];
+                    pdis.forEach(doc => { pdiList.push({ id: doc.id, ...doc.data() }); });
+                    html += renderPDIStats(pdiList);
+                    html += renderPDIFilters();
+                    pdiList.forEach(function(pdi) {
+                        html += renderPDICardWithStatus(pdi, pdi.id, false);
                     });
                 }
-
-                listContainer.innerHTML = html;
+                container.innerHTML = html;
             } catch (error) {
                 console.error('Erro ao carregar PDIs do colaborador:', error);
             }
@@ -4477,8 +4379,6 @@
 
         async function loadPDIGestorAnalista() {
             const container = document.getElementById('pdiContainer');
-            container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button>';
-
             try {
                 const [myPdis, subordinados] = await Promise.all([
                     cachedGet('pdis:user:' + currentUser.id, () =>
@@ -4488,8 +4388,11 @@
                 ]);
 
                 const subordinadoIds = [];
+                const subordinadoMap = {};
                 subordinados.forEach(doc => {
                     subordinadoIds.push(doc.id);
+                    var u = doc.data();
+                    subordinadoMap[doc.id] = u.nome || u.email || doc.id;
                 });
 
                 let teamPdis = [];
@@ -4498,64 +4401,36 @@
                         .where('colaborador_id', 'in', subordinadoIds)
                         .get();
                     teamDocsSnap.forEach(doc => {
-                        teamPdis.push({ id: doc.id, ...doc.data() });
+                        var d = doc.data();
+                        d.colaborador_nome = subordinadoMap[d.colaborador_id] || d.colaborador_id;
+                        teamPdis.push({ id: doc.id, ...d });
                     });
                 }
 
-                let html = '';
+                let html = '<button class="btn btn-primary" onclick="openPDIForm()" style="margin-bottom:20px;">+ Novo PDI</button>';
 
                 // Meu PDI
-                html += '<h3 style="margin-top: 20px; margin-bottom: 15px;">Meu PDI</h3>';
+                html += '<h3 style="margin-top: 10px; margin-bottom: 15px;">🎯 Meu PDI</h3>';
                 if (myPdis.empty) {
                     html += '<div class="alert alert-info">Você ainda não tem um PDI.</div>';
                 } else {
                     myPdis.forEach(doc => {
-                        const pdi = doc.data();
-                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
-                        const progressClass = 'progress-' + progressValue;
-
-                        html += '<div class="card">';
-                        html += '<div class="card-header">';
-                        html += '<div>';
-                        html += '<div class="card-title">' + pdi.titulo + '</div>';
-                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
-                        html += '</div>';
-                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Visualizar</button>';
-                        html += '</div>';
-                        html += '<div class="progress-bar">';
-                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
-                        html += '</div>';
-                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
-                        html += '</div>';
+                        var pdi = doc.data();
+                        html += renderPDICard(pdi, doc.id, false);
                     });
                 }
 
-                // PDI da Equipe
-                html += '<h3 style="margin-top: 30px; margin-bottom: 15px;">PDI da Minha Equipe</h3>';
+                // Equipe
+                html += '<h3 style="margin-top: 30px; margin-bottom: 15px;">👥 PDI da Minha Equipe</h3>';
                 if (teamPdis.length === 0) {
                     html += '<div class="alert alert-info">Nenhum PDI encontrado para sua equipe.</div>';
                 } else {
-                    teamPdis.forEach(pdi => {
-                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
-                        const progressClass = 'progress-' + progressValue;
-
-                        html += '<div class="card">';
-                        html += '<div class="card-header">';
-                        html += '<div>';
-                        html += '<div class="card-title">' + pdi.titulo + '</div>';
-                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
-                        html += '</div>';
-                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + pdi.id + '\')">Visualizar</button>';
-                        html += '</div>';
-                        html += '<div class="progress-bar">';
-                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
-                        html += '</div>';
-                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
-                        html += '</div>';
+                    teamPdis.forEach(function(pdi) {
+                        html += renderPDICard(pdi, pdi.id, true);
                     });
                 }
 
-                container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button>' + html;
+                container.innerHTML = html;
             } catch (error) {
                 console.error('Erro ao carregar PDIs do gestor/analista:', error);
             }
@@ -4563,76 +4438,106 @@
 
         async function loadPDIAdmin() {
             const container = document.getElementById('pdiContainer');
-            container.innerHTML = '<button class="btn btn-primary" onclick="openPDIForm()">+ Novo PDI</button><div id="pdiList"></div>';
-
             try {
-                const pdis = await cachedGet('pdis:all', () => db.collection('pdis').get());
-                const listContainer = document.getElementById('pdiList');
-                let html = '';
+                const [pdisSnap, usuariosSnap] = await Promise.all([
+                    cachedGet('pdis:all', () => db.collection('pdis').get()),
+                    cachedGet('usuarios:all', () => db.collection('usuarios').get())
+                ]);
 
-                if (pdis.empty) {
-                    html = '<div class="alert alert-info">Nenhum PDI encontrado.</div>';
+                var userMap = {};
+                usuariosSnap.forEach(function(doc) {
+                    var u = doc.data();
+                    userMap[doc.id] = u.nome || u.email || doc.id;
+                });
+
+                var pdiList = [];
+                pdisSnap.forEach(function(doc) {
+                    var d = doc.data();
+                    d.colaborador_nome = userMap[d.colaborador_id] || d.colaborador_id;
+                    pdiList.push({ id: doc.id, ...d });
+                });
+
+                let html = '<button class="btn btn-primary" onclick="openPDIForm()" style="margin-bottom:20px;">+ Novo PDI</button>';
+                html += renderPDIStats(pdiList);
+                html += renderPDIFilters();
+
+                if (pdiList.length === 0) {
+                    html += '<div class="alert alert-info">Nenhum PDI encontrado.</div>';
                 } else {
-                    pdis.forEach(doc => {
-                        const pdi = doc.data();
-                        const progressValue = pdi.status === 'pendente' ? 0 : pdi.status === 'em_andamento' ? 50 : 100;
-                        const progressClass = 'progress-' + progressValue;
-
-                        html += '<div class="card">';
-                        html += '<div class="card-header">';
-                        html += '<div>';
-                        html += '<div class="card-title">' + pdi.titulo + '</div>';
-                        html += '<span class="badge badge-' + pdi.status + '">' + pdi.status + '</span>';
-                        html += '</div>';
-                        html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + doc.id + '\')">Visualizar</button>';
-                        html += '</div>';
-                        html += '<div class="progress-bar">';
-                        html += '<div class="progress-bar-fill ' + progressClass + '" style="width: ' + progressValue + '%"></div>';
-                        html += '</div>';
-                        html += '<p style="margin-top: 10px; font-size: 12px; color: #636E72;">Progresso: ' + progressValue + '%</p>';
-                        html += '</div>';
+                    pdiList.forEach(function(pdi) {
+                        html += renderPDICardWithStatus(pdi, pdi.id, true);
                     });
                 }
 
-                listContainer.innerHTML = html;
+                container.innerHTML = html;
             } catch (error) {
                 console.error('Erro ao carregar PDIs do admin:', error);
             }
         }
 
         function openPDIForm() {
-            let html = `
-                <div class="pdi-form-section">
-                    <label>Título do PDI:</label>
-                    <input type="text" id="pdiTitulo" placeholder="Título do plano de desenvolvimento">
-                </div>
-                <div class="pdi-form-section">
-                    <label>Descrição:</label>
-                    <textarea id="pdiDescricao" placeholder="Descreva os objetivos do PDI"></textarea>
-                </div>
-                <div class="pdi-form-section">
-                    <label>Colaborador:</label>
-                    <select id="pdiColaborador">
-                        <option value="">-- Selecione um colaborador --</option>
-                    </select>
-                </div>
-                <div class="pdi-form-section">
-                    <label>Status:</label>
-                    <select id="pdiStatus">
-                        <option value="pendente">Pendente</option>
-                        <option value="em_andamento">Em Andamento</option>
-                        <option value="concluido">Concluído</option>
-                    </select>
-                </div>
-            `;
+            var isAdminOrGestor = currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista' || currentUser.perfil === 'diretoria';
 
-            openModal('Novo PDI', html, [
+            var html = '<div class="pdi-form-section">';
+            html += '<label>Título do PDI: *</label>';
+            html += '<input type="text" id="pdiTitulo" placeholder="Ex: Desenvolver habilidades de liderança">';
+            html += '</div>';
+
+            if (isAdminOrGestor) {
+                html += '<div class="pdi-form-section">';
+                html += '<label>Colaborador: *</label>';
+                html += '<select id="pdiColaborador"><option value="">-- Selecione um colaborador --</option></select>';
+                html += '</div>';
+            }
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Competência a Desenvolver: *</label>';
+            html += '<select id="pdiCompetencia"><option value="">Selecione...</option>';
+            PDI_COMPETENCIAS.forEach(function(c) { html += '<option value="' + c + '">' + c + '</option>'; });
+            html += '</select></div>';
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Objetivo SMART: *</label>';
+            html += '<textarea id="pdiObjetivo" placeholder="O que especificamente deseja alcançar? (Específico, Mensurável, Atingível, Relevante, Temporal)"></textarea>';
+            html += '</div>';
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Ações / Plano de Ação: *</label>';
+            html += '<textarea id="pdiAcoes" placeholder="Passos concretos para atingir o objetivo..."></textarea>';
+            html += '</div>';
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Recursos Necessários:</label>';
+            html += '<textarea id="pdiRecursos" placeholder="Cursos, mentoria, livros, ferramentas..."></textarea>';
+            html += '</div>';
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Indicador de Sucesso:</label>';
+            html += '<input type="text" id="pdiIndicador" placeholder="Como medir o sucesso deste PDI?">';
+            html += '</div>';
+
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+            html += '<div class="pdi-form-section">';
+            html += '<label>Prazo: *</label>';
+            html += '<input type="date" id="pdiPrazo">';
+            html += '</div>';
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Prioridade:</label>';
+            html += '<select id="pdiPrioridade"><option value="Média">Média</option><option value="Alta">Alta</option><option value="Baixa">Baixa</option></select>';
+            html += '</div></div>';
+
+            html += '<div class="pdi-form-section">';
+            html += '<label>Status:</label>';
+            html += '<select id="pdiStatus"><option value="nao_iniciado">Não Iniciado</option><option value="em_andamento">Em Andamento</option><option value="concluido">Concluído</option><option value="cancelado">Cancelado</option></select>';
+            html += '</div>';
+
+            openModal('🎯 Novo PDI', html, [
                 { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
                 { text: 'Salvar', onclick: 'savePDI()', class: 'btn-primary' }
             ]);
 
-            // Load collaborators
-            loadPDIColaboradorSelect();
+            if (isAdminOrGestor) loadPDIColaboradorSelect();
         }
 
         async function loadPDIColaboradorSelect() {
@@ -4642,13 +4547,11 @@
 
                 const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
                 usuarios.forEach(doc => {
-                    if (doc.id !== currentUser.id) {
-                        const option = document.createElement('option');
-                        option.value = doc.id;
-                        const u = doc.data();
-                        option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
-                        select.appendChild(option);
-                    }
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    const u = doc.data();
+                    option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
+                    select.appendChild(option);
                 });
             } catch (error) {
                 console.error('Erro ao carregar colaboradores:', error);
@@ -4656,28 +4559,44 @@
         }
 
         async function savePDI() {
-            const titulo = document.getElementById('pdiTitulo').value;
-            const descricao = document.getElementById('pdiDescricao').value;
-            const colaboradorId = document.getElementById('pdiColaborador').value;
-            const status = document.getElementById('pdiStatus').value;
+            var titulo = document.getElementById('pdiTitulo').value.trim();
+            var competencia = document.getElementById('pdiCompetencia').value;
+            var objetivo = document.getElementById('pdiObjetivo').value.trim();
+            var acoes = document.getElementById('pdiAcoes').value.trim();
+            var recursos = (document.getElementById('pdiRecursos') || {}).value || '';
+            var indicador = (document.getElementById('pdiIndicador') || {}).value || '';
+            var prazo = document.getElementById('pdiPrazo').value;
+            var prioridade = document.getElementById('pdiPrioridade').value;
+            var status = document.getElementById('pdiStatus').value;
+            var colabSelect = document.getElementById('pdiColaborador');
+            var colaboradorId = colabSelect ? colabSelect.value : currentUser.id;
 
-            if (!titulo || !colaboradorId) {
-                showToast('warn', 'Campos obrigatórios', 'Preencha título e colaborador.');
+            if (!titulo || !competencia || !objetivo || !acoes || !prazo) {
+                showToast('warn', 'Campos obrigatórios', 'Preencha título, competência, objetivo, ações e prazo.');
+                return;
+            }
+            if (!colaboradorId) {
+                showToast('warn', 'Colaborador', 'Selecione um colaborador.');
                 return;
             }
 
             try {
                 await db.collection('pdis').add({
                     titulo: titulo,
-                    descricao: descricao,
+                    competencia: competencia,
+                    objetivo: objetivo,
+                    acoes: acoes,
+                    recursos: recursos.trim(),
+                    indicador: indicador.trim(),
+                    prazo: new Date(prazo + 'T12:00:00'),
+                    prioridade: prioridade,
+                    status: status,
                     colaborador_id: colaboradorId,
                     criador_id: currentUser.id,
-                    status: status,
                     data_criacao: new Date(),
                     atualizacoes: []
                 });
                 invalidateCache('pdis:');
-
                 showToast('success', 'PDI criado!', 'Plano de desenvolvimento registrado com sucesso.');
                 closeModal();
                 loadPDI();
@@ -4691,51 +4610,75 @@
             try {
                 const doc = await db.collection('pdis').doc(pdiId).get();
                 const pdi = doc.data();
+                var si = pdiStatusInfo(pdi.status);
+                var prioClass = pdi.prioridade === 'Alta' ? 'pdi-priority-alta' : pdi.prioridade === 'Média' ? 'pdi-priority-media' : 'pdi-priority-baixa';
 
-                let html = `
-                    <div class="pdi-form-section">
-                        <strong>Título:</strong> ${pdi.titulo}
-                    </div>
-                    <div class="pdi-form-section">
-                        <strong>Descrição:</strong> ${pdi.descricao}
-                    </div>
-                    <div class="pdi-form-section">
-                        <strong>Status:</strong> <span class="badge badge-${pdi.status}">${pdi.status}</span>
-                    </div>
-                    <div class="pdi-form-section">
-                        <strong>Data de Criação:</strong> ${formatDate(pdi.data_criacao)}
-                    </div>
-                `;
+                // Resolve collaborator name
+                var colabNome = pdi.colaborador_id;
+                try {
+                    var colabDoc = await db.collection('usuarios').doc(pdi.colaborador_id).get();
+                    if (colabDoc.exists) colabNome = colabDoc.data().nome || colabDoc.data().email || pdi.colaborador_id;
+                } catch(e) {}
 
-                // Show updates if user is the collaborator or a gestor/analista viewing their team
-                if (currentUser.perfil === 'colaborador' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista' || currentUser.perfil === 'admin') {
-                    html += '<h4 style="margin-top: 20px; margin-bottom: 10px;">Atualizações de Progresso</h4>';
+                var html = '';
 
-                    if (pdi.atualizacoes && pdi.atualizacoes.length > 0) {
-                        pdi.atualizacoes.forEach(update => {
-                            html += '<div class="update-item">';
-                            html += '<strong>' + update.autor + '</strong> - ' + (update.data ? formatDate(update.data) : '') + '<br>';
-                            html += update.texto;
-                            html += '</div>';
-                        });
-                    } else {
-                        html += '<p style="color: #636E72;">Nenhuma atualização ainda.</p>';
-                    }
+                // Section: Informações Gerais
+                html += '<div class="pdi-section-title">📋 Informações Gerais</div>';
+                html += '<div class="pdi-detail-grid">';
+                html += '<div class="pdi-detail-item"><label>Título</label><p>' + (pdi.titulo || '—') + '</p></div>';
+                html += '<div class="pdi-detail-item"><label>Colaborador</label><p>' + colabNome + '</p></div>';
+                html += '<div class="pdi-detail-item"><label>Competência</label><p><span class="pdi-competencia-tag">' + (pdi.competencia || '—') + '</span></p></div>';
+                html += '<div class="pdi-detail-item"><label>Prioridade</label><p><span class="pdi-priority ' + prioClass + '">' + (pdi.prioridade || '—') + '</span></p></div>';
+                html += '<div class="pdi-detail-item"><label>Status</label><p><span class="badge" style="background:' + si.bg + ';color:' + si.color + ';">' + si.label + '</span></p></div>';
+                html += '<div class="pdi-detail-item"><label>Prazo</label><p style="color:' + (pdiPrazoClass(pdi.prazo) === 'overdue' ? '#c62828' : 'inherit') + ';">' + pdiPrazoLabel(pdi.prazo) + (pdiPrazoClass(pdi.prazo) === 'overdue' ? ' (Atrasado)' : '') + '</p></div>';
+                html += '</div>';
 
-                    // Allow adding updates if user is the collaborator
-                    if (currentUser.id === pdi.colaborador_id || currentUser.perfil === 'admin') {
-                        html += '<div class="pdi-form-section" style="margin-top: 20px;">';
-                        html += '<label>Adicionar Atualização:</label>';
-                        html += '<textarea id="novaAtualizacao" placeholder="Descreva o progresso..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; min-height: 80px;"></textarea>';
-                        html += '<button class="btn btn-primary" onclick="addAtualizacaoPDI(\'' + pdiId + '\')" style="margin-top: 10px; width: auto; padding: 8px 16px;">Adicionar Atualização</button>';
+                // Progress bar
+                html += '<div style="margin-bottom:20px;">';
+                html += '<label style="font-size:12px;color:#636E72;font-weight:600;">PROGRESSO</label>';
+                html += '<div class="progress-bar" style="margin-top:4px;height:10px;"><div class="progress-bar-fill" style="width:' + si.progress + '%;background:' + si.color + ';"></div></div>';
+                html += '<p style="font-size:12px;color:#636E72;margin-top:4px;">' + si.progress + '% — ' + si.label + '</p>';
+                html += '</div>';
+
+                // Section: Desenvolvimento
+                html += '<div class="pdi-section-title">🚀 Desenvolvimento</div>';
+                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Objetivo SMART</label><p>' + (pdi.objetivo || pdi.descricao || '—') + '</p></div>';
+                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Ações / Plano de Ação</label><p style="white-space:pre-line;">' + (pdi.acoes || '—') + '</p></div>';
+                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Recursos Necessários</label><p style="white-space:pre-line;">' + (pdi.recursos || '—') + '</p></div>';
+                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Indicador de Sucesso</label><p>' + (pdi.indicador || '—') + '</p></div>';
+
+                // Section: Histórico de Atualizações
+                html += '<div class="pdi-section-title">📝 Histórico de Atualizações</div>';
+                if (pdi.atualizacoes && pdi.atualizacoes.length > 0) {
+                    html += '<div class="pdi-timeline">';
+                    pdi.atualizacoes.slice().reverse().forEach(function(update) {
+                        html += '<div class="pdi-timeline-item">';
+                        html += '<span class="timeline-author">' + (update.autor || 'Usuário') + '</span>';
+                        html += '<span class="timeline-date">' + (update.data ? formatDate(update.data) : '') + '</span>';
+                        html += '<div class="timeline-text">' + (update.texto || '') + '</div>';
                         html += '</div>';
-                    }
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<p style="color: #636E72; font-size:13px;">Nenhuma atualização registrada.</p>';
                 }
 
-                openModal('Visualizar PDI: ' + pdi.titulo, html, [
-                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' },
-                    { text: 'Editar', onclick: 'editPDI("' + pdiId + '")', class: 'btn-primary' }
-                ]);
+                // Add update form
+                if (currentUser.id === pdi.colaborador_id || currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
+                    html += '<div class="pdi-form-section" style="margin-top:16px;">';
+                    html += '<label>Adicionar Atualização:</label>';
+                    html += '<textarea id="novaAtualizacao" placeholder="Descreva o progresso, dificuldades, conquistas..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;min-height:80px;box-sizing:border-box;"></textarea>';
+                    html += '<button class="btn btn-primary" onclick="addAtualizacaoPDI(\'' + pdiId + '\')" style="margin-top:10px;width:auto;padding:8px 16px;">Adicionar Atualização</button>';
+                    html += '</div>';
+                }
+
+                var buttons = [{ text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }];
+                var canEdit = currentUser.perfil === 'admin' || currentUser.id === pdi.colaborador_id || currentUser.id === pdi.criador_id || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista';
+                if (canEdit) {
+                    buttons.push({ text: 'Editar', onclick: 'editPDI("' + pdiId + '")', class: 'btn-primary' });
+                }
+
+                openModal('🎯 PDI: ' + pdi.titulo, html, buttons);
             } catch (error) {
                 console.error('Erro ao visualizar PDI:', error);
                 showToast('error', 'Erro', error.message);
@@ -4751,8 +4694,8 @@
             }
 
             try {
-                const doc = await db.collection('pdis').doc(pdiId).get();
-                const pdi = doc.data();
+                const docSnap = await db.collection('pdis').doc(pdiId).get();
+                const pdi = docSnap.data();
                 const atualizacoes = pdi.atualizacoes || [];
 
                 atualizacoes.push({
@@ -4780,7 +4723,6 @@
                 const docSnap = await db.collection('pdis').doc(pdiId).get();
                 const pdi = docSnap.data();
 
-                // Permissão: admin, gestor do colaborador, ou o próprio colaborador
                 const canEdit = currentUser.perfil === 'admin' ||
                     currentUser.id === pdi.colaborador_id ||
                     currentUser.id === pdi.criador_id ||
@@ -4791,26 +4733,69 @@
                     return;
                 }
 
-                const html = `
-                    <div class="pdi-form-section">
-                        <label>Título:</label>
-                        <input type="text" id="editPdiTitulo" value="${pdi.titulo}">
-                    </div>
-                    <div class="pdi-form-section">
-                        <label>Descrição:</label>
-                        <textarea id="editPdiDescricao">${pdi.descricao || ''}</textarea>
-                    </div>
-                    <div class="pdi-form-section">
-                        <label>Status:</label>
-                        <select id="editPdiStatus">
-                            <option value="pendente" ${pdi.status === 'pendente' ? 'selected' : ''}>Pendente</option>
-                            <option value="em_andamento" ${pdi.status === 'em_andamento' ? 'selected' : ''}>Em Andamento</option>
-                            <option value="concluido" ${pdi.status === 'concluido' ? 'selected' : ''}>Concluído</option>
-                        </select>
-                    </div>
-                `;
+                var prazoVal = '';
+                if (pdi.prazo) {
+                    var pd = pdi.prazo.toDate ? pdi.prazo.toDate() : new Date(pdi.prazo);
+                    prazoVal = pd.toISOString().split('T')[0];
+                }
+
+                var html = '<div class="pdi-form-section">';
+                html += '<label>Título do PDI: *</label>';
+                html += '<input type="text" id="editPdiTitulo" value="' + (pdi.titulo || '').replace(/"/g, '&quot;') + '">';
+                html += '</div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Competência a Desenvolver: *</label>';
+                html += '<select id="editPdiCompetencia">';
+                PDI_COMPETENCIAS.forEach(function(c) {
+                    html += '<option value="' + c + '"' + (pdi.competencia === c ? ' selected' : '') + '>' + c + '</option>';
+                });
+                html += '</select></div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Objetivo SMART: *</label>';
+                html += '<textarea id="editPdiObjetivo">' + (pdi.objetivo || pdi.descricao || '') + '</textarea>';
+                html += '</div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Ações / Plano de Ação: *</label>';
+                html += '<textarea id="editPdiAcoes">' + (pdi.acoes || '') + '</textarea>';
+                html += '</div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Recursos Necessários:</label>';
+                html += '<textarea id="editPdiRecursos">' + (pdi.recursos || '') + '</textarea>';
+                html += '</div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Indicador de Sucesso:</label>';
+                html += '<input type="text" id="editPdiIndicador" value="' + (pdi.indicador || '').replace(/"/g, '&quot;') + '">';
+                html += '</div>';
+
+                html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+                html += '<div class="pdi-form-section">';
+                html += '<label>Prazo: *</label>';
+                html += '<input type="date" id="editPdiPrazo" value="' + prazoVal + '">';
+                html += '</div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Prioridade:</label>';
+                html += '<select id="editPdiPrioridade">';
+                ['Alta', 'Média', 'Baixa'].forEach(function(p) {
+                    html += '<option value="' + p + '"' + (pdi.prioridade === p ? ' selected' : '') + '>' + p + '</option>';
+                });
+                html += '</select></div></div>';
+
+                html += '<div class="pdi-form-section">';
+                html += '<label>Status:</label>';
+                html += '<select id="editPdiStatus">';
+                Object.keys(PDI_STATUS).forEach(function(k) {
+                    html += '<option value="' + k + '"' + (pdi.status === k ? ' selected' : '') + '>' + PDI_STATUS[k].label + '</option>';
+                });
+                html += '</select></div>';
+
                 closeModal();
-                openModal('Editar PDI', html, [
+                openModal('✏️ Editar PDI', html, [
                     { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
                     { text: 'Salvar', onclick: 'saveEditPDI("' + pdiId + '")', class: 'btn-primary' }
                 ]);
@@ -4821,16 +4806,31 @@
         }
 
         async function saveEditPDI(pdiId) {
-            const titulo = document.getElementById('editPdiTitulo').value;
-            const descricao = document.getElementById('editPdiDescricao').value;
-            const status = document.getElementById('editPdiStatus').value;
+            var titulo = document.getElementById('editPdiTitulo').value.trim();
+            var competencia = document.getElementById('editPdiCompetencia').value;
+            var objetivo = document.getElementById('editPdiObjetivo').value.trim();
+            var acoes = document.getElementById('editPdiAcoes').value.trim();
+            var recursos = document.getElementById('editPdiRecursos').value.trim();
+            var indicador = document.getElementById('editPdiIndicador').value.trim();
+            var prazo = document.getElementById('editPdiPrazo').value;
+            var prioridade = document.getElementById('editPdiPrioridade').value;
+            var status = document.getElementById('editPdiStatus').value;
 
-            if (!titulo) { showToast('warn', 'Atenção', 'Título é obrigatório.'); return; }
+            if (!titulo || !competencia || !objetivo || !acoes || !prazo) {
+                showToast('warn', 'Atenção', 'Preencha título, competência, objetivo, ações e prazo.');
+                return;
+            }
 
             try {
                 await db.collection('pdis').doc(pdiId).update({
                     titulo: titulo,
-                    descricao: descricao,
+                    competencia: competencia,
+                    objetivo: objetivo,
+                    acoes: acoes,
+                    recursos: recursos,
+                    indicador: indicador,
+                    prazo: new Date(prazo + 'T12:00:00'),
+                    prioridade: prioridade,
                     status: status
                 });
                 invalidateCache('pdis:');
@@ -4849,6 +4849,7 @@
                     await db.collection('pdis').doc(pdiId).delete();
                     invalidateCache('pdis:');
                     showToast('success', 'PDI deletado', 'Plano removido com sucesso.');
+                    closeModal();
                     loadPDI();
                 } catch (error) {
                     console.error('Erro ao deletar PDI:', error);
@@ -4860,6 +4861,7 @@
         function closePDIForm() {
             closeModal();
         }
+
 
         function openModal(title, body, buttons) {
             document.getElementById('modalTitle').textContent = title;
