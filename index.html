@@ -434,265 +434,342 @@
             color: var(--danger);
         }
 
-        .pdi-form {
+        /* ── Plano de Acompanhamento ── */
+        .evo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .evo-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .evo-stat-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 16px;
+            text-align: center;
             border: 1px solid var(--border);
         }
-
-        .pdi-form-section {
-            margin-bottom: 20px;
+        .evo-stat-card .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
         }
-
-        .pdi-form-section label {
-            display: block;
+        .evo-stat-card .stat-label {
+            font-size: 11px;
+            color: #636E72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .evo-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .evo-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        .evo-card-top {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .evo-card-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        .evo-card-info p {
+            font-size: 13px;
+            color: #636E72;
+            margin: 0;
+        }
+        .evo-card-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .evo-badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
             font-weight: 600;
-            margin-bottom: 8px;
+        }
+        .evo-badge-cargo { background: #e8eaf6; color: #283593; }
+        .evo-badge-depto { background: #e0f2f1; color: #00695c; }
+        .evo-badge-tempo { background: #fff3e0; color: #e65100; }
+        .evo-card-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .evo-card-bottom {
+            background: #f8f9fa;
+            padding: 14px 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: #636E72;
+        }
+        .evo-card-bottom .evo-metric {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .evo-card-bottom .evo-metric strong {
             color: var(--dark);
         }
-
-        .pdi-form-section input,
-        .pdi-form-section textarea,
-        .pdi-form-section select {
+        /* Tabs dentro do plano do colaborador */
+        .evo-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .evo-tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #636E72;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .evo-tab-btn:hover { color: var(--primary); }
+        .evo-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        .evo-section { display: none; }
+        .evo-section.active { display: block; }
+        /* Competências */
+        .comp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+        .comp-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+        .comp-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .comp-card-header h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+        .comp-level {
+            display: flex;
+            gap: 3px;
+        }
+        .comp-level-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e0e0e0;
+        }
+        .comp-level-dot.filled { background: var(--primary); }
+        .comp-level-label {
+            font-size: 11px;
+            color: #636E72;
+            margin-top: 4px;
+        }
+        /* Metas */
+        .meta-item {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+        .meta-item .meta-info {
+            flex: 1;
+        }
+        .meta-item .meta-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0 0 4px;
+        }
+        .meta-item .meta-info p {
+            font-size: 12px;
+            color: #636E72;
+            margin: 0;
+        }
+        .meta-progress {
+            width: 60px;
+            text-align: center;
+        }
+        .meta-progress .pct {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .meta-progress .pct-label {
+            font-size: 10px;
+            color: #636E72;
+        }
+        /* Timeline / Marcos */
+        .evo-timeline {
+            position: relative;
+            padding-left: 28px;
+        }
+        .evo-timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        .evo-timeline-item {
+            position: relative;
+            padding: 14px 0;
+        }
+        .evo-timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--border);
+        }
+        .evo-timeline-item.tipo-avaliacao::before { background: var(--primary); box-shadow: 0 0 0 2px var(--primary); }
+        .evo-timeline-item.tipo-meta::before { background: #2e7d32; box-shadow: 0 0 0 2px #2e7d32; }
+        .evo-timeline-item.tipo-competencia::before { background: #1565c0; box-shadow: 0 0 0 2px #1565c0; }
+        .evo-timeline-item.tipo-marco::before { background: #f57f17; box-shadow: 0 0 0 2px #f57f17; }
+        .evo-timeline-item.tipo-feedback::before { background: #7b1fa2; box-shadow: 0 0 0 2px #7b1fa2; }
+        .evo-timeline-item .tl-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .evo-timeline-item .tl-tipo {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .tl-tipo-avaliacao { background: #ffebee; color: #c62828; }
+        .tl-tipo-meta { background: #e8f5e9; color: #2e7d32; }
+        .tl-tipo-competencia { background: #e3f2fd; color: #1565c0; }
+        .tl-tipo-marco { background: #fff8e1; color: #f57f17; }
+        .tl-tipo-feedback { background: #f3e5f5; color: #7b1fa2; }
+        .evo-timeline-item .tl-date {
+            font-size: 11px;
+            color: #999;
+        }
+        .evo-timeline-item .tl-author {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .evo-timeline-item .tl-text {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+        /* Avaliações periódicas */
+        .aval-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+        .aval-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .aval-card-header h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .aval-card-header .aval-date {
+            font-size: 12px;
+            color: #636E72;
+        }
+        .aval-nota {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 20px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+        .aval-nota.alta { background: #e8f5e9; color: #2e7d32; }
+        .aval-nota.media { background: #fff8e1; color: #f57f17; }
+        .aval-nota.baixa { background: #ffebee; color: #c62828; }
+        .form-section {
+            margin-bottom: 16px;
+        }
+        .form-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--dark);
+            font-size: 13px;
+        }
+        .form-section input,
+        .form-section textarea,
+        .form-section select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-family: inherit;
             font-size: 14px;
-            margin-bottom: 10px;
         }
-
-        .pdi-form-section textarea {
+        .form-section textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 70px;
         }
-
-        .pdi-form-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .pdi-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-            position: relative;
-        }
-        .pdi-card:hover {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-        }
-        .pdi-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        .pdi-card-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 4px;
-        }
-        .pdi-card-meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 10px 0;
-            font-size: 12px;
-            color: #636E72;
-        }
-        .pdi-card-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .pdi-card-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 14px;
-        }
-        .pdi-priority {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-        .pdi-priority-alta { background: #ffebee; color: #c62828; }
-        .pdi-priority-media { background: #fff8e1; color: #f57f17; }
-        .pdi-priority-baixa { background: #e8f5e9; color: #2e7d32; }
-        .pdi-competencia-tag {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 12px;
-            background: #e3f2fd;
-            color: #1565c0;
-            font-weight: 500;
-        }
-        .pdi-section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--dark);
-            margin: 20px 0 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .pdi-detail-grid {
+        .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        .pdi-detail-item {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-        }
-        .pdi-detail-item label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #636E72;
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: block;
-        }
-        .pdi-detail-item p {
-            font-size: 14px;
-            color: var(--dark);
-            margin: 0;
-        }
-        .pdi-timeline {
-            position: relative;
-            padding-left: 24px;
-        }
-        .pdi-timeline::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--border);
-        }
-        .pdi-timeline-item {
-            position: relative;
-            padding: 12px 0;
-            margin-bottom: 8px;
-        }
-        .pdi-timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -20px;
-            top: 18px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 2px solid white;
-        }
-        .pdi-timeline-item .timeline-author {
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--dark);
-        }
-        .pdi-timeline-item .timeline-date {
-            font-size: 11px;
-            color: #636E72;
-            margin-left: 8px;
-        }
-        .pdi-timeline-item .timeline-text {
-            font-size: 13px;
-            color: #555;
-            margin-top: 4px;
-            line-height: 1.5;
-        }
-        .pdi-stats-bar {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .pdi-stat {
-            background: white;
-            border-radius: 12px;
-            padding: 16px 20px;
-            flex: 1;
-            min-width: 120px;
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-        .pdi-stat h4 {
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0 0 4px;
-            color: var(--primary);
-        }
-        .pdi-stat p {
-            font-size: 12px;
-            color: #636E72;
-            margin: 0;
-        }
-        .pdi-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .pdi-filter-btn {
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: white;
-            color: #636E72;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .pdi-filter-btn:hover, .pdi-filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .badge-nao_iniciado {
-            background: #f0f0f0;
-            color: #636E72;
-        }
-
-        .pdi-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .pdi-table th {
-            background: var(--light);
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 13px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .pdi-table td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-        }
-
-        .pdi-table tr:hover {
-            background: var(--light);
+            gap: 14px;
         }
 
         .table-wrapper {
@@ -1417,7 +1494,7 @@
                         <div class="chart-wrap"><canvas id="chartPesquisasMes"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
-                        <h4>🎯 Status dos PDIs</h4>
+                        <h4>📈 Planos de Evolução</h4>
                         <div class="chart-wrap"><canvas id="chartPdiStatus"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
@@ -1787,32 +1864,32 @@
                 { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
                 { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
                 { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
-                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
             ],
             gestor: [
                 { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
                 { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
                 { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
             ],
             diretoria: [
                 { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
                 { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
                 { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
-                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
             ],
             colaborador: [
                 { id: 'questionnairesTab', label: 'Minhas Pesquisas', key: 'questionarios' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-                { id: 'pdiTab', label: 'Meu PDI', key: 'pdi' }
+                { id: 'pdiTab', label: 'Minha Evolução', key: 'pdi' }
             ],
             analista: [
                 { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
                 { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
                 { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
                 { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-                { id: 'pdiTab', label: 'PDI', key: 'pdi' }
+                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
             ]
         };
 
@@ -2050,7 +2127,7 @@
             avaliadores: '📈',
             pesquisas_colab: '📄',
             respostas: '📁',
-            pdi: '🎯'
+            pdi: '📈'
         };
 
         // Initialize
@@ -2894,10 +2971,10 @@
             destroyCharts();
 
             try {
-                var [usuarios, pesquisas, pdis, liberacoes, respostas] = await Promise.all([
+                var [usuarios, pesquisas, evoSnap, liberacoes, respostas] = await Promise.all([
                     cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); }),
                     cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
-                    cachedGet('pdis:all', function() { return db.collection('pdis').get(); }),
+                    cachedGet('evolucao:all', function() { return db.collection('evolucao').get(); }),
                     cachedGet('liberacoes:all', function() { return db.collection('liberacoes').get(); }),
                     cachedGet('respostas:all', function() { return db.collection('respostas').get(); })
                 ]);
@@ -2923,12 +3000,23 @@
                     else libPendentes++;
                 });
 
-                var pdiByStatus = {};
-                var totalPdis = pdis.size;
-                pdis.forEach(function(doc) {
-                    var status = doc.data().status || 'pendente';
-                    pdiByStatus[status] = (pdiByStatus[status] || 0) + 1;
+                var totalEvo = evoSnap.size;
+                var evoNotaSum = 0; var evoNotaCount = 0;
+                var evoNotaDist = { alta: 0, media: 0, baixa: 0 };
+                evoSnap.forEach(function(doc) {
+                    var d = doc.data();
+                    var avals = d.avaliacoes || [];
+                    avals.forEach(function(a) {
+                        if (a.nota) {
+                            evoNotaSum += a.nota;
+                            evoNotaCount++;
+                            if (a.nota >= 7) evoNotaDist.alta++;
+                            else if (a.nota >= 4) evoNotaDist.media++;
+                            else evoNotaDist.baixa++;
+                        }
+                    });
                 });
+                var evoMediaNota = evoNotaCount > 0 ? (evoNotaSum / evoNotaCount).toFixed(1) : '—';
 
                 // Pesquisas por mês (últimos 6 meses)
                 var pesquisasPorMes = {};
@@ -2984,7 +3072,7 @@
                 html += '<div class="stat-card"><div class="stat-icon blue">👥</div><div class="stat-info"><h3>' + totalUsers + '</h3><p>Usuários Cadastrados (' + activeUsers + ' ativos)</p></div></div>';
                 html += '<div class="stat-card"><div class="stat-icon green">📝</div><div class="stat-info"><h3>' + totalSurveys + '</h3><p>Pesquisas Respondidas</p></div></div>';
                 html += '<div class="stat-card"><div class="stat-icon orange">📊</div><div class="stat-info"><h3>' + taxaResposta + '%</h3><p>Taxa de Resposta (' + libRespondidas + '/' + totalLiberacoes + ')</p></div></div>';
-                html += '<div class="stat-card"><div class="stat-icon purple">🎯</div><div class="stat-info"><h3>' + totalPdis + '</h3><p>PDIs (' + (pdiByStatus['concluido'] || 0) + ' concluídos, ' + (pdiByStatus['em_andamento'] || 0) + ' em andamento)</p></div></div>';
+                html += '<div class="stat-card"><div class="stat-icon purple">📈</div><div class="stat-info"><h3>' + totalEvo + '</h3><p>Planos de Evolução (nota média: ' + evoMediaNota + ')</p></div></div>';
                 statsContainer.innerHTML = html;
 
                 // ── Charts ──
@@ -3040,16 +3128,11 @@
                     }
                 });
 
-                // 3) PDI Status (Doughnut)
-                var statusLabels = { pendente: 'Pendente', em_andamento: 'Em Andamento', concluido: 'Concluído', cancelado: 'Cancelado' };
-                var statusColors = { pendente: '#fb8c00', em_andamento: '#1565c0', concluido: '#2e7d32', cancelado: '#c62828' };
-                var pdiLabels = []; var pdiValues = []; var pdiColors = [];
-                Object.keys(pdiByStatus).forEach(function(s) {
-                    pdiLabels.push(statusLabels[s] || s);
-                    pdiValues.push(pdiByStatus[s]);
-                    pdiColors.push(statusColors[s] || '#999');
-                });
-                if (pdiLabels.length === 0) { pdiLabels = ['Nenhum PDI']; pdiValues = [1]; pdiColors = ['#e0e0e0']; }
+                // 3) Evolução das Avaliações (Doughnut)
+                var pdiLabels = ['Alta (7-10)', 'Média (4-6)', 'Baixa (1-3)'];
+                var pdiValues = [evoNotaDist.alta, evoNotaDist.media, evoNotaDist.baixa];
+                var pdiColors = ['#2e7d32', '#f57f17', '#c62828'];
+                if (evoNotaCount === 0) { pdiLabels = ['Sem avaliações']; pdiValues = [1]; pdiColors = ['#e0e0e0']; }
                 dashCharts.pdiStatus = new Chart(document.getElementById('chartPdiStatus'), {
                     type: 'doughnut',
                     data: {
@@ -4168,389 +4251,521 @@
             }
         }
 
-        // ══════════════════════════════════════════════
-        // ══  PDI — PLANO DE DESENVOLVIMENTO INDIVIDUAL
-        // ══════════════════════════════════════════════
+        // ══════════════════════════════════════════════════════
+        // ══  PLANO DE ACOMPANHAMENTO DE EVOLUÇÃO
+        // ══════════════════════════════════════════════════════
 
-        const PDI_STATUS = {
-            'nao_iniciado': { label: 'Não Iniciado', color: '#636E72', bg: '#f0f0f0', progress: 0 },
-            'em_andamento': { label: 'Em Andamento', color: '#1565c0', bg: '#e3f2fd', progress: 50 },
-            'concluido': { label: 'Concluído', color: '#2e7d32', bg: '#e8f5e9', progress: 100 },
-            'cancelado': { label: 'Cancelado', color: '#c62828', bg: '#ffebee', progress: 0 }
+        var COMPETENCIAS_SUGERIDAS = [
+            'Comunicação', 'Liderança', 'Trabalho em Equipe', 'Resolução de Problemas',
+            'Gestão de Tempo', 'Adaptabilidade', 'Criatividade', 'Pensamento Analítico',
+            'Conhecimento Técnico', 'Atendimento ao Cliente', 'Negociação',
+            'Organização', 'Proatividade', 'Inteligência Emocional', 'Outro'
+        ];
+
+        var NIVEL_LABELS = ['Iniciante', 'Básico', 'Intermediário', 'Avançado', 'Especialista'];
+
+        var META_STATUS_LABELS = {
+            'pendente': { label: 'Pendente', bg: '#f0f0f0', color: '#636E72' },
+            'em_andamento': { label: 'Em Andamento', bg: '#e3f2fd', color: '#1565c0' },
+            'concluida': { label: 'Concluída', bg: '#e8f5e9', color: '#2e7d32' },
+            'cancelada': { label: 'Cancelada', bg: '#ffebee', color: '#c62828' }
         };
 
-        const PDI_COMPETENCIAS = ['Comunicação', 'Liderança', 'Técnica', 'Gestão de Tempo', 'Trabalho em Equipe', 'Resolução de Problemas', 'Inovação', 'Outro'];
-
-        function pdiStatusInfo(status) {
-            return PDI_STATUS[status] || PDI_STATUS['nao_iniciado'];
+        function evoNivelDots(nivel) {
+            var html = '<div class="comp-level">';
+            for (var i = 1; i <= 5; i++) {
+                html += '<span class="comp-level-dot' + (i <= nivel ? ' filled' : '') + '"></span>';
+            }
+            html += '</div>';
+            return html;
         }
 
-        function pdiPrazoClass(prazo) {
-            if (!prazo) return '';
-            var d = prazo.toDate ? prazo.toDate() : new Date(prazo);
-            var now = new Date(); now.setHours(0,0,0,0); d.setHours(0,0,0,0);
-            var diff = (d - now) / (1000 * 60 * 60 * 24);
-            if (diff < 0) return 'overdue';
-            if (diff <= 14) return 'upcoming';
-            return 'ok';
+        function evoNotaClass(nota) {
+            if (nota >= 7) return 'alta';
+            if (nota >= 4) return 'media';
+            return 'baixa';
         }
 
-        function pdiPrazoLabel(prazo) {
-            if (!prazo) return '—';
-            var d = prazo.toDate ? prazo.toDate() : new Date(prazo);
-            return formatDate(d);
+        function evoTempoEmpresa(dataAdm) {
+            if (!dataAdm) return '';
+            var d = dataAdm.toDate ? dataAdm.toDate() : new Date(dataAdm);
+            var now = new Date();
+            var diffMs = now - d;
+            var days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            if (days < 30) return days + ' dias';
+            var months = Math.floor(days / 30);
+            if (months < 12) return months + (months === 1 ? ' mês' : ' meses');
+            var years = Math.floor(months / 12);
+            var remMonths = months % 12;
+            return years + (years === 1 ? ' ano' : ' anos') + (remMonths > 0 ? ' e ' + remMonths + 'm' : '');
         }
 
-        function renderPDICard(pdi, id, showColab) {
-            var si = pdiStatusInfo(pdi.status);
-            var prazoC = pdiPrazoClass(pdi.prazo);
-            var prazoColor = prazoC === 'overdue' ? '#c62828' : prazoC === 'upcoming' ? '#f57f17' : '#2e7d32';
-            var prioClass = pdi.prioridade === 'Alta' ? 'pdi-priority-alta' : pdi.prioridade === 'Média' ? 'pdi-priority-media' : 'pdi-priority-baixa';
-            var canDelete = currentUser.perfil === 'admin' || currentUser.id === pdi.criador_id;
+        function renderEvoCard(evo, docId, canEdit) {
+            var comps = evo.competencias || [];
+            var metas = evo.metas || [];
+            var avals = evo.avaliacoes || [];
+            var timeline = evo.timeline || [];
+            var lastAval = avals.length > 0 ? avals[avals.length - 1] : null;
 
-            var html = '<div class="pdi-card">';
-            html += '<div class="pdi-card-header">';
-            html += '<div style="flex:1;">';
-            html += '<div class="pdi-card-title">' + (pdi.titulo || 'Sem título') + '</div>';
-            html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
-            if (pdi.prioridade) html += '<span class="pdi-priority ' + prioClass + '">' + pdi.prioridade + '</span>';
-            if (pdi.competencia) html += '<span class="pdi-competencia-tag">' + pdi.competencia + '</span>';
-            html += '<span class="badge" style="background:' + si.bg + ';color:' + si.color + ';">' + si.label + '</span>';
+            var html = '<div class="evo-card">';
+            html += '<div class="evo-card-top">';
+            html += '<div class="evo-card-info">';
+            html += '<h3>' + (evo.colaborador_nome || '—') + '</h3>';
+            html += '<div class="evo-card-badges">';
+            if (evo.cargo) html += '<span class="evo-badge evo-badge-cargo">' + evo.cargo + '</span>';
+            if (evo.departamento) html += '<span class="evo-badge evo-badge-depto">' + evo.departamento + '</span>';
+            if (evo.data_admissao) html += '<span class="evo-badge evo-badge-tempo">⏱ ' + evoTempoEmpresa(evo.data_admissao) + '</span>';
             html += '</div>';
             html += '</div>';
+            html += '<div class="evo-card-actions">';
+            html += '<button class="btn btn-primary btn-small" onclick="viewEvoPlano(\'' + docId + '\')">📋 Ver Plano</button>';
+            if (canEdit) html += '<button class="btn btn-secondary btn-small" onclick="openEvoForm(\'' + docId + '\')">✏️ Editar</button>';
             html += '</div>';
-
-            // Progress bar
-            html += '<div class="progress-bar"><div class="progress-bar-fill" style="width:' + si.progress + '%;background:' + si.color + ';"></div></div>';
-
-            // Meta info
-            html += '<div class="pdi-card-meta">';
-            if (showColab && pdi.colaborador_nome) html += '<span>👤 ' + pdi.colaborador_nome + '</span>';
-            html += '<span>📅 Criado: ' + formatDate(pdi.data_criacao) + '</span>';
-            if (pdi.prazo) html += '<span style="color:' + prazoColor + ';">⏰ Prazo: ' + pdiPrazoLabel(pdi.prazo) + (prazoC === 'overdue' ? ' (Atrasado)' : '') + '</span>';
-            if (pdi.competencia) html += '<span>📚 ' + pdi.competencia + '</span>';
             html += '</div>';
-
-            // Actions
-            html += '<div class="pdi-card-actions">';
-            html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + id + '\')">Visualizar</button>';
-            html += '<button class="btn btn-secondary btn-small" onclick="editPDI(\'' + id + '\')">Editar</button>';
-            if (canDelete) html += '<button class="btn btn-secondary btn-small" onclick="deletePDI(\'' + id + '\')" style="color:#c62828;">Excluir</button>';
+            html += '<div class="evo-card-bottom">';
+            html += '<div class="evo-metric">🎯 Metas: <strong>' + metas.length + '</strong></div>';
+            html += '<div class="evo-metric">📊 Competências: <strong>' + comps.length + '</strong></div>';
+            if (lastAval) html += '<div class="evo-metric">⭐ Última nota: <strong>' + lastAval.nota + '/10</strong></div>';
+            html += '<div class="evo-metric">📌 Marcos: <strong>' + timeline.length + '</strong></div>';
             html += '</div>';
             html += '</div>';
             return html;
         }
 
-        var _pdiFilter = 'todos';
-
-        function setPDIFilter(f) {
-            _pdiFilter = f;
-            document.querySelectorAll('.pdi-filter-btn').forEach(function(btn) {
-                btn.classList.toggle('active', btn.getAttribute('data-filter') === f);
+        function renderEvoCompetencias(comps, docId, canEdit) {
+            if (!comps || comps.length === 0) {
+                return '<p style="color:#636E72;font-size:13px;">Nenhuma competência registrada.</p>';
+            }
+            var html = '<div class="comp-grid">';
+            comps.forEach(function(c, idx) {
+                html += '<div class="comp-card">';
+                html += '<div class="comp-card-header">';
+                html += '<h4>' + (c.nome || '—') + '</h4>';
+                if (canEdit) html += '<button class="btn btn-secondary btn-small" onclick="editCompetencia(\'' + docId + '\',' + idx + ')" style="padding:2px 8px;font-size:11px;">✏️</button>';
+                html += '</div>';
+                html += evoNivelDots(c.nivel || 0);
+                html += '<div class="comp-level-label">' + (NIVEL_LABELS[(c.nivel || 1) - 1] || '') + '</div>';
+                if (c.descricao) html += '<p style="font-size:12px;color:#636E72;margin-top:6px;">' + c.descricao + '</p>';
+                html += '</div>';
             });
-            // Re-render cards visibility
-            document.querySelectorAll('.pdi-card[data-status]').forEach(function(card) {
-                if (f === 'todos' || card.getAttribute('data-status') === f) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
+            html += '</div>';
+            return html;
+        }
+
+        function renderEvoMetas(metas, docId, canEdit) {
+            if (!metas || metas.length === 0) {
+                return '<p style="color:#636E72;font-size:13px;">Nenhuma meta registrada.</p>';
+            }
+            var html = '';
+            metas.forEach(function(m, idx) {
+                var si = META_STATUS_LABELS[m.status] || META_STATUS_LABELS['pendente'];
+                html += '<div class="meta-item">';
+                html += '<div class="meta-info">';
+                html += '<h4>' + (m.titulo || '—') + ' <span class="badge" style="background:' + si.bg + ';color:' + si.color + ';font-size:10px;">' + si.label + '</span></h4>';
+                html += '<p>' + (m.descricao || '') + '</p>';
+                if (m.prazo) {
+                    var prazoD = m.prazo.toDate ? m.prazo.toDate() : new Date(m.prazo);
+                    html += '<p style="margin-top:4px;">📅 Prazo: ' + formatDate(prazoD) + '</p>';
                 }
+                if (canEdit) html += '<button class="btn btn-secondary btn-small" onclick="editMeta(\'' + docId + '\',' + idx + ')" style="margin-top:6px;padding:2px 8px;font-size:11px;">✏️ Editar</button>';
+                html += '</div>';
+                html += '<div class="meta-progress">';
+                html += '<div class="pct">' + (m.progresso || 0) + '%</div>';
+                html += '<div class="pct-label">progresso</div>';
+                html += '</div>';
+                html += '</div>';
             });
+            return html;
         }
 
-        function renderPDIFilters() {
-            var filters = [
-                { key: 'todos', label: 'Todos' },
-                { key: 'nao_iniciado', label: 'Não Iniciado' },
-                { key: 'em_andamento', label: 'Em Andamento' },
-                { key: 'concluido', label: 'Concluído' },
-                { key: 'cancelado', label: 'Cancelado' }
-            ];
-            var html = '<div class="pdi-filters">';
-            filters.forEach(function(f) {
-                html += '<button class="pdi-filter-btn' + (f.key === _pdiFilter ? ' active' : '') + '" data-filter="' + f.key + '" onclick="setPDIFilter(\'' + f.key + '\')">' + f.label + '</button>';
+        function renderEvoAvaliacoes(avals, docId, canEdit) {
+            if (!avals || avals.length === 0) {
+                return '<p style="color:#636E72;font-size:13px;">Nenhuma avaliação registrada.</p>';
+            }
+            var html = '';
+            avals.slice().reverse().forEach(function(a) {
+                var nc = evoNotaClass(a.nota);
+                html += '<div class="aval-card">';
+                html += '<div class="aval-card-header">';
+                html += '<h4>' + (a.periodo || '—') + '</h4>';
+                var dt = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : null;
+                html += '<span class="aval-date">' + (dt ? formatDate(dt) : '') + '</span>';
+                html += '</div>';
+                html += '<span class="aval-nota ' + nc + '">⭐ ' + a.nota + '/10</span>';
+                if (a.observacoes) html += '<p style="margin-top:10px;font-size:13px;color:#555;line-height:1.5;">' + a.observacoes + '</p>';
+                if (a.autor) html += '<p style="margin-top:6px;font-size:12px;color:#999;">Por: ' + a.autor + '</p>';
+                html += '</div>';
+            });
+            return html;
+        }
+
+        function renderEvoTimeline(timeline) {
+            if (!timeline || timeline.length === 0) {
+                return '<p style="color:#636E72;font-size:13px;">Nenhum registro na timeline.</p>';
+            }
+            var html = '<div class="evo-timeline">';
+            var sorted = timeline.slice().sort(function(a, b) {
+                var da = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : new Date(0);
+                var db2 = b.data ? (b.data.toDate ? b.data.toDate() : new Date(b.data)) : new Date(0);
+                return db2 - da;
+            });
+            sorted.forEach(function(item) {
+                var tipo = item.tipo || 'marco';
+                var dt = item.data ? (item.data.toDate ? item.data.toDate() : new Date(item.data)) : null;
+                html += '<div class="evo-timeline-item tipo-' + tipo + '">';
+                html += '<div class="tl-header">';
+                html += '<span class="tl-tipo tl-tipo-' + tipo + '">' + tipo + '</span>';
+                if (dt) html += '<span class="tl-date">' + formatDate(dt) + '</span>';
+                html += '</div>';
+                if (item.autor) html += '<div class="tl-author">' + item.autor + '</div>';
+                html += '<div class="tl-text">' + (item.texto || '') + '</div>';
+                html += '</div>';
             });
             html += '</div>';
             return html;
         }
 
-        function renderPDIStats(pdis) {
-            var total = pdis.length;
-            var counts = { nao_iniciado: 0, em_andamento: 0, concluido: 0, cancelado: 0 };
-            var overdue = 0;
-            var now = new Date(); now.setHours(0,0,0,0);
-            pdis.forEach(function(p) {
-                var s = p.status || 'nao_iniciado';
-                if (counts[s] !== undefined) counts[s]++;
-                if (p.prazo && s !== 'concluido' && s !== 'cancelado') {
-                    var d = p.prazo.toDate ? p.prazo.toDate() : new Date(p.prazo);
-                    d.setHours(0,0,0,0);
-                    if (d < now) overdue++;
-                }
-            });
-            var html = '<div class="pdi-stats-bar">';
-            html += '<div class="pdi-stat"><h4>' + total + '</h4><p>Total</p></div>';
-            html += '<div class="pdi-stat"><h4 style="color:#636E72;">' + counts.nao_iniciado + '</h4><p>Não Iniciado</p></div>';
-            html += '<div class="pdi-stat"><h4 style="color:#1565c0;">' + counts.em_andamento + '</h4><p>Em Andamento</p></div>';
-            html += '<div class="pdi-stat"><h4 style="color:#2e7d32;">' + counts.concluido + '</h4><p>Concluído</p></div>';
-            html += '<div class="pdi-stat"><h4 style="color:#c62828;">' + overdue + '</h4><p>Atrasados</p></div>';
+        function renderEvoPlanoTabs(evo, docId, canEdit) {
+            var html = '<div class="evo-tabs">';
+            html += '<button class="evo-tab-btn active" onclick="switchEvoTab(\'comp\',this)">Competências</button>';
+            html += '<button class="evo-tab-btn" onclick="switchEvoTab(\'metas\',this)">Metas</button>';
+            html += '<button class="evo-tab-btn" onclick="switchEvoTab(\'aval\',this)">Avaliações</button>';
+            html += '<button class="evo-tab-btn" onclick="switchEvoTab(\'timeline\',this)">Timeline</button>';
             html += '</div>';
+
+            html += '<div class="evo-section active" id="evoSecComp">';
+            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addCompetencia(\'' + docId + '\')" style="margin-bottom:12px;">+ Competência</button>';
+            html += renderEvoCompetencias(evo.competencias, docId, canEdit);
+            html += '</div>';
+
+            html += '<div class="evo-section" id="evoSecMetas">';
+            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addMeta(\'' + docId + '\')" style="margin-bottom:12px;">+ Meta</button>';
+            html += renderEvoMetas(evo.metas, docId, canEdit);
+            html += '</div>';
+
+            html += '<div class="evo-section" id="evoSecAval">';
+            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addAvaliacao(\'' + docId + '\')" style="margin-bottom:12px;">+ Avaliação</button>';
+            html += renderEvoAvaliacoes(evo.avaliacoes, docId, canEdit);
+            html += '</div>';
+
+            html += '<div class="evo-section" id="evoSecTimeline">';
+            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addMarco(\'' + docId + '\')" style="margin-bottom:12px;">+ Registro</button>';
+            html += renderEvoTimeline(evo.timeline);
+            html += '</div>';
+
             return html;
         }
 
-        function renderPDICardWithStatus(pdi, id, showColab) {
-            var si = pdiStatusInfo(pdi.status);
-            var prazoC = pdiPrazoClass(pdi.prazo);
-            var prazoColor = prazoC === 'overdue' ? '#c62828' : prazoC === 'upcoming' ? '#f57f17' : '#2e7d32';
-            var prioClass = pdi.prioridade === 'Alta' ? 'pdi-priority-alta' : pdi.prioridade === 'Média' ? 'pdi-priority-media' : 'pdi-priority-baixa';
-            var canDelete = currentUser.perfil === 'admin' || currentUser.id === pdi.criador_id;
-
-            var html = '<div class="pdi-card" data-status="' + (pdi.status || 'nao_iniciado') + '"' + (_pdiFilter !== 'todos' && (pdi.status || 'nao_iniciado') !== _pdiFilter ? ' style="display:none;"' : '') + '>';
-            html += '<div class="pdi-card-header">';
-            html += '<div style="flex:1;">';
-            html += '<div class="pdi-card-title">' + (pdi.titulo || 'Sem título') + '</div>';
-            html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
-            if (pdi.prioridade) html += '<span class="pdi-priority ' + prioClass + '">' + pdi.prioridade + '</span>';
-            if (pdi.competencia) html += '<span class="pdi-competencia-tag">' + pdi.competencia + '</span>';
-            html += '<span class="badge" style="background:' + si.bg + ';color:' + si.color + ';">' + si.label + '</span>';
-            html += '</div>';
-            html += '</div>';
-            html += '</div>';
-
-            html += '<div class="progress-bar"><div class="progress-bar-fill" style="width:' + si.progress + '%;background:' + si.color + ';"></div></div>';
-
-            html += '<div class="pdi-card-meta">';
-            if (showColab && pdi.colaborador_nome) html += '<span>👤 ' + pdi.colaborador_nome + '</span>';
-            html += '<span>📅 Criado: ' + formatDate(pdi.data_criacao) + '</span>';
-            if (pdi.prazo) html += '<span style="color:' + prazoColor + ';">⏰ Prazo: ' + pdiPrazoLabel(pdi.prazo) + (prazoC === 'overdue' ? ' (Atrasado)' : '') + '</span>';
-            if (pdi.competencia) html += '<span>📚 ' + pdi.competencia + '</span>';
-            html += '</div>';
-
-            html += '<div class="pdi-card-actions">';
-            html += '<button class="btn btn-primary btn-small" onclick="viewPDI(\'' + id + '\')">Visualizar</button>';
-            html += '<button class="btn btn-secondary btn-small" onclick="editPDI(\'' + id + '\')">Editar</button>';
-            if (canDelete) html += '<button class="btn btn-secondary btn-small" onclick="deletePDI(\'' + id + '\')" style="color:#c62828;">Excluir</button>';
-            html += '</div>';
-            html += '</div>';
-            return html;
+        function switchEvoTab(tab, btn) {
+            var sectionMap = { comp: 'evoSecComp', metas: 'evoSecMetas', aval: 'evoSecAval', timeline: 'evoSecTimeline' };
+            document.querySelectorAll('.evo-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.evo-section').forEach(function(s) { s.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+            var sec = document.getElementById(sectionMap[tab]);
+            if (sec) sec.classList.add('active');
         }
 
         async function loadPDI() {
-            const container = document.getElementById('pdiContainer');
+            var container = document.getElementById('pdiContainer');
             container.innerHTML = '<div class="loading"></div>';
-
             try {
                 if (currentUser.perfil === 'colaborador') {
-                    await loadPDIColaborador();
+                    await loadEvoColaborador();
                 } else if (currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
-                    await loadPDIGestorAnalista();
+                    await loadEvoGestor();
                 } else if (currentUser.perfil === 'admin' || currentUser.perfil === 'diretoria') {
-                    await loadPDIAdmin();
+                    await loadEvoAdmin();
                 }
             } catch (error) {
-                console.error('Erro ao carregar PDI:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar PDI</div>';
+                console.error('Erro ao carregar Evolução:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar plano de evolução</div>';
             }
         }
 
-        async function loadPDIColaborador() {
-            const container = document.getElementById('pdiContainer');
+        async function loadEvoAdmin() {
+            var container = document.getElementById('pdiContainer');
+            var db = await getDb();
             try {
-                const pdis = await cachedGet('pdis:user:' + currentUser.id, () =>
-                    db.collection('pdis').where('colaborador_id', '==', currentUser.id).get());
+                var evoSnap = await cachedGet('evolucao:all', function() { return db.collection('evolucao').get(); });
+                var usuariosSnap = await cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); });
 
-                let html = '';
-                if (pdis.empty) {
-                    html = '<div class="alert alert-info">Nenhum PDI encontrado para você.</div>';
+                var userMap = {};
+                usuariosSnap.forEach(function(doc) {
+                    var u = doc.data();
+                    userMap[doc.id] = u;
+                });
+
+                var evoList = [];
+                var totalMetas = 0; var totalNotas = 0; var countNotas = 0;
+                evoSnap.forEach(function(doc) {
+                    var d = doc.data();
+                    if (!d.colaborador_nome && d.colaborador_id && userMap[d.colaborador_id]) {
+                        d.colaborador_nome = userMap[d.colaborador_id].nome || userMap[d.colaborador_id].email || d.colaborador_id;
+                    }
+                    totalMetas += (d.metas || []).length;
+                    (d.avaliacoes || []).forEach(function(a) { if (a.nota) { totalNotas += a.nota; countNotas++; } });
+                    evoList.push({ id: doc.id, data: d });
+                });
+
+                var mediaNotas = countNotas > 0 ? (totalNotas / countNotas).toFixed(1) : '—';
+                var mediaMetas = evoList.length > 0 ? (totalMetas / evoList.length).toFixed(1) : '0';
+
+                var html = '<div class="evo-header">';
+                html += '<h2 style="font-size:20px;font-weight:700;">📈 Plano de Acompanhamento de Evolução</h2>';
+                html += '<button class="btn btn-primary" onclick="openEvoForm()">+ Novo Plano</button>';
+                html += '</div>';
+
+                html += '<div class="evo-stats">';
+                html += '<div class="evo-stat-card"><div class="stat-number">' + evoList.length + '</div><div class="stat-label">Colaboradores com Plano</div></div>';
+                html += '<div class="evo-stat-card"><div class="stat-number">' + mediaMetas + '</div><div class="stat-label">Média de Metas</div></div>';
+                html += '<div class="evo-stat-card"><div class="stat-number">' + mediaNotas + '</div><div class="stat-label">Nota Média</div></div>';
+                html += '</div>';
+
+                if (evoList.length === 0) {
+                    html += '<div class="alert alert-info">Nenhum plano de evolução encontrado.</div>';
                 } else {
-                    var pdiList = [];
-                    pdis.forEach(doc => { pdiList.push({ id: doc.id, ...doc.data() }); });
-                    html += renderPDIStats(pdiList);
-                    html += renderPDIFilters();
-                    pdiList.forEach(function(pdi) {
-                        html += renderPDICardWithStatus(pdi, pdi.id, false);
+                    evoList.forEach(function(item) {
+                        html += renderEvoCard(item.data, item.id, true);
                     });
                 }
                 container.innerHTML = html;
             } catch (error) {
-                console.error('Erro ao carregar PDIs do colaborador:', error);
+                console.error('Erro ao carregar evolução admin:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar dados</div>';
             }
         }
 
-        async function loadPDIGestorAnalista() {
-            const container = document.getElementById('pdiContainer');
+        async function loadEvoGestor() {
+            var container = document.getElementById('pdiContainer');
+            var db = await getDb();
             try {
-                const [myPdis, subordinados] = await Promise.all([
-                    cachedGet('pdis:user:' + currentUser.id, () =>
-                        db.collection('pdis').where('colaborador_id', '==', currentUser.id).get()),
-                    cachedGet('usuarios:subordinados:' + currentUser.id, () =>
-                        db.collection('usuarios').where('gestor_id', '==', currentUser.id).get())
-                ]);
+                var subordinados = await cachedGet('usuarios:subordinados:' + currentUser.id, function() {
+                    return db.collection('usuarios').where('gestor_id', '==', currentUser.id).get();
+                });
 
-                const subordinadoIds = [];
-                const subordinadoMap = {};
-                subordinados.forEach(doc => {
+                var subordinadoIds = [];
+                var subordinadoMap = {};
+                subordinados.forEach(function(doc) {
                     subordinadoIds.push(doc.id);
                     var u = doc.data();
                     subordinadoMap[doc.id] = u.nome || u.email || doc.id;
                 });
 
-                let teamPdis = [];
-                if (subordinadoIds.length > 0) {
-                    const teamDocsSnap = await db.collection('pdis')
-                        .where('colaborador_id', 'in', subordinadoIds)
-                        .get();
-                    teamDocsSnap.forEach(doc => {
-                        var d = doc.data();
-                        d.colaborador_nome = subordinadoMap[d.colaborador_id] || d.colaborador_id;
-                        teamPdis.push({ id: doc.id, ...d });
-                    });
-                }
+                var html = '<div class="evo-header">';
+                html += '<h2 style="font-size:20px;font-weight:700;">📈 Acompanhamento da Equipe</h2>';
+                html += '<button class="btn btn-primary" onclick="openEvoForm()">+ Novo Plano</button>';
+                html += '</div>';
 
-                let html = '<button class="btn btn-primary" onclick="openPDIForm()" style="margin-bottom:20px;">+ Novo PDI</button>';
-
-                // Meu PDI
-                html += '<h3 style="margin-top: 10px; margin-bottom: 15px;">🎯 Meu PDI</h3>';
-                if (myPdis.empty) {
-                    html += '<div class="alert alert-info">Você ainda não tem um PDI.</div>';
+                // Meu plano
+                var myEvo = await cachedGet('evolucao:user:' + currentUser.id, function() {
+                    return db.collection('evolucao').where('colaborador_id', '==', currentUser.id).get();
+                });
+                html += '<h3 style="margin-bottom:15px;">📈 Meu Plano</h3>';
+                if (myEvo.empty) {
+                    html += '<div class="alert alert-info">Você ainda não tem um plano de evolução.</div>';
                 } else {
-                    myPdis.forEach(doc => {
-                        var pdi = doc.data();
-                        html += renderPDICard(pdi, doc.id, false);
+                    myEvo.forEach(function(doc) {
+                        html += renderEvoCard(doc.data(), doc.id, true);
                     });
                 }
 
                 // Equipe
-                html += '<h3 style="margin-top: 30px; margin-bottom: 15px;">👥 PDI da Minha Equipe</h3>';
-                if (teamPdis.length === 0) {
-                    html += '<div class="alert alert-info">Nenhum PDI encontrado para sua equipe.</div>';
+                html += '<h3 style="margin-top:30px;margin-bottom:15px;">👥 Equipe</h3>';
+                if (subordinadoIds.length === 0) {
+                    html += '<div class="alert alert-info">Nenhum subordinado encontrado.</div>';
                 } else {
-                    teamPdis.forEach(function(pdi) {
-                        html += renderPDICard(pdi, pdi.id, true);
-                    });
+                    var teamEvo = [];
+                    // Firestore 'in' supports max 10
+                    for (var i = 0; i < subordinadoIds.length; i += 10) {
+                        var batch = subordinadoIds.slice(i, i + 10);
+                        var snap = await db.collection('evolucao').where('colaborador_id', 'in', batch).get();
+                        snap.forEach(function(doc) {
+                            var d = doc.data();
+                            d.colaborador_nome = subordinadoMap[d.colaborador_id] || d.colaborador_nome || d.colaborador_id;
+                            teamEvo.push({ id: doc.id, data: d });
+                        });
+                    }
+                    if (teamEvo.length === 0) {
+                        html += '<div class="alert alert-info">Nenhum plano de evolução encontrado para sua equipe.</div>';
+                    } else {
+                        teamEvo.forEach(function(item) {
+                            html += renderEvoCard(item.data, item.id, true);
+                        });
+                    }
                 }
 
                 container.innerHTML = html;
             } catch (error) {
-                console.error('Erro ao carregar PDIs do gestor/analista:', error);
+                console.error('Erro ao carregar evolução gestor:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar dados</div>';
             }
         }
 
-        async function loadPDIAdmin() {
-            const container = document.getElementById('pdiContainer');
+        async function loadEvoColaborador() {
+            var container = document.getElementById('pdiContainer');
+            var db = await getDb();
             try {
-                const [pdisSnap, usuariosSnap] = await Promise.all([
-                    cachedGet('pdis:all', () => db.collection('pdis').get()),
-                    cachedGet('usuarios:all', () => db.collection('usuarios').get())
-                ]);
-
-                var userMap = {};
-                usuariosSnap.forEach(function(doc) {
-                    var u = doc.data();
-                    userMap[doc.id] = u.nome || u.email || doc.id;
+                var snap = await cachedGet('evolucao:user:' + currentUser.id, function() {
+                    return db.collection('evolucao').where('colaborador_id', '==', currentUser.id).get();
                 });
 
-                var pdiList = [];
-                pdisSnap.forEach(function(doc) {
-                    var d = doc.data();
-                    d.colaborador_nome = userMap[d.colaborador_id] || d.colaborador_id;
-                    pdiList.push({ id: doc.id, ...d });
-                });
-
-                let html = '<button class="btn btn-primary" onclick="openPDIForm()" style="margin-bottom:20px;">+ Novo PDI</button>';
-                html += renderPDIStats(pdiList);
-                html += renderPDIFilters();
-
-                if (pdiList.length === 0) {
-                    html += '<div class="alert alert-info">Nenhum PDI encontrado.</div>';
-                } else {
-                    pdiList.forEach(function(pdi) {
-                        html += renderPDICardWithStatus(pdi, pdi.id, true);
-                    });
+                if (snap.empty) {
+                    container.innerHTML = '<div class="alert alert-info">Nenhum plano de evolução encontrado para você.</div>';
+                    return;
                 }
+
+                var html = '<h2 style="font-size:20px;font-weight:700;margin-bottom:20px;">📈 Minha Evolução</h2>';
+                snap.forEach(function(doc) {
+                    var evo = doc.data();
+                    var docId = doc.id;
+
+                    // Stats
+                    var comps = evo.competencias || [];
+                    var metas = evo.metas || [];
+                    var avals = evo.avaliacoes || [];
+                    var lastAval = avals.length > 0 ? avals[avals.length - 1] : null;
+                    var metasConcl = metas.filter(function(m) { return m.status === 'concluida'; }).length;
+
+                    html += '<div class="evo-stats">';
+                    html += '<div class="evo-stat-card"><div class="stat-number">' + comps.length + '</div><div class="stat-label">Competências</div></div>';
+                    html += '<div class="evo-stat-card"><div class="stat-number">' + metas.length + '</div><div class="stat-label">Metas</div></div>';
+                    html += '<div class="evo-stat-card"><div class="stat-number">' + metasConcl + '</div><div class="stat-label">Metas Concluídas</div></div>';
+                    html += '<div class="evo-stat-card"><div class="stat-number">' + (lastAval ? lastAval.nota + '/10' : '—') + '</div><div class="stat-label">Última Avaliação</div></div>';
+                    html += '</div>';
+
+                    html += renderEvoPlanoTabs(evo, docId, false);
+                });
 
                 container.innerHTML = html;
             } catch (error) {
-                console.error('Erro ao carregar PDIs do admin:', error);
+                console.error('Erro ao carregar evolução colaborador:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar dados</div>';
             }
         }
 
-        function openPDIForm() {
-            var isAdminOrGestor = currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista' || currentUser.perfil === 'diretoria';
+        async function viewEvoPlano(docId) {
+            var db = await getDb();
+            try {
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                if (!docSnap.exists) { showToast('error', 'Erro', 'Plano não encontrado.'); return; }
+                var evo = docSnap.data();
+                var canEdit = currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista' || currentUser.perfil === 'diretoria';
 
-            var html = '<div class="pdi-form-section">';
-            html += '<label>Título do PDI: *</label>';
-            html += '<input type="text" id="pdiTitulo" placeholder="Ex: Desenvolver habilidades de liderança">';
-            html += '</div>';
+                var html = '';
+                // Header info
+                html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">';
+                if (evo.cargo) html += '<span class="evo-badge evo-badge-cargo">' + evo.cargo + '</span>';
+                if (evo.departamento) html += '<span class="evo-badge evo-badge-depto">' + evo.departamento + '</span>';
+                if (evo.data_admissao) html += '<span class="evo-badge evo-badge-tempo">⏱ ' + evoTempoEmpresa(evo.data_admissao) + '</span>';
+                html += '</div>';
 
-            if (isAdminOrGestor) {
-                html += '<div class="pdi-form-section">';
+                html += renderEvoPlanoTabs(evo, docId, canEdit);
+
+                var buttons = [{ text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }];
+                if (canEdit) {
+                    buttons.push({ text: '🗑 Excluir', onclick: 'deleteEvo("' + docId + '")', class: 'btn-secondary', style: 'color:#c62828;' });
+                }
+
+                openModal('📈 ' + (evo.colaborador_nome || 'Plano de Evolução'), html, buttons);
+            } catch (error) {
+                console.error('Erro ao visualizar plano:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        async function openEvoForm(docId) {
+            var db = await getDb();
+            var isEdit = !!docId;
+            var evo = {};
+
+            if (isEdit) {
+                try {
+                    var docSnap = await db.collection('evolucao').doc(docId).get();
+                    if (docSnap.exists) evo = docSnap.data();
+                } catch(e) {}
+            }
+
+            var html = '';
+
+            if (!isEdit) {
+                html += '<div class="form-section">';
                 html += '<label>Colaborador: *</label>';
-                html += '<select id="pdiColaborador"><option value="">-- Selecione um colaborador --</option></select>';
+                html += '<select id="evoColaborador"><option value="">-- Selecione --</option></select>';
                 html += '</div>';
             }
 
-            html += '<div class="pdi-form-section">';
-            html += '<label>Competência a Desenvolver: *</label>';
-            html += '<select id="pdiCompetencia"><option value="">Selecione...</option>';
-            PDI_COMPETENCIAS.forEach(function(c) { html += '<option value="' + c + '">' + c + '</option>'; });
-            html += '</select></div>';
-
-            html += '<div class="pdi-form-section">';
-            html += '<label>Objetivo SMART: *</label>';
-            html += '<textarea id="pdiObjetivo" placeholder="O que especificamente deseja alcançar? (Específico, Mensurável, Atingível, Relevante, Temporal)"></textarea>';
+            html += '<div class="form-row">';
+            html += '<div class="form-section"><label>Cargo:</label>';
+            html += '<input type="text" id="evoCargo" value="' + ((evo.cargo || '').replace(/"/g, '&quot;')) + '"></div>';
+            html += '<div class="form-section"><label>Departamento:</label>';
+            html += '<input type="text" id="evoDepto" value="' + ((evo.departamento || '').replace(/"/g, '&quot;')) + '"></div>';
             html += '</div>';
 
-            html += '<div class="pdi-form-section">';
-            html += '<label>Ações / Plano de Ação: *</label>';
-            html += '<textarea id="pdiAcoes" placeholder="Passos concretos para atingir o objetivo..."></textarea>';
-            html += '</div>';
+            html += '<div class="form-section"><label>Data de Admissão:</label>';
+            var admVal = '';
+            if (evo.data_admissao) {
+                var ad = evo.data_admissao.toDate ? evo.data_admissao.toDate() : new Date(evo.data_admissao);
+                admVal = ad.toISOString().split('T')[0];
+            }
+            html += '<input type="date" id="evoAdmissao" value="' + admVal + '"></div>';
 
-            html += '<div class="pdi-form-section">';
-            html += '<label>Recursos Necessários:</label>';
-            html += '<textarea id="pdiRecursos" placeholder="Cursos, mentoria, livros, ferramentas..."></textarea>';
-            html += '</div>';
+            if (isEdit) {
+                html += '<h4 style="margin:16px 0 10px;font-size:14px;">Competências atuais: ' + (evo.competencias || []).length + '</h4>';
+                html += '<p style="font-size:12px;color:#636E72;">Use os botões no plano para gerenciar competências individualmente.</p>';
+            } else {
+                html += '<h4 style="margin:16px 0 10px;font-size:14px;">Competências Iniciais</h4>';
+                html += '<div id="evoCompRows">';
+                html += renderEvoCompRow(0);
+                html += '</div>';
+                html += '<button class="btn btn-secondary btn-small" onclick="addEvoCompRow()" style="margin-top:8px;">+ Competência</button>';
+            }
 
-            html += '<div class="pdi-form-section">';
-            html += '<label>Indicador de Sucesso:</label>';
-            html += '<input type="text" id="pdiIndicador" placeholder="Como medir o sucesso deste PDI?">';
-            html += '</div>';
-
-            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
-            html += '<div class="pdi-form-section">';
-            html += '<label>Prazo: *</label>';
-            html += '<input type="date" id="pdiPrazo">';
-            html += '</div>';
-
-            html += '<div class="pdi-form-section">';
-            html += '<label>Prioridade:</label>';
-            html += '<select id="pdiPrioridade"><option value="Média">Média</option><option value="Alta">Alta</option><option value="Baixa">Baixa</option></select>';
-            html += '</div></div>';
-
-            html += '<div class="pdi-form-section">';
-            html += '<label>Status:</label>';
-            html += '<select id="pdiStatus"><option value="nao_iniciado">Não Iniciado</option><option value="em_andamento">Em Andamento</option><option value="concluido">Concluído</option><option value="cancelado">Cancelado</option></select>';
-            html += '</div>';
-
-            openModal('🎯 Novo PDI', html, [
+            var title = isEdit ? '✏️ Editar Plano de Evolução' : '📈 Novo Plano de Evolução';
+            openModal(title, html, [
                 { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'savePDI()', class: 'btn-primary' }
+                { text: 'Salvar', onclick: 'saveEvo(' + (isEdit ? '"' + docId + '"' : '') + ')', class: 'btn-primary' }
             ]);
 
-            if (isAdminOrGestor) loadPDIColaboradorSelect();
+            if (!isEdit) loadEvoColaboradorSelect();
         }
 
-        async function loadPDIColaboradorSelect() {
-            try {
-                const select = document.getElementById('pdiColaborador');
-                if (!select) return;
+        var _evoCompRowCount = 1;
 
-                const usuarios = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
-                usuarios.forEach(doc => {
-                    const option = document.createElement('option');
+        function renderEvoCompRow(idx) {
+            var html = '<div class="form-row" style="margin-bottom:8px;" id="evoCompRow' + idx + '">';
+            html += '<div class="form-section" style="margin-bottom:0;"><select id="evoCompNome' + idx + '">';
+            html += '<option value="">Selecione...</option>';
+            COMPETENCIAS_SUGERIDAS.forEach(function(c) { html += '<option value="' + c + '">' + c + '</option>'; });
+            html += '</select></div>';
+            html += '<div class="form-section" style="margin-bottom:0;display:flex;gap:8px;">';
+            html += '<select id="evoCompNivel' + idx + '" style="width:auto;">';
+            for (var i = 1; i <= 5; i++) { html += '<option value="' + i + '">' + i + ' - ' + NIVEL_LABELS[i-1] + '</option>'; }
+            html += '</select>';
+            html += '<button class="btn btn-secondary btn-small" onclick="document.getElementById(\'evoCompRow' + idx + '\').remove()" style="padding:4px 8px;color:#c62828;">✕</button>';
+            html += '</div></div>';
+            return html;
+        }
+
+        function addEvoCompRow() {
+            var container = document.getElementById('evoCompRows');
+            if (!container) return;
+            var div = document.createElement('div');
+            div.innerHTML = renderEvoCompRow(_evoCompRowCount);
+            container.appendChild(div.firstElementChild);
+            _evoCompRowCount++;
+        }
+
+        async function loadEvoColaboradorSelect() {
+            try {
+                var db = await getDb();
+                var select = document.getElementById('evoColaborador');
+                if (!select) return;
+                var usuarios = await cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); });
+                usuarios.forEach(function(doc) {
+                    var option = document.createElement('option');
                     option.value = doc.id;
-                    const u = doc.data();
-                    option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
+                    var u = doc.data();
+                    option.textContent = (u.nome || u.email || doc.id) + ' (' + (u.perfil || '') + ')';
                     select.appendChild(option);
                 });
             } catch (error) {
@@ -4558,302 +4773,460 @@
             }
         }
 
-        async function savePDI() {
-            var titulo = document.getElementById('pdiTitulo').value.trim();
-            var competencia = document.getElementById('pdiCompetencia').value;
-            var objetivo = document.getElementById('pdiObjetivo').value.trim();
-            var acoes = document.getElementById('pdiAcoes').value.trim();
-            var recursos = (document.getElementById('pdiRecursos') || {}).value || '';
-            var indicador = (document.getElementById('pdiIndicador') || {}).value || '';
-            var prazo = document.getElementById('pdiPrazo').value;
-            var prioridade = document.getElementById('pdiPrioridade').value;
-            var status = document.getElementById('pdiStatus').value;
-            var colabSelect = document.getElementById('pdiColaborador');
-            var colaboradorId = colabSelect ? colabSelect.value : currentUser.id;
+        async function saveEvo(docId) {
+            var db = await getDb();
+            var isEdit = !!docId;
 
-            if (!titulo || !competencia || !objetivo || !acoes || !prazo) {
-                showToast('warn', 'Campos obrigatórios', 'Preencha título, competência, objetivo, ações e prazo.');
+            var cargo = document.getElementById('evoCargo').value.trim();
+            var depto = document.getElementById('evoDepto').value.trim();
+            var admissaoVal = document.getElementById('evoAdmissao').value;
+
+            if (isEdit) {
+                try {
+                    var updateData = {
+                        cargo: cargo,
+                        departamento: depto,
+                        ultima_atualizacao: new Date()
+                    };
+                    if (admissaoVal) updateData.data_admissao = new Date(admissaoVal + 'T12:00:00');
+                    await db.collection('evolucao').doc(docId).update(updateData);
+                    invalidateCache('evolucao:');
+                    showToast('success', 'Plano atualizado!', 'Alterações salvas com sucesso.');
+                    closeModal();
+                    loadPDI();
+                } catch(error) {
+                    console.error('Erro ao salvar plano:', error);
+                    showToast('error', 'Erro', error.message);
+                }
                 return;
             }
+
+            var colabSelect = document.getElementById('evoColaborador');
+            var colaboradorId = colabSelect ? colabSelect.value : '';
+
             if (!colaboradorId) {
-                showToast('warn', 'Colaborador', 'Selecione um colaborador.');
+                showToast('warn', 'Atenção', 'Selecione um colaborador.');
                 return;
+            }
+
+            // Get collaborator name
+            var colabNome = colaboradorId;
+            try {
+                var colabDoc = await db.collection('usuarios').doc(colaboradorId).get();
+                if (colabDoc.exists) colabNome = colabDoc.data().nome || colabDoc.data().email || colaboradorId;
+            } catch(e) {}
+
+            // Collect competencies
+            var competencias = [];
+            for (var i = 0; i < _evoCompRowCount; i++) {
+                var nomeEl = document.getElementById('evoCompNome' + i);
+                var nivelEl = document.getElementById('evoCompNivel' + i);
+                if (nomeEl && nivelEl && nomeEl.value) {
+                    competencias.push({
+                        nome: nomeEl.value,
+                        nivel: parseInt(nivelEl.value) || 1,
+                        descricao: ''
+                    });
+                }
             }
 
             try {
-                await db.collection('pdis').add({
-                    titulo: titulo,
-                    competencia: competencia,
-                    objetivo: objetivo,
-                    acoes: acoes,
-                    recursos: recursos.trim(),
-                    indicador: indicador.trim(),
-                    prazo: new Date(prazo + 'T12:00:00'),
-                    prioridade: prioridade,
-                    status: status,
+                await db.collection('evolucao').add({
                     colaborador_id: colaboradorId,
-                    criador_id: currentUser.id,
+                    colaborador_nome: colabNome,
+                    cargo: cargo,
+                    departamento: depto,
+                    data_admissao: admissaoVal ? new Date(admissaoVal + 'T12:00:00') : null,
+                    competencias: competencias,
+                    metas: [],
+                    avaliacoes: [],
+                    timeline: [{
+                        tipo: 'marco',
+                        texto: 'Plano de evolução criado',
+                        autor: currentUser.nome,
+                        data: new Date()
+                    }],
+                    criado_por: currentUser.id,
                     data_criacao: new Date(),
-                    atualizacoes: []
+                    ultima_atualizacao: new Date()
                 });
-                invalidateCache('pdis:');
-                showToast('success', 'PDI criado!', 'Plano de desenvolvimento registrado com sucesso.');
+                _evoCompRowCount = 1;
+                invalidateCache('evolucao:');
+                showToast('success', 'Plano criado!', 'Plano de evolução registrado com sucesso.');
                 closeModal();
                 loadPDI();
             } catch (error) {
-                console.error('Erro ao criar PDI:', error);
-                showToast('error', 'Erro ao criar PDI', error.message);
+                console.error('Erro ao criar plano:', error);
+                showToast('error', 'Erro ao criar plano', error.message);
             }
         }
 
-        async function viewPDI(pdiId) {
-            try {
-                const doc = await db.collection('pdis').doc(pdiId).get();
-                const pdi = doc.data();
-                var si = pdiStatusInfo(pdi.status);
-                var prioClass = pdi.prioridade === 'Alta' ? 'pdi-priority-alta' : pdi.prioridade === 'Média' ? 'pdi-priority-media' : 'pdi-priority-baixa';
+        function addMeta(docId) {
+            var html = '<div class="form-section"><label>Título da Meta: *</label>';
+            html += '<input type="text" id="metaTitulo" placeholder="Ex: Concluir certificação PMP"></div>';
+            html += '<div class="form-section"><label>Descrição:</label>';
+            html += '<textarea id="metaDescricao" placeholder="Detalhes da meta..."></textarea></div>';
+            html += '<div class="form-row">';
+            html += '<div class="form-section"><label>Prazo:</label>';
+            html += '<input type="date" id="metaPrazo"></div>';
+            html += '<div class="form-section"><label>Progresso (0-100):</label>';
+            html += '<input type="number" id="metaProgresso" min="0" max="100" value="0"></div>';
+            html += '</div>';
+            html += '<div class="form-section"><label>Status:</label>';
+            html += '<select id="metaStatus">';
+            html += '<option value="pendente">Pendente</option>';
+            html += '<option value="em_andamento">Em Andamento</option>';
+            html += '<option value="concluida">Concluída</option>';
+            html += '<option value="cancelada">Cancelada</option>';
+            html += '</select></div>';
 
-                // Resolve collaborator name
-                var colabNome = pdi.colaborador_id;
-                try {
-                    var colabDoc = await db.collection('usuarios').doc(pdi.colaborador_id).get();
-                    if (colabDoc.exists) colabNome = colabDoc.data().nome || colabDoc.data().email || pdi.colaborador_id;
-                } catch(e) {}
-
-                var html = '';
-
-                // Section: Informações Gerais
-                html += '<div class="pdi-section-title">📋 Informações Gerais</div>';
-                html += '<div class="pdi-detail-grid">';
-                html += '<div class="pdi-detail-item"><label>Título</label><p>' + (pdi.titulo || '—') + '</p></div>';
-                html += '<div class="pdi-detail-item"><label>Colaborador</label><p>' + colabNome + '</p></div>';
-                html += '<div class="pdi-detail-item"><label>Competência</label><p><span class="pdi-competencia-tag">' + (pdi.competencia || '—') + '</span></p></div>';
-                html += '<div class="pdi-detail-item"><label>Prioridade</label><p><span class="pdi-priority ' + prioClass + '">' + (pdi.prioridade || '—') + '</span></p></div>';
-                html += '<div class="pdi-detail-item"><label>Status</label><p><span class="badge" style="background:' + si.bg + ';color:' + si.color + ';">' + si.label + '</span></p></div>';
-                html += '<div class="pdi-detail-item"><label>Prazo</label><p style="color:' + (pdiPrazoClass(pdi.prazo) === 'overdue' ? '#c62828' : 'inherit') + ';">' + pdiPrazoLabel(pdi.prazo) + (pdiPrazoClass(pdi.prazo) === 'overdue' ? ' (Atrasado)' : '') + '</p></div>';
-                html += '</div>';
-
-                // Progress bar
-                html += '<div style="margin-bottom:20px;">';
-                html += '<label style="font-size:12px;color:#636E72;font-weight:600;">PROGRESSO</label>';
-                html += '<div class="progress-bar" style="margin-top:4px;height:10px;"><div class="progress-bar-fill" style="width:' + si.progress + '%;background:' + si.color + ';"></div></div>';
-                html += '<p style="font-size:12px;color:#636E72;margin-top:4px;">' + si.progress + '% — ' + si.label + '</p>';
-                html += '</div>';
-
-                // Section: Desenvolvimento
-                html += '<div class="pdi-section-title">🚀 Desenvolvimento</div>';
-                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Objetivo SMART</label><p>' + (pdi.objetivo || pdi.descricao || '—') + '</p></div>';
-                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Ações / Plano de Ação</label><p style="white-space:pre-line;">' + (pdi.acoes || '—') + '</p></div>';
-                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Recursos Necessários</label><p style="white-space:pre-line;">' + (pdi.recursos || '—') + '</p></div>';
-                html += '<div class="pdi-detail-item" style="margin-bottom:12px;"><label>Indicador de Sucesso</label><p>' + (pdi.indicador || '—') + '</p></div>';
-
-                // Section: Histórico de Atualizações
-                html += '<div class="pdi-section-title">📝 Histórico de Atualizações</div>';
-                if (pdi.atualizacoes && pdi.atualizacoes.length > 0) {
-                    html += '<div class="pdi-timeline">';
-                    pdi.atualizacoes.slice().reverse().forEach(function(update) {
-                        html += '<div class="pdi-timeline-item">';
-                        html += '<span class="timeline-author">' + (update.autor || 'Usuário') + '</span>';
-                        html += '<span class="timeline-date">' + (update.data ? formatDate(update.data) : '') + '</span>';
-                        html += '<div class="timeline-text">' + (update.texto || '') + '</div>';
-                        html += '</div>';
-                    });
-                    html += '</div>';
-                } else {
-                    html += '<p style="color: #636E72; font-size:13px;">Nenhuma atualização registrada.</p>';
-                }
-
-                // Add update form
-                if (currentUser.id === pdi.colaborador_id || currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
-                    html += '<div class="pdi-form-section" style="margin-top:16px;">';
-                    html += '<label>Adicionar Atualização:</label>';
-                    html += '<textarea id="novaAtualizacao" placeholder="Descreva o progresso, dificuldades, conquistas..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;min-height:80px;box-sizing:border-box;"></textarea>';
-                    html += '<button class="btn btn-primary" onclick="addAtualizacaoPDI(\'' + pdiId + '\')" style="margin-top:10px;width:auto;padding:8px 16px;">Adicionar Atualização</button>';
-                    html += '</div>';
-                }
-
-                var buttons = [{ text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }];
-                var canEdit = currentUser.perfil === 'admin' || currentUser.id === pdi.colaborador_id || currentUser.id === pdi.criador_id || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista';
-                if (canEdit) {
-                    buttons.push({ text: 'Editar', onclick: 'editPDI("' + pdiId + '")', class: 'btn-primary' });
-                }
-
-                openModal('🎯 PDI: ' + pdi.titulo, html, buttons);
-            } catch (error) {
-                console.error('Erro ao visualizar PDI:', error);
-                showToast('error', 'Erro', error.message);
-            }
+            openModal('🎯 Nova Meta', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveNewMeta("' + docId + '")', class: 'btn-primary' }
+            ]);
         }
 
-        async function addAtualizacaoPDI(pdiId) {
-            const texto = document.getElementById('novaAtualizacao').value;
+        async function saveNewMeta(docId) {
+            var titulo = document.getElementById('metaTitulo').value.trim();
+            if (!titulo) { showToast('warn', 'Atenção', 'Informe o título da meta.'); return; }
 
-            if (!texto.trim()) {
-                showToast('warn', 'Atenção', 'Digite uma atualização antes de salvar.');
-                return;
-            }
-
+            var db = await getDb();
             try {
-                const docSnap = await db.collection('pdis').doc(pdiId).get();
-                const pdi = docSnap.data();
-                const atualizacoes = pdi.atualizacoes || [];
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var metas = evo.metas || [];
+                var timeline = evo.timeline || [];
+                var prazoVal = document.getElementById('metaPrazo').value;
 
-                atualizacoes.push({
+                metas.push({
+                    titulo: titulo,
+                    descricao: document.getElementById('metaDescricao').value.trim(),
+                    prazo: prazoVal ? new Date(prazoVal + 'T12:00:00') : null,
+                    progresso: parseInt(document.getElementById('metaProgresso').value) || 0,
+                    status: document.getElementById('metaStatus').value
+                });
+
+                timeline.push({
+                    tipo: 'meta',
+                    texto: 'Meta adicionada: ' + titulo,
                     autor: currentUser.nome,
-                    texto: texto,
                     data: new Date()
                 });
 
-                await db.collection('pdis').doc(pdiId).update({
-                    atualizacoes: atualizacoes
-                });
-                invalidateCache('pdis:');
-
-                showToast('success', 'Adicionada!', 'Atualização registrada com sucesso.');
+                await db.collection('evolucao').doc(docId).update({ metas: metas, timeline: timeline, ultima_atualizacao: new Date() });
+                invalidateCache('evolucao:');
+                showToast('success', 'Meta adicionada!', '');
                 closeModal();
-                viewPDI(pdiId);
+                viewEvoPlano(docId);
             } catch (error) {
-                console.error('Erro ao adicionar atualização:', error);
+                console.error('Erro ao adicionar meta:', error);
                 showToast('error', 'Erro', error.message);
             }
         }
 
-        async function editPDI(pdiId) {
+        async function editMeta(docId, metaIndex) {
+            var db = await getDb();
             try {
-                const docSnap = await db.collection('pdis').doc(pdiId).get();
-                const pdi = docSnap.data();
-
-                const canEdit = currentUser.perfil === 'admin' ||
-                    currentUser.id === pdi.colaborador_id ||
-                    currentUser.id === pdi.criador_id ||
-                    currentUser.perfil === 'gestor' || currentUser.perfil === 'analista';
-
-                if (!canEdit) {
-                    showToast('error', 'Sem permissão', 'Você não tem permissão para editar este PDI.');
-                    return;
-                }
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var meta = (evo.metas || [])[metaIndex];
+                if (!meta) { showToast('error', 'Erro', 'Meta não encontrada.'); return; }
 
                 var prazoVal = '';
-                if (pdi.prazo) {
-                    var pd = pdi.prazo.toDate ? pdi.prazo.toDate() : new Date(pdi.prazo);
+                if (meta.prazo) {
+                    var pd = meta.prazo.toDate ? meta.prazo.toDate() : new Date(meta.prazo);
                     prazoVal = pd.toISOString().split('T')[0];
                 }
 
-                var html = '<div class="pdi-form-section">';
-                html += '<label>Título do PDI: *</label>';
-                html += '<input type="text" id="editPdiTitulo" value="' + (pdi.titulo || '').replace(/"/g, '&quot;') + '">';
+                var html = '<div class="form-section"><label>Título da Meta: *</label>';
+                html += '<input type="text" id="metaTitulo" value="' + (meta.titulo || '').replace(/"/g, '&quot;') + '"></div>';
+                html += '<div class="form-section"><label>Descrição:</label>';
+                html += '<textarea id="metaDescricao">' + (meta.descricao || '') + '</textarea></div>';
+                html += '<div class="form-row">';
+                html += '<div class="form-section"><label>Prazo:</label>';
+                html += '<input type="date" id="metaPrazo" value="' + prazoVal + '"></div>';
+                html += '<div class="form-section"><label>Progresso (0-100):</label>';
+                html += '<input type="number" id="metaProgresso" min="0" max="100" value="' + (meta.progresso || 0) + '"></div>';
                 html += '</div>';
-
-                html += '<div class="pdi-form-section">';
-                html += '<label>Competência a Desenvolver: *</label>';
-                html += '<select id="editPdiCompetencia">';
-                PDI_COMPETENCIAS.forEach(function(c) {
-                    html += '<option value="' + c + '"' + (pdi.competencia === c ? ' selected' : '') + '>' + c + '</option>';
+                html += '<div class="form-section"><label>Status:</label>';
+                html += '<select id="metaStatus">';
+                ['pendente', 'em_andamento', 'concluida', 'cancelada'].forEach(function(s) {
+                    var si = META_STATUS_LABELS[s];
+                    html += '<option value="' + s + '"' + (meta.status === s ? ' selected' : '') + '>' + si.label + '</option>';
                 });
                 html += '</select></div>';
 
-                html += '<div class="pdi-form-section">';
-                html += '<label>Objetivo SMART: *</label>';
-                html += '<textarea id="editPdiObjetivo">' + (pdi.objetivo || pdi.descricao || '') + '</textarea>';
-                html += '</div>';
-
-                html += '<div class="pdi-form-section">';
-                html += '<label>Ações / Plano de Ação: *</label>';
-                html += '<textarea id="editPdiAcoes">' + (pdi.acoes || '') + '</textarea>';
-                html += '</div>';
-
-                html += '<div class="pdi-form-section">';
-                html += '<label>Recursos Necessários:</label>';
-                html += '<textarea id="editPdiRecursos">' + (pdi.recursos || '') + '</textarea>';
-                html += '</div>';
-
-                html += '<div class="pdi-form-section">';
-                html += '<label>Indicador de Sucesso:</label>';
-                html += '<input type="text" id="editPdiIndicador" value="' + (pdi.indicador || '').replace(/"/g, '&quot;') + '">';
-                html += '</div>';
-
-                html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
-                html += '<div class="pdi-form-section">';
-                html += '<label>Prazo: *</label>';
-                html += '<input type="date" id="editPdiPrazo" value="' + prazoVal + '">';
-                html += '</div>';
-
-                html += '<div class="pdi-form-section">';
-                html += '<label>Prioridade:</label>';
-                html += '<select id="editPdiPrioridade">';
-                ['Alta', 'Média', 'Baixa'].forEach(function(p) {
-                    html += '<option value="' + p + '"' + (pdi.prioridade === p ? ' selected' : '') + '>' + p + '</option>';
-                });
-                html += '</select></div></div>';
-
-                html += '<div class="pdi-form-section">';
-                html += '<label>Status:</label>';
-                html += '<select id="editPdiStatus">';
-                Object.keys(PDI_STATUS).forEach(function(k) {
-                    html += '<option value="' + k + '"' + (pdi.status === k ? ' selected' : '') + '>' + PDI_STATUS[k].label + '</option>';
-                });
-                html += '</select></div>';
-
-                closeModal();
-                openModal('✏️ Editar PDI', html, [
+                openModal('✏️ Editar Meta', html, [
                     { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                    { text: 'Salvar', onclick: 'saveEditPDI("' + pdiId + '")', class: 'btn-primary' }
+                    { text: 'Salvar', onclick: 'saveEditMeta("' + docId + '",' + metaIndex + ')', class: 'btn-primary' }
                 ]);
-            } catch(error) {
-                console.error('Erro ao abrir edição PDI:', error);
+            } catch (error) {
+                console.error('Erro:', error);
                 showToast('error', 'Erro', error.message);
             }
         }
 
-        async function saveEditPDI(pdiId) {
-            var titulo = document.getElementById('editPdiTitulo').value.trim();
-            var competencia = document.getElementById('editPdiCompetencia').value;
-            var objetivo = document.getElementById('editPdiObjetivo').value.trim();
-            var acoes = document.getElementById('editPdiAcoes').value.trim();
-            var recursos = document.getElementById('editPdiRecursos').value.trim();
-            var indicador = document.getElementById('editPdiIndicador').value.trim();
-            var prazo = document.getElementById('editPdiPrazo').value;
-            var prioridade = document.getElementById('editPdiPrioridade').value;
-            var status = document.getElementById('editPdiStatus').value;
+        async function saveEditMeta(docId, metaIndex) {
+            var titulo = document.getElementById('metaTitulo').value.trim();
+            if (!titulo) { showToast('warn', 'Atenção', 'Informe o título.'); return; }
 
-            if (!titulo || !competencia || !objetivo || !acoes || !prazo) {
-                showToast('warn', 'Atenção', 'Preencha título, competência, objetivo, ações e prazo.');
-                return;
-            }
-
+            var db = await getDb();
             try {
-                await db.collection('pdis').doc(pdiId).update({
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var metas = evo.metas || [];
+                var timeline = evo.timeline || [];
+                var prazoVal = document.getElementById('metaPrazo').value;
+
+                metas[metaIndex] = {
                     titulo: titulo,
-                    competencia: competencia,
-                    objetivo: objetivo,
-                    acoes: acoes,
-                    recursos: recursos,
-                    indicador: indicador,
-                    prazo: new Date(prazo + 'T12:00:00'),
-                    prioridade: prioridade,
-                    status: status
+                    descricao: document.getElementById('metaDescricao').value.trim(),
+                    prazo: prazoVal ? new Date(prazoVal + 'T12:00:00') : null,
+                    progresso: parseInt(document.getElementById('metaProgresso').value) || 0,
+                    status: document.getElementById('metaStatus').value
+                };
+
+                timeline.push({
+                    tipo: 'meta',
+                    texto: 'Meta atualizada: ' + titulo,
+                    autor: currentUser.nome,
+                    data: new Date()
                 });
-                invalidateCache('pdis:');
-                showToast('success', 'PDI atualizado!', 'Alterações salvas com sucesso.');
+
+                await db.collection('evolucao').doc(docId).update({ metas: metas, timeline: timeline, ultima_atualizacao: new Date() });
+                invalidateCache('evolucao:');
+                showToast('success', 'Meta atualizada!', '');
                 closeModal();
-                loadPDI();
-            } catch(error) {
-                console.error('Erro ao salvar PDI:', error);
-                showToast('error', 'Erro ao salvar', error.message);
+                viewEvoPlano(docId);
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('error', 'Erro', error.message);
             }
         }
 
-        async function deletePDI(pdiId) {
-            showConfirm('⚠️', 'Deletar PDI', 'Tem certeza que deseja deletar este plano de desenvolvimento? Esta ação é irreversível.', 'Deletar', async function() {
+        function addAvaliacao(docId) {
+            var html = '<div class="form-section"><label>Período: *</label>';
+            html += '<input type="text" id="avalPeriodo" placeholder="Ex: Q3 2026, Out/2026"></div>';
+            html += '<div class="form-section"><label>Nota (1-10): *</label>';
+            html += '<input type="number" id="avalNota" min="1" max="10" value="5"></div>';
+            html += '<div class="form-section"><label>Observações:</label>';
+            html += '<textarea id="avalObs" placeholder="Comentários sobre o desempenho..."></textarea></div>';
+
+            openModal('⭐ Nova Avaliação', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveNewAvaliacao("' + docId + '")', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveNewAvaliacao(docId) {
+            var periodo = document.getElementById('avalPeriodo').value.trim();
+            var nota = parseInt(document.getElementById('avalNota').value);
+            if (!periodo) { showToast('warn', 'Atenção', 'Informe o período.'); return; }
+            if (!nota || nota < 1 || nota > 10) { showToast('warn', 'Atenção', 'Nota deve ser entre 1 e 10.'); return; }
+
+            var db = await getDb();
+            try {
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var avaliacoes = evo.avaliacoes || [];
+                var timeline = evo.timeline || [];
+
+                avaliacoes.push({
+                    periodo: periodo,
+                    nota: nota,
+                    observacoes: document.getElementById('avalObs').value.trim(),
+                    autor: currentUser.nome,
+                    data: new Date()
+                });
+
+                timeline.push({
+                    tipo: 'avaliacao',
+                    texto: 'Avaliação ' + periodo + ': nota ' + nota + '/10',
+                    autor: currentUser.nome,
+                    data: new Date()
+                });
+
+                await db.collection('evolucao').doc(docId).update({ avaliacoes: avaliacoes, timeline: timeline, ultima_atualizacao: new Date() });
+                invalidateCache('evolucao:');
+                showToast('success', 'Avaliação registrada!', '');
+                closeModal();
+                viewEvoPlano(docId);
+            } catch (error) {
+                console.error('Erro ao adicionar avaliação:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        function addCompetencia(docId) {
+            var html = '<div class="form-section"><label>Competência: *</label>';
+            html += '<select id="compNome"><option value="">Selecione...</option>';
+            COMPETENCIAS_SUGERIDAS.forEach(function(c) { html += '<option value="' + c + '">' + c + '</option>'; });
+            html += '</select></div>';
+            html += '<div class="form-section"><label>Nível (1-5): *</label>';
+            html += '<select id="compNivel">';
+            for (var i = 1; i <= 5; i++) { html += '<option value="' + i + '">' + i + ' - ' + NIVEL_LABELS[i-1] + '</option>'; }
+            html += '</select></div>';
+            html += '<div class="form-section"><label>Descrição:</label>';
+            html += '<textarea id="compDesc" placeholder="Observações sobre essa competência..."></textarea></div>';
+
+            openModal('📊 Nova Competência', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveNewCompetencia("' + docId + '")', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveNewCompetencia(docId) {
+            var nome = document.getElementById('compNome').value;
+            if (!nome) { showToast('warn', 'Atenção', 'Selecione uma competência.'); return; }
+
+            var db = await getDb();
+            try {
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var competencias = evo.competencias || [];
+                var timeline = evo.timeline || [];
+                var nivel = parseInt(document.getElementById('compNivel').value) || 1;
+
+                competencias.push({
+                    nome: nome,
+                    nivel: nivel,
+                    descricao: document.getElementById('compDesc').value.trim()
+                });
+
+                timeline.push({
+                    tipo: 'competencia',
+                    texto: 'Competência adicionada: ' + nome + ' (Nível ' + nivel + ' - ' + NIVEL_LABELS[nivel-1] + ')',
+                    autor: currentUser.nome,
+                    data: new Date()
+                });
+
+                await db.collection('evolucao').doc(docId).update({ competencias: competencias, timeline: timeline, ultima_atualizacao: new Date() });
+                invalidateCache('evolucao:');
+                showToast('success', 'Competência adicionada!', '');
+                closeModal();
+                viewEvoPlano(docId);
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        async function editCompetencia(docId, compIndex) {
+            var db = await getDb();
+            try {
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var comp = (evo.competencias || [])[compIndex];
+                if (!comp) { showToast('error', 'Erro', 'Competência não encontrada.'); return; }
+
+                var html = '<div class="form-section"><label>Competência:</label>';
+                html += '<input type="text" id="compNome" value="' + (comp.nome || '').replace(/"/g, '&quot;') + '" readonly style="background:#f0f0f0;"></div>';
+                html += '<div class="form-section"><label>Nível (1-5): *</label>';
+                html += '<select id="compNivel">';
+                for (var i = 1; i <= 5; i++) { html += '<option value="' + i + '"' + (comp.nivel === i ? ' selected' : '') + '>' + i + ' - ' + NIVEL_LABELS[i-1] + '</option>'; }
+                html += '</select></div>';
+                html += '<div class="form-section"><label>Descrição:</label>';
+                html += '<textarea id="compDesc">' + (comp.descricao || '') + '</textarea></div>';
+
+                openModal('✏️ Editar Competência', html, [
+                    { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: 'Salvar', onclick: 'saveEditCompetencia("' + docId + '",' + compIndex + ')', class: 'btn-primary' }
+                ]);
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        async function saveEditCompetencia(docId, compIndex) {
+            var db = await getDb();
+            try {
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var competencias = evo.competencias || [];
+                var timeline = evo.timeline || [];
+                var oldNivel = competencias[compIndex].nivel;
+                var newNivel = parseInt(document.getElementById('compNivel').value) || 1;
+
+                competencias[compIndex].nivel = newNivel;
+                competencias[compIndex].descricao = document.getElementById('compDesc').value.trim();
+
+                if (oldNivel !== newNivel) {
+                    timeline.push({
+                        tipo: 'competencia',
+                        texto: competencias[compIndex].nome + ': nível ' + oldNivel + ' → ' + newNivel + ' (' + NIVEL_LABELS[newNivel-1] + ')',
+                        autor: currentUser.nome,
+                        data: new Date()
+                    });
+                }
+
+                await db.collection('evolucao').doc(docId).update({ competencias: competencias, timeline: timeline, ultima_atualizacao: new Date() });
+                invalidateCache('evolucao:');
+                showToast('success', 'Competência atualizada!', '');
+                closeModal();
+                viewEvoPlano(docId);
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        function addMarco(docId) {
+            var html = '<div class="form-section"><label>Tipo: *</label>';
+            html += '<select id="marcoTipo">';
+            html += '<option value="marco">Marco</option>';
+            html += '<option value="feedback">Feedback</option>';
+            html += '</select></div>';
+            html += '<div class="form-section"><label>Descrição: *</label>';
+            html += '<textarea id="marcoTexto" placeholder="Descreva o marco ou feedback..."></textarea></div>';
+
+            openModal('📌 Novo Registro', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveNewMarco("' + docId + '")', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveNewMarco(docId) {
+            var texto = document.getElementById('marcoTexto').value.trim();
+            var tipo = document.getElementById('marcoTipo').value;
+            if (!texto) { showToast('warn', 'Atenção', 'Informe a descrição.'); return; }
+
+            var db = await getDb();
+            try {
+                var docSnap = await db.collection('evolucao').doc(docId).get();
+                var evo = docSnap.data();
+                var timeline = evo.timeline || [];
+
+                timeline.push({
+                    tipo: tipo,
+                    texto: texto,
+                    autor: currentUser.nome,
+                    data: new Date()
+                });
+
+                await db.collection('evolucao').doc(docId).update({ timeline: timeline, ultima_atualizacao: new Date() });
+                invalidateCache('evolucao:');
+                showToast('success', 'Registro adicionado!', '');
+                closeModal();
+                viewEvoPlano(docId);
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        function deleteEvo(docId) {
+            showConfirm('⚠️', 'Excluir Plano', 'Tem certeza que deseja excluir este plano de evolução? Esta ação é irreversível.', 'Excluir', async function() {
+                var db = await getDb();
                 try {
-                    await db.collection('pdis').doc(pdiId).delete();
-                    invalidateCache('pdis:');
-                    showToast('success', 'PDI deletado', 'Plano removido com sucesso.');
+                    await db.collection('evolucao').doc(docId).delete();
+                    invalidateCache('evolucao:');
+                    showToast('success', 'Plano excluído', 'Plano de evolução removido com sucesso.');
                     closeModal();
                     loadPDI();
                 } catch (error) {
-                    console.error('Erro ao deletar PDI:', error);
-                    showToast('error', 'Erro ao deletar', error.message);
+                    console.error('Erro ao excluir plano:', error);
+                    showToast('error', 'Erro', error.message);
                 }
             });
         }
