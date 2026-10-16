@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://www.googleapis.com" crossorigin>
     <link rel="dns-prefetch" href="https://firestore.googleapis.com">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script async src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -1437,6 +1437,236 @@
         .confirm-box .btn-confirm-action { background: var(--primary); color: #fff; }
         .confirm-box .btn-confirm-action:hover { background: var(--primary-dark); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Fichas */
+        .ficha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .ficha-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .ficha-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        .ficha-card-top {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .ficha-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .ficha-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .ficha-info h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 0 2px;
+        }
+        .ficha-info p {
+            font-size: 12px;
+            color: #636E72;
+            margin: 0;
+        }
+        .ficha-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .ficha-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: auto;
+        }
+        .ficha-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .ficha-search input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        /* View ficha detail */
+        .ficha-detail-header {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .ficha-detail-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: 700;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .ficha-detail-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .ficha-detail-info h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+        }
+        .ficha-detail-info p {
+            margin: 0;
+            color: #636E72;
+            font-size: 13px;
+        }
+        .ficha-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .ficha-detail-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .ficha-detail-item label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #636E72;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .ficha-detail-item p {
+            font-size: 14px;
+            color: var(--dark);
+            margin: 0;
+        }
+        /* Promoção */
+        .promo-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 14px;
+            transition: all 0.2s;
+        }
+        .promo-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .promo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .promo-card-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .promo-counts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .promo-count-badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .promo-tipo-ponto_positivo { background: #e8f5e9; color: #2e7d32; }
+        .promo-tipo-ponto_negativo { background: #ffebee; color: #c62828; }
+        .promo-tipo-inconsistencia_ponto { background: #fff8e1; color: #f57f17; }
+        .promo-tipo-feedback { background: #f3e5f5; color: #7b1fa2; }
+        .promo-timeline-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+        }
+        .promo-timeline-item.tipo-ponto_positivo { border-left-color: #2e7d32; background: #f9fdf9; }
+        .promo-timeline-item.tipo-ponto_negativo { border-left-color: #c62828; background: #fff9f9; }
+        .promo-timeline-item.tipo-inconsistencia_ponto { border-left-color: #f57f17; background: #fffdf5; }
+        .promo-timeline-item.tipo-feedback { border-left-color: #7b1fa2; background: #fdf5ff; }
+        .promo-timeline-item .promo-tipo-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .promo-timeline-item .promo-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        .promo-timeline-item .promo-meta {
+            font-size: 11px;
+            color: #999;
+        }
+        .promo-filters {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .promo-filter-btn {
+            padding: 5px 12px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: white;
+            color: #636E72;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .promo-filter-btn:hover, .promo-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -1494,7 +1724,7 @@
                         <div class="chart-wrap"><canvas id="chartPesquisasMes"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
-                        <h4>📈 Planos de Evolução</h4>
+                        <h4>⭐ Avaliações Promoção</h4>
                         <div class="chart-wrap"><canvas id="chartPdiStatus"></canvas></div>
                     </div>
                     <div class="dash-chart-card">
@@ -1505,38 +1735,9 @@
                 <div id="dashboardContent"></div>
             </div>
 
-            <!-- Questionários Tab -->
-            <div id="questionnairesTab" class="tab-content">
-                <div id="questionnairesContainer"></div>
-            </div>
-
-            <!-- Avaliações Tab -->
-            <div id="evaluationsTab" class="tab-content">
-                <div class="collaborator-select">
-                    <label for="collaboratorSelect">Selecione um colaborador:</label>
-                    <select id="collaboratorSelect" onchange="loadEvaluationsForCollaborator()"></select>
-                </div>
-                <div id="evaluationsContainer"></div>
-            </div>
-
-            <!-- Subordinados Tab -->
-            <div id="subordinatesTab" class="tab-content">
-                <div id="subordinatesContainer"></div>
-            </div>
-
-            <!-- Respostas Tab -->
-            <div id="respostasTab" class="tab-content">
-                <div id="respostasContainer"></div>
-            </div>
-
-            <!-- Gestores Tab -->
-            <div id="gestoresTab" class="tab-content">
-                <div id="gestoresContainer"></div>
-            </div>
-
-            <!-- Pesquisas Colaborador Tab -->
-            <div id="pesquisasColabTab" class="tab-content">
-                <div id="pesquisasColabContainer"></div>
+            <!-- Fichas Tab -->
+            <div id="fichasTab" class="tab-content">
+                <div id="fichasContainer"></div>
             </div>
 
             <!-- Liberar Pesquisas Tab -->
@@ -1552,10 +1753,9 @@
                 <div id="pesquisasContainer"></div>
             </div>
 
-            <!-- Colaboradores Tab -->
-            <div id="colaboradoresTab" class="tab-content">
-                <button class="btn btn-primary" onclick="loadColaboradores()">Atualizar</button>
-                <div id="colaboradoresContainer"></div>
+            <!-- Promoção Tab -->
+            <div id="promocaoTab" class="tab-content">
+                <div id="promocaoContainer"></div>
             </div>
 
             <!-- Usuários Tab -->
@@ -1569,10 +1769,6 @@
                 <div id="usuariosContainer"></div>
             </div>
 
-            <!-- PDI Tab -->
-            <div id="pdiTab" class="tab-content">
-                <div id="pdiContainer"></div>
-            </div>
         </div>
     </div>
 
@@ -1857,258 +2053,99 @@
         // TABS Configuration
         const TABS = {
             admin: [
-                { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
-                { id: 'evaluationsTab', label: 'Avaliações da Empresa', key: 'avaliações' },
+                { id: 'fichasTab', label: 'Colaboradores', key: 'fichas' },
                 { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
-                { id: 'liberacoesTab', label: 'Liberar Pesquisas', key: 'liberacoes' },
-                { id: 'pesquisasTab', label: 'Pesquisas', key: 'pesquisas' },
-                { id: 'colaboradoresTab', label: 'Colaboradores', key: 'colaboradores' },
-                { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' },
-                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
+                { id: 'liberacoesTab', label: 'Pesquisas', key: 'liberacoes' },
+                { id: 'pesquisasTab', label: 'Respostas', key: 'pesquisas' },
+                { id: 'promocaoTab', label: 'Avaliação Promoção', key: 'promocao' },
+                { id: 'usuariosTab', label: 'Usuários', key: 'usuarios' }
             ],
             gestor: [
-                { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
-                { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
-                { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
-                { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
-            ],
-            diretoria: [
-                { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
-                { id: 'gestoresTab', label: 'Avaliações dos Gestores', key: 'avaliadores' },
-                { id: 'pesquisasColabTab', label: 'Pesquisas dos Colaboradores', key: 'pesquisas_colab' },
-                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
-            ],
-            colaborador: [
-                { id: 'questionnairesTab', label: 'Minhas Pesquisas', key: 'questionarios' },
-                { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-                { id: 'pdiTab', label: 'Minha Evolução', key: 'pdi' }
+                { id: 'fichasTab', label: 'Minha Equipe', key: 'fichas' },
+                { id: 'liberacoesTab', label: 'Pesquisas', key: 'liberacoes' },
+                { id: 'pesquisasTab', label: 'Respostas', key: 'pesquisas' },
+                { id: 'promocaoTab', label: 'Avaliação Promoção', key: 'promocao' }
             ],
             analista: [
-                { id: 'questionnairesTab', label: 'Sua Equipe', key: 'questionarios' },
-                { id: 'evaluationsTab', label: 'Avaliar Equipe', key: 'avaliações' },
-                { id: 'subordinatesTab', label: 'Meus Subordinados', key: 'subordinados' },
-                { id: 'respostasTab', label: 'Minhas Respostas', key: 'respostas' },
-                { id: 'pdiTab', label: 'Acompanhamento', key: 'pdi' }
+                { id: 'fichasTab', label: 'Minha Equipe', key: 'fichas' },
+                { id: 'liberacoesTab', label: 'Pesquisas', key: 'liberacoes' },
+                { id: 'pesquisasTab', label: 'Respostas', key: 'pesquisas' },
+                { id: 'promocaoTab', label: 'Avaliação Promoção', key: 'promocao' }
+            ],
+            diretoria: [
+                { id: 'fichasTab', label: 'Colaboradores', key: 'fichas' },
+                { id: 'dashboardTab', label: 'Dashboard', key: 'dashboard' },
+                { id: 'promocaoTab', label: 'Avaliação Promoção', key: 'promocao' }
             ]
         };
 
         // Survey Templates
         const SURVEY_TEMPLATES = {
-            experiencia_45_colab: {
-                nome: 'Pesquisa de Experiência 45 dias - Colaborador',
-                tipo: 'experiencia_45_colab',
+            experiencia_45_etapa1: {
+                nome: 'Pesquisa de Experiência 45 dias - Etapa 1 (RH)',
+                tipo: 'experiencia_45_etapa1',
+                preenchido_por: 'admin',
                 secoes: [
                     {
-                        titulo: 'Acolhimento e Integração',
+                        titulo: 'Documentação e Integração',
                         questoes: [
-                            { id: 'acol_1', tipo: 'escala', texto: 'Como você avalia o processo de recepção e acolhimento no seu primeiro dia?' },
-                            { id: 'acol_2', tipo: 'escala', texto: 'Você foi apresentado(a) adequadamente à equipe e colegas de trabalho?' },
-                            { id: 'acol_3', tipo: 'sim_nao', texto: 'Recebeu todas as ferramentas e acessos necessários para iniciar seu trabalho?' },
-                            { id: 'acol_4', tipo: 'texto', texto: 'Se não recebeu algo, o que ficou faltando?' },
-                            { id: 'acol_5', tipo: 'sim_nao', texto: 'Alguém foi designado para te acompanhar nos primeiros dias (buddy/padrinho)?' },
-                            { id: 'acol_6', tipo: 'texto', texto: 'Como foi essa experiência de acompanhamento?' }
+                            { id: 'doc_completa', tipo: 'radio', texto: 'Toda a documentação admissional foi entregue dentro do prazo?', opcoes: ['Sim', 'Parcialmente', 'Não'] },
+                            { id: 'doc_integracao', tipo: 'escala', texto: 'O colaborador participou do programa de integração/onboarding?' },
+                            { id: 'doc_sistemas', tipo: 'radio', texto: 'Acessos aos sistemas e ferramentas foram concedidos?', opcoes: ['Sim, todos', 'Parcialmente', 'Ainda pendente'] },
+                            { id: 'doc_uniforme', tipo: 'radio', texto: 'Uniformes e materiais de trabalho foram entregues (se aplicável)?', opcoes: ['Sim', 'Parcialmente', 'Não se aplica'] }
                         ]
                     },
                     {
-                        titulo: 'Expectativas vs. Realidade',
+                        titulo: 'Adaptação e Comportamento',
                         questoes: [
-                            { id: 'exp_1', tipo: 'escala', texto: 'As atividades do dia a dia estão alinhadas com o que foi apresentado no processo seletivo?' },
-                            { id: 'exp_2', tipo: 'escala', texto: 'Você está conseguindo compreender suas responsabilidades e entregas esperadas?' },
-                            { id: 'exp_3', tipo: 'texto', texto: 'Houve algo que te surpreendeu positivamente até agora?' },
-                            { id: 'exp_4', tipo: 'texto', texto: 'Houve algo que te surpreendeu negativamente?' }
+                            { id: 'adap_pontualidade', tipo: 'escala', texto: 'Como avalia a pontualidade e assiduidade do colaborador?' },
+                            { id: 'adap_normas', tipo: 'escala', texto: 'O colaborador demonstra conhecimento das normas e políticas da empresa?' },
+                            { id: 'adap_postura', tipo: 'escala', texto: 'Como avalia a postura profissional e apresentação pessoal?' },
+                            { id: 'adap_relacionamento', tipo: 'escala', texto: 'Como está o relacionamento com colegas e demais áreas?' }
                         ]
                     },
                     {
-                        titulo: 'Infraestrutura e Ambiente',
+                        titulo: 'Acompanhamento RH',
                         questoes: [
-                            { id: 'infra_1', tipo: 'escala', texto: 'Como você avalia o ambiente físico de trabalho (espaço, equipamentos, conforto)?' },
-                            { id: 'infra_2', tipo: 'escala', texto: 'Os sistemas e ferramentas tecnológicas estão funcionando adequadamente?' },
-                            { id: 'infra_3', tipo: 'texto', texto: 'Há algo na infraestrutura que precisa ser melhorado?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Relacionamento com Gestor e Equipe',
-                        questoes: [
-                            { id: 'rel_1', tipo: 'escala', texto: 'Como está o relacionamento com seu gestor direto?' },
-                            { id: 'rel_2', tipo: 'escala', texto: 'Você sente que pode tirar dúvidas e pedir ajuda quando necessário?' },
-                            { id: 'rel_3', tipo: 'escala', texto: 'Como está a integração com os colegas de equipe?' },
-                            { id: 'rel_4', tipo: 'sim_nao', texto: 'Você se sente parte do time?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Treinamento e Desenvolvimento',
-                        questoes: [
-                            { id: 'trein_1', tipo: 'escala', texto: 'Os treinamentos oferecidos até agora foram suficientes para suas atividades?' },
-                            { id: 'trein_2', tipo: 'texto', texto: 'Há algum treinamento adicional que você sente necessidade?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Avaliação Geral',
-                        questoes: [
-                            { id: 'ger45_1', tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de você recomendar a empresa para um amigo trabalhar aqui? (eNPS)' },
-                            { id: 'ger45_2', tipo: 'escala', texto: 'Qual seu nível geral de satisfação até o momento?' },
-                            { id: 'ger45_3', tipo: 'texto', texto: 'O que poderíamos melhorar no processo de integração?' },
-                            { id: 'ger45_4', tipo: 'texto', texto: 'Gostaria de compartilhar mais alguma coisa?' }
+                            { id: 'rh_beneficios', tipo: 'radio', texto: 'O colaborador foi orientado sobre seus benefícios?', opcoes: ['Sim', 'Parcialmente', 'Não'] },
+                            { id: 'rh_duvidas', tipo: 'texto', texto: 'Há alguma pendência ou dúvida do colaborador junto ao RH?' },
+                            { id: 'rh_observacoes', tipo: 'texto', texto: 'Observações gerais do RH sobre os primeiros 45 dias:' },
+                            { id: 'rh_recomendacao', tipo: 'radio', texto: 'Recomendação do RH:', opcoes: ['Manter na função', 'Acompanhar de perto', 'Conversar com gestor', 'Avaliar desligamento'] }
                         ]
                     }
                 ]
             },
-            desempenho_90_colab: {
-                nome: 'Avaliação 360° - Autoavaliação (90 dias)',
-                tipo: 'desempenho_90_colab',
+            experiencia_45_etapa2: {
+                nome: 'Pesquisa de Experiência 45 dias - Etapa 2 (Gestor)',
+                tipo: 'experiencia_45_etapa2',
+                preenchido_por: 'gestor',
                 secoes: [
                     {
-                        titulo: 'Competências Técnicas',
+                        titulo: 'Desempenho Técnico',
                         questoes: [
-                            { id: 'ct_1', tipo: 'escala', texto: 'Como você avalia seu domínio das ferramentas e sistemas necessários para o cargo?' },
-                            { id: 'ct_2', tipo: 'escala', texto: 'Você consegue executar suas atividades com autonomia e qualidade?' },
-                            { id: 'ct_3', tipo: 'escala', texto: 'Como avalia sua capacidade de resolver problemas técnicos do dia a dia?' },
-                            { id: 'ct_4', tipo: 'texto', texto: 'Em quais áreas técnicas você sente que precisa de mais desenvolvimento?' }
+                            { id: 'tec_aprendizado', tipo: 'escala', texto: 'Como avalia a curva de aprendizado do colaborador nas atividades da área?' },
+                            { id: 'tec_qualidade', tipo: 'escala', texto: 'Qualidade das entregas realizadas até o momento:' },
+                            { id: 'tec_autonomia', tipo: 'escala', texto: 'Nível de autonomia para executar as tarefas do dia a dia:' },
+                            { id: 'tec_conhecimento', tipo: 'escala', texto: 'Domínio das ferramentas e processos necessários para a função:' }
                         ]
                     },
                     {
-                        titulo: 'Competências Comportamentais',
+                        titulo: 'Comportamento e Atitude',
                         questoes: [
-                            { id: 'cc_1', tipo: 'escala', texto: 'Como você avalia sua comunicação com colegas e gestores?' },
-                            { id: 'cc_2', tipo: 'escala', texto: 'Como avalia sua capacidade de trabalhar em equipe e colaborar?' },
-                            { id: 'cc_3', tipo: 'escala', texto: 'Como avalia sua organização e gestão do tempo?' },
-                            { id: 'cc_4', tipo: 'escala', texto: 'Como avalia sua proatividade e iniciativa?' },
-                            { id: 'cc_5', tipo: 'escala', texto: 'Como avalia sua adaptabilidade diante de mudanças?' },
-                            { id: 'cc_6', tipo: 'texto', texto: 'Descreva uma situação em que precisou se adaptar a algo inesperado.' }
+                            { id: 'comp_proatividade', tipo: 'escala', texto: 'O colaborador demonstra proatividade e iniciativa?' },
+                            { id: 'comp_equipe', tipo: 'escala', texto: 'Como está a integração e colaboração com a equipe?' },
+                            { id: 'comp_feedback', tipo: 'escala', texto: 'Recebe feedback de forma construtiva e busca melhorar?' },
+                            { id: 'comp_comprometimento', tipo: 'escala', texto: 'Demonstra comprometimento com prazos e responsabilidades?' }
                         ]
                     },
                     {
-                        titulo: 'Metas e Entregas',
+                        titulo: 'Avaliação Geral do Gestor',
                         questoes: [
-                            { id: 'me_1', tipo: 'escala', texto: 'Você tem clareza sobre as metas e o que é esperado de você?' },
-                            { id: 'me_2', tipo: 'escala', texto: 'Está conseguindo cumprir os prazos estabelecidos?' },
-                            { id: 'me_3', tipo: 'escala', texto: 'Como avalia a qualidade das suas entregas?' },
-                            { id: 'me_4', tipo: 'sim_nao', texto: 'Existe algo impedindo você de entregar mais ou melhor?' },
-                            { id: 'me_5', tipo: 'texto', texto: 'Se sim, quais são os principais impedimentos?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Relacionamento e Liderança',
-                        questoes: [
-                            { id: 'rl_1', tipo: 'escala', texto: 'Como está o relacionamento com seu gestor direto?' },
-                            { id: 'rl_2', tipo: 'sim_nao', texto: 'Recebe feedbacks frequentes sobre seu trabalho?' },
-                            { id: 'rl_3', tipo: 'escala', texto: 'A comunicação dentro da equipe está fluindo bem?' },
-                            { id: 'rl_4', tipo: 'escala', texto: 'Sente que suas ideias e opiniões são ouvidas e valorizadas?' },
-                            { id: 'rl_5', tipo: 'texto', texto: 'Há algo que gostaria de dizer ao seu gestor mas ainda não disse?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Cultura e Valores',
-                        questoes: [
-                            { id: 'cv_1', tipo: 'escala', texto: 'Você se identifica com os valores e a cultura da empresa?' },
-                            { id: 'cv_2', tipo: 'escala', texto: 'Sente que a empresa pratica os valores que comunica?' },
-                            { id: 'cv_3', tipo: 'escala', texto: 'Você se sente respeitado(a) e incluído(a) no ambiente de trabalho?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Crescimento e Desenvolvimento',
-                        questoes: [
-                            { id: 'cd_1', tipo: 'escala', texto: 'Você vê oportunidades de crescimento na empresa?' },
-                            { id: 'cd_2', tipo: 'escala', texto: 'Está aprendendo coisas novas no seu trabalho?' },
-                            { id: 'cd_3', tipo: 'texto', texto: 'Que tipo de desenvolvimento profissional você gostaria de ter?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Avaliação Geral e Satisfação',
-                        questoes: [
-                            { id: 'ag_1', tipo: 'nps', texto: 'De 0 a 10, qual a probabilidade de recomendar a empresa para um amigo trabalhar aqui? (eNPS)' },
-                            { id: 'ag_2', tipo: 'escala', texto: 'Qual seu nível geral de satisfação neste momento?' },
-                            { id: 'ag_3', tipo: 'escala', texto: 'Qual a probabilidade de você permanecer na empresa nos próximos 12 meses?' },
-                            { id: 'ag_4', tipo: 'texto', texto: 'O que a empresa poderia fazer para melhorar sua experiência?' },
-                            { id: 'ag_5', tipo: 'texto', texto: 'Algum comentário adicional?' }
-                        ]
-                    }
-                ]
-            },
-            experiencia_45_empresa: {
-                nome: 'Avaliação 360° - Pelo Gestor (45 dias)',
-                tipo: 'experiencia_45_empresa',
-                secoes: [
-                    {
-                        titulo: 'Adaptação e Integração',
-                        questoes: [
-                            { id: 'ga_1', tipo: 'escala', texto: 'Como você avalia a adaptação deste colaborador ao time?' },
-                            { id: 'ga_2', tipo: 'escala', texto: 'O colaborador demonstrou proatividade para se integrar?' },
-                            { id: 'ga_3', tipo: 'sim_nao', texto: 'O colaborador buscou esclarecer dúvidas e entender os processos?' },
-                            { id: 'ga_4', tipo: 'texto', texto: 'Pontos fortes observados na adaptação:' }
-                        ]
-                    },
-                    {
-                        titulo: 'Competências Técnicas',
-                        questoes: [
-                            { id: 'gct_1', tipo: 'escala', texto: 'O colaborador demonstra conhecimento técnico adequado para a função?' },
-                            { id: 'gct_2', tipo: 'escala', texto: 'Qual o nível de autonomia do colaborador nas atividades?' },
-                            { id: 'gct_3', tipo: 'escala', texto: 'A qualidade das entregas está de acordo com o esperado?' },
-                            { id: 'gct_4', tipo: 'texto', texto: 'Áreas técnicas que precisam de desenvolvimento:' }
-                        ]
-                    },
-                    {
-                        titulo: 'Competências Comportamentais',
-                        questoes: [
-                            { id: 'gcc_1', tipo: 'escala', texto: 'Como avalia a comunicação do colaborador?' },
-                            { id: 'gcc_2', tipo: 'escala', texto: 'O colaborador trabalha bem em equipe?' },
-                            { id: 'gcc_3', tipo: 'escala', texto: 'Demonstra comprometimento e responsabilidade?' },
-                            { id: 'gcc_4', tipo: 'escala', texto: 'Cumpre horários e prazos estabelecidos?' },
-                            { id: 'gcc_5', tipo: 'texto', texto: 'Observações sobre comportamento e postura profissional:' }
-                        ]
-                    },
-                    {
-                        titulo: 'Potencial e Recomendação',
-                        questoes: [
-                            { id: 'gp_1', tipo: 'escala', texto: 'Qual o potencial de crescimento do colaborador na empresa?' },
-                            { id: 'gp_2', tipo: 'sim_nao', texto: 'O colaborador está adequado para a função?' },
-                            { id: 'gp_3', tipo: 'nps', texto: 'De 0 a 10, recomendaria a efetivação/continuidade deste colaborador?' },
-                            { id: 'gp_4', tipo: 'texto', texto: 'Plano de ação sugerido para os próximos meses:' },
-                            { id: 'gp_5', tipo: 'texto', texto: 'Observações gerais sobre o colaborador:' }
-                        ]
-                    }
-                ]
-            },
-            desempenho_90_empresa: {
-                nome: 'Avaliação 360° - Pelo Gestor (90 dias)',
-                tipo: 'desempenho_90_empresa',
-                secoes: [
-                    {
-                        titulo: 'Desempenho e Entregas',
-                        questoes: [
-                            { id: 'gd_1', tipo: 'escala', texto: 'O colaborador está atingindo as metas e entregas definidas?' },
-                            { id: 'gd_2', tipo: 'escala', texto: 'A qualidade do trabalho evoluiu desde a última avaliação?' },
-                            { id: 'gd_3', tipo: 'escala', texto: 'Demonstra autonomia crescente nas atividades?' },
-                            { id: 'gd_4', tipo: 'escala', texto: 'Gerencia bem múltiplas tarefas e prioridades?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Evolução Comportamental',
-                        questoes: [
-                            { id: 'ge_1', tipo: 'escala', texto: 'Houve evolução nas competências comportamentais desde a avaliação anterior?' },
-                            { id: 'ge_2', tipo: 'escala', texto: 'Como avalia a capacidade de receber e aplicar feedbacks?' },
-                            { id: 'ge_3', tipo: 'escala', texto: 'Demonstra alinhamento com os valores e cultura da empresa?' },
-                            { id: 'ge_4', tipo: 'escala', texto: 'Contribui positivamente para o clima e ambiente da equipe?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Liderança e Influência',
-                        questoes: [
-                            { id: 'gl_1', tipo: 'escala', texto: 'Demonstra potencial de liderança ou influência positiva no time?' },
-                            { id: 'gl_2', tipo: 'sim_nao', texto: 'O colaborador ajuda ou orienta colegas quando solicitado?' },
-                            { id: 'gl_3', tipo: 'escala', texto: 'Propõe ideias ou melhorias para processos e atividades?' }
-                        ]
-                    },
-                    {
-                        titulo: 'Avaliação Final e Recomendações',
-                        questoes: [
-                            { id: 'gf_1', tipo: 'nps', texto: 'De 0 a 10, qual sua avaliação geral do desempenho nos 90 dias?' },
-                            { id: 'gf_2', tipo: 'sim_nao', texto: 'Recomenda a continuidade/efetivação deste colaborador?' },
-                            { id: 'gf_3', tipo: 'escala', texto: 'Qual o potencial de crescimento do colaborador na organização?' },
-                            { id: 'gf_4', tipo: 'texto', texto: 'Principais pontos fortes do colaborador:' },
-                            { id: 'gf_5', tipo: 'texto', texto: 'Principais pontos de desenvolvimento:' },
-                            { id: 'gf_6', tipo: 'texto', texto: 'Plano de ação sugerido:' }
+                            { id: 'ges_expectativa', tipo: 'radio', texto: 'O colaborador atende às expectativas para o cargo?', opcoes: ['Supera as expectativas', 'Atende plenamente', 'Atende parcialmente', 'Abaixo do esperado'] },
+                            { id: 'ges_pontos_fortes', tipo: 'texto', texto: 'Principais pontos fortes observados:' },
+                            { id: 'ges_pontos_melhorar', tipo: 'texto', texto: 'Pontos a desenvolver/melhorar:' },
+                            { id: 'ges_plano_acao', tipo: 'texto', texto: 'Plano de ação para os próximos 45 dias:' },
+                            { id: 'ges_recomendacao', tipo: 'radio', texto: 'Recomendação do gestor:', opcoes: ['Efetivar/manter', 'Estender período de experiência', 'Realocar para outra função', 'Não recomenda continuidade'] }
                         ]
                     }
                 ]
@@ -2116,18 +2153,12 @@
         };
 
         const navIcons = {
-            questionarios: '📋',
-            avaliações: '✅',
+            fichas: '👤',
             dashboard: '📊',
-            liberacoes: '🔓',
-            pesquisas: '📝',
-            colaboradores: '👥',
-            usuarios: '⚙️',
-            subordinados: '👨‍💼',
-            avaliadores: '📈',
-            pesquisas_colab: '📄',
-            respostas: '📁',
-            pdi: '📈'
+            liberacoes: '📝',
+            pesquisas: '📋',
+            promocao: '⭐',
+            usuarios: '⚙️'
         };
 
         // Initialize
@@ -2171,6 +2202,10 @@
                     const hashedPassword = hashSenha(password);
 
                     if (userData.senha === hashedPassword) {
+                        if (userData.perfil === 'colaborador') {
+                            showToast('error', 'Acesso restrito', 'Acesso restrito a gestores e equipe de RH.');
+                            return;
+                        }
                         currentUser = { id: user.id, ...userData };
                         lsSet('session', currentUser);
                         // Verifica senha provisória
@@ -2441,7 +2476,6 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'flex';
             buildNavigation();
-            loadDashboard();
             document.getElementById('userNameDisplay').textContent = currentUser.nome;
             document.getElementById('userRoleDisplay').innerHTML = '<strong>Perfil:</strong> ' + currentUser.perfil;
         }
@@ -2486,225 +2520,23 @@
                 tabElement.classList.add('active');
                 element.classList.add('active');
 
-                if (tabId === 'questionnairesTab') loadQuestionnaires();
-                else if (tabId === 'evaluationsTab') loadEvaluations();
-                else if (tabId === 'subordinatesTab') loadSubordinates();
+                if (tabId === 'fichasTab') loadFichas();
                 else if (tabId === 'dashboardTab') loadDashboard();
                 else if (tabId === 'liberacoesTab') loadLiberacoes();
                 else if (tabId === 'pesquisasTab') loadPesquisas();
-                else if (tabId === 'colaboradoresTab') loadColaboradores();
+                else if (tabId === 'promocaoTab') loadPromocao();
                 else if (tabId === 'usuariosTab') loadUsuarios();
-                else if (tabId === 'respostasTab') loadRespostas();
-                else if (tabId === 'gestoresTab') loadAvaliadoresTab();
-                else if (tabId === 'pesquisasColabTab') loadPesquisasColabTab();
-                else if (tabId === 'pdiTab') loadPDI();
             }
         }
 
-        async function loadQuestionnaires() {
-            var container = document.getElementById('questionnairesContainer');
-            container.innerHTML = '<div class="loading"></div>';
+        function openSurveyModal(tipo, fichaId, fichaName) {
+            var template = SURVEY_TEMPLATES[tipo];
+            var html = '<p style="margin-bottom:14px;font-size:13px;color:#636E72;">Colaborador: <strong>' + fichaName + '</strong></p>';
 
-            // Colaborador: mostra seus questionários pendentes para responder
-            if (currentUser.perfil === 'colaborador') {
-                try {
-                    var liberacoes = await cachedGet('liberacoes:user:' + currentUser.id, function() {
-                        return db.collection('liberacoes').where('colaborador_id', '==', currentUser.id).get();
-                    });
-                    var liberadosTipos = {};
-                    liberacoes.forEach(function(doc) { liberadosTipos[doc.data().tipo_pesquisa] = true; });
-
-                    if (Object.keys(liberadosTipos).length === 0) {
-                        container.innerHTML = '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
-                        return;
-                    }
-                    var html = '';
-                    ['experiencia_45_colab', 'desempenho_90_colab'].forEach(function(tipo) {
-                        if (liberadosTipos[tipo]) {
-                            var template = SURVEY_TEMPLATES[tipo];
-                            html += '<div class="card"><div class="card-header"><div>';
-                            html += '<div class="card-title">' + template.nome + '</div>';
-                            html += '<div style="font-size:12px;color:#636E72;margin-top:5px;">Responda as questões abaixo</div>';
-                            html += '</div><button class="btn btn-primary btn-small" onclick="openSurveyModal(\'' + tipo + '\')">Responder</button></div></div>';
-                        }
-                    });
-                    container.innerHTML = html || '<div class="alert alert-info">Nenhum questionário disponível no momento.</div>';
-                } catch(e) {
-                    console.error('Erro:', e);
-                    container.innerHTML = '<div class="alert alert-error">Erro ao carregar questionários</div>';
-                }
-                return;
-            }
-
-            // Admin/Gestor/Analista: mostra respostas dos membros da equipe
-            try {
-                var [respostasSnap, pesquisasSnap, usuariosSnap] = await Promise.all([
-                    cachedGet('respostas:all', function() { return db.collection('respostas').get(); }),
-                    cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
-                    cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); })
-                ]);
-
-                // Mapas
-                var nomeMap = {};
-                var gestorMap = {};
-                usuariosSnap.forEach(function(doc) {
-                    var u = doc.data();
-                    nomeMap[doc.id] = u.nome || u.email;
-                    gestorMap[doc.id] = u.gestor_id || null;
-                });
-
-                // Filtrar: admin vê tudo, gestor/analista vê só subordinados
-                function isMyTeam(userId) {
-                    if (currentUser.perfil === 'admin') return true;
-                    return gestorMap[userId] === currentUser.id;
-                }
-
-                var todas = [];
-                respostasSnap.forEach(function(doc) {
-                    var r = doc.data();
-                    if (isMyTeam(r.colaborador_id || r.usuario_id)) {
-                        todas.push({
-                            id: doc.id, collection: 'respostas',
-                            respondente: r.usuario_nome || nomeMap[r.usuario_id] || 'Colaborador',
-                            tipo: r.tipo_pesquisa,
-                            data: toDate(r.data_resposta)
-                        });
-                    }
-                });
-                pesquisasSnap.forEach(function(doc) {
-                    var p = doc.data();
-                    if (isMyTeam(p.colaborador_id)) {
-                        todas.push({
-                            id: doc.id, collection: 'pesquisas',
-                            respondente: p.avaliador_nome || nomeMap[p.avaliador_id] || 'Avaliador',
-                            colaborador: nomeMap[p.colaborador_id] || p.colaborador_id,
-                            tipo: p.tipo_pesquisa,
-                            data: toDate(p.data_avaliacao || p.data_resposta)
-                        });
-                    }
-                });
-
-                todas.sort(function(a, b) { return b.data - a.data; });
-
-                var html = '';
-                if (todas.length === 0) {
-                    html = '<div class="alert alert-info">Nenhuma resposta de pesquisa encontrada para sua equipe.</div>';
-                } else {
-                    html += '<p style="color:#636E72;font-size:13px;margin-bottom:12px;">Respostas da equipe: <strong>' + todas.length + '</strong></p>';
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Respondente</th><th>Tipo</th><th>Data</th><th>Ação</th></tr></thead><tbody>';
-                    todas.forEach(function(r) {
-                        var tipoLabel = PESQUISA_LABELS[r.tipo] || r.tipo || 'N/A';
-                        html += '<tr>';
-                        html += '<td><strong>' + r.respondente + '</strong></td>';
-                        html += '<td style="font-size:12px;">' + tipoLabel + '</td>';
-                        html += '<td>' + formatDate(r.data) + '</td>';
-                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + r.id + '\',\'' + r.collection + '\')">👁 Ver</button></td>';
-                        html += '</tr>';
-                    });
-                    html += '</tbody></table></div>';
-                }
-                container.innerHTML = html;
-            } catch(error) {
-                console.error('Erro ao carregar questionários:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar</div>';
-            }
-        }
-
-        async function loadEvaluations() {
-            const container = document.getElementById('evaluationsContainer');
-
-            try {
-                const select = document.getElementById('collaboratorSelect');
-                select.innerHTML = '<option value="">-- Selecione um membro da equipe --</option>';
-
-                if (currentUser.perfil === 'admin') {
-                    const todos = await cachedGet('usuarios:all', () => db.collection('usuarios').get());
-                    todos.forEach(doc => {
-                        const u = doc.data();
-                        if (doc.id !== currentUser.id) {
-                            const option = document.createElement('option');
-                            option.value = doc.id;
-                            option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
-                            select.appendChild(option);
-                        }
-                    });
-                } else {
-                    const subordinados = await cachedGet('usuarios:subordinados:' + currentUser.id, () =>
-                        db.collection('usuarios').where('gestor_id', '==', currentUser.id).get());
-                    subordinados.forEach(doc => {
-                        const u = doc.data();
-                        const option = document.createElement('option');
-                        option.value = doc.id;
-                        option.textContent = u.nome + ' (' + (u.perfil || '') + ')';
-                        select.appendChild(option);
-                    });
-                }
-
-                container.innerHTML = '';
-            } catch (error) {
-                console.error('Erro ao carregar avaliações:', error);
-            }
-        }
-
-        async function loadEvaluationsForCollaborator() {
-            const collaboratorId = document.getElementById('collaboratorSelect').value;
-            const container = document.getElementById('evaluationsContainer');
-
-            if (!collaboratorId) {
-                container.innerHTML = '';
-                return;
-            }
-
-            try {
-                const liberacoes = await cachedGet('liberacoes:eval:' + collaboratorId, () =>
-                    db.collection('liberacoes')
-                    .where('colaborador_id', '==', collaboratorId)
-                    .where('tipo_pesquisa', 'in', ['experiencia_45_empresa', 'desempenho_90_empresa'])
-                    .get());
-
-                const liberadosTipos = {};
-                liberacoes.forEach(doc => {
-                    liberadosTipos[doc.data().tipo_pesquisa] = true;
-                });
-
-                let html = '';
-                const tiposOrdenados = ['experiencia_45_empresa', 'desempenho_90_empresa'];
-
-                for (const tipo of tiposOrdenados) {
-                    if (liberadosTipos[tipo]) {
-                        const template = SURVEY_TEMPLATES[tipo];
-                        html += '<div class="card" data-survey-type="' + tipo + '" data-collaborator-id="' + collaboratorId + '">';
-                        html += '<div class="card-header">';
-                        html += '<div>';
-                        html += '<div class="card-title">' + template.nome + '</div>';
-                        html += '<div style="font-size: 12px; color: #636E72; margin-top: 5px;">Avaliação do colaborador</div>';
-                        html += '</div>';
-                        html += '<button class="btn btn-primary btn-small" onclick="openEvaluationModal(\'' + tipo + '\', \'' + collaboratorId + '\')">Avaliar</button>';
-                        html += '</div>';
-                        html += '</div>';
-                    }
-                }
-
-                if (html === '') {
-                    container.innerHTML = '<div class="alert alert-info">Nenhuma avaliação disponível para este colaborador.</div>';
-                } else {
-                    container.innerHTML = html;
-                }
-            } catch (error) {
-                console.error('Erro ao carregar avaliações do colaborador:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
-            }
-        }
-
-        function openSurveyModal(tipo) {
-            const template = SURVEY_TEMPLATES[tipo];
-            let html = '';
-
-            template.secoes.forEach(secao => {
+            template.secoes.forEach(function(secao) {
                 html += '<div class="form-section">';
                 html += '<div class="form-section-title">' + secao.titulo + '</div>';
-                secao.questoes.forEach(q => {
+                secao.questoes.forEach(function(q) {
                     html += renderQuestion(q, tipo);
                 });
                 html += '</div>';
@@ -2712,26 +2544,7 @@
 
             openModal(template.nome, html, [
                 { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Enviar', onclick: 'saveSurvey("' + tipo + '")', class: 'btn-primary' }
-            ]);
-        }
-
-        function openEvaluationModal(tipo, collaboratorId) {
-            const template = SURVEY_TEMPLATES[tipo];
-            let html = '';
-
-            template.secoes.forEach(secao => {
-                html += '<div class="form-section">';
-                html += '<div class="form-section-title">' + secao.titulo + '</div>';
-                secao.questoes.forEach(q => {
-                    html += renderQuestion(q, tipo);
-                });
-                html += '</div>';
-            });
-
-            openModal(template.nome, html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Enviar', onclick: 'saveEvaluation("' + tipo + '", "' + collaboratorId + '")', class: 'btn-primary' }
+                { text: 'Enviar', onclick: 'saveEvaluation("' + tipo + '", "' + fichaId + '")', class: 'btn-primary' }
             ]);
         }
 
@@ -2784,6 +2597,22 @@
                 return html;
             }
 
+            if (question.tipo === 'radio' && question.opcoes) {
+                let html = '<div class="question-group">';
+                html += '<label class="question-label">' + question.texto + '</label>';
+                html += '<div class="radio-group">';
+                question.opcoes.forEach(function(opcao, i) {
+                    html += '<div class="radio-item">';
+                    html += '<input type="radio" id="' + questionId + '_' + i + '" name="' + questionId + '" value="' + opcao + '" onchange="selectOption(\'' + questionId + '\', \'' + opcao.replace(/'/g, "\\'") + '\')">';
+                    html += '<label for="' + questionId + '_' + i + '">' + opcao + '</label>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                html += '<input type="hidden" id="' + questionId + '" value="">';
+                html += '</div>';
+                return html;
+            }
+
             return '';
         }
 
@@ -2805,75 +2634,14 @@
             document.getElementById(questionId).value = value;
         }
 
-        async function saveSurvey(tipo) {
-            const template = SURVEY_TEMPLATES[tipo];
-            const respostas = {};
+        async function saveEvaluation(tipo, fichaId) {
+            var template = SURVEY_TEMPLATES[tipo];
+            var respostas = {};
 
-            template.secoes.forEach(secao => {
-                secao.questoes.forEach(questao => {
-                    const inputId = tipo + '_' + questao.id;
-                    const input = document.getElementById(inputId);
-                    if (input) {
-                        respostas[questao.id] = input.value;
-                    }
-                });
-            });
-
-            try {
-                await db.collection('respostas').add({
-                    usuario_id: currentUser.id,
-                    usuario_nome: currentUser.nome,
-                    tipo_pesquisa: tipo,
-                    respostas: respostas,
-                    data_resposta: new Date(),
-                    colaborador_id: currentUser.id
-                });
-                invalidateCache('respostas:');
-
-                // Marcar liberação como respondida
-                try {
-                    const libs = await db.collection('liberacoes')
-                        .where('colaborador_id', '==', currentUser.id)
-                        .where('tipo_pesquisa', '==', tipo)
-                        .get();
-                    // Marca a mais recente não-respondida
-                    let marcou = false;
-                    const libsList = [];
-                    libs.forEach(doc => libsList.push({ id: doc.id, ...doc.data() }));
-                    libsList.sort((a, b) => {
-                        const da = toDate(a.data_liberacao);
-                        const db2 = toDate(b.data_liberacao);
-                        return db2 - da;
-                    });
-                    for (const lib of libsList) {
-                        if (!lib.respondida && !marcou) {
-                            await db.collection('liberacoes').doc(lib.id).update({
-                                respondida: true,
-                                data_resposta: new Date()
-                            });
-                            marcou = true;
-                        }
-                    }
-                    invalidateCache('liberacoes:');
-                } catch(_) {}
-
-                showToast('success', 'Salvo!', 'Questionário salvo com sucesso.');
-                closeModal();
-                loadQuestionnaires();
-            } catch (error) {
-                console.error('Erro ao salvar questionário:', error);
-                showToast('error', 'Erro ao salvar', error.message);
-            }
-        }
-
-        async function saveEvaluation(tipo, collaboratorId) {
-            const template = SURVEY_TEMPLATES[tipo];
-            const respostas = {};
-
-            template.secoes.forEach(secao => {
-                secao.questoes.forEach(questao => {
-                    const inputId = tipo + '_' + questao.id;
-                    const input = document.getElementById(inputId);
+            template.secoes.forEach(function(secao) {
+                secao.questoes.forEach(function(questao) {
+                    var inputId = tipo + '_' + questao.id;
+                    var input = document.getElementById(inputId);
                     if (input) {
                         respostas[questao.id] = input.value;
                     }
@@ -2884,7 +2652,7 @@
                 await db.collection('pesquisas').add({
                     avaliador_id: currentUser.id,
                     avaliador_nome: currentUser.nome,
-                    colaborador_id: collaboratorId,
+                    colaborador_id: fichaId,
                     tipo_pesquisa: tipo,
                     respostas: respostas,
                     data_avaliacao: new Date()
@@ -2893,8 +2661,8 @@
 
                 // Marcar liberação como respondida
                 try {
-                    const libs = await db.collection('liberacoes')
-                        .where('colaborador_id', '==', collaboratorId)
+                    var libs = await db.collection('liberacoes')
+                        .where('colaborador_id', '==', fichaId)
                         .where('tipo_pesquisa', '==', tipo)
                         .get();
                     const libsList = [];
@@ -2916,36 +2684,13 @@
                     invalidateCache('liberacoes:');
                 } catch(_) {}
 
-                showToast('success', 'Salvo!', 'Avaliação salva com sucesso.');
+                showToast('success', 'Salvo!', 'Pesquisa salva com sucesso.');
                 closeModal();
-                loadEvaluationsForCollaborator();
+                loadLiberacoes();
             } catch (error) {
-                console.error('Erro ao salvar avaliação:', error);
+                console.error('Erro ao salvar pesquisa:', error);
                 showToast('error', 'Erro ao salvar', error.message);
             }
-        }
-
-        function filterSurveys(filter) {
-            currentSurveyFilter = filter;
-            const cards = document.querySelectorAll('#questionnairesContainer .card');
-            cards.forEach(card => {
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = card.dataset.surveyType === filter ? 'block' : 'none';
-                }
-            });
-        }
-
-        function filterEvaluations(filter) {
-            const cards = document.querySelectorAll('#evaluationsContainer .card');
-            cards.forEach(card => {
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = card.dataset.evaluationType === filter ? 'block' : 'none';
-                }
-            });
         }
 
         // Guarda instâncias dos gráficos para destruir antes de re-criar
@@ -2957,10 +2702,8 @@
         }
 
         var PESQUISA_LABELS = {
-            experiencia_45_colab: 'Experiência 45d (Colab)',
-            desempenho_90_colab: 'Desempenho 90d (Colab)',
-            experiencia_45_empresa: 'Experiência 45d (Empresa)',
-            desempenho_90_empresa: 'Desempenho 90d (Empresa)'
+            experiencia_45_etapa1: 'Experiência 45d - Etapa 1 (RH)',
+            experiencia_45_etapa2: 'Experiência 45d - Etapa 2 (Gestor)'
         };
 
         async function loadDashboard() {
@@ -2971,10 +2714,11 @@
             destroyCharts();
 
             try {
-                var [usuarios, pesquisas, evoSnap, liberacoes, respostas] = await Promise.all([
+                var [usuarios, pesquisas, fichasSnap, promoSnap, liberacoes, respostas] = await Promise.all([
                     cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); }),
                     cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
-                    cachedGet('evolucao:all', function() { return db.collection('evolucao').get(); }),
+                    cachedGet('fichas:all', function() { return db.collection('fichas').get(); }),
+                    cachedGet('avaliacoes_promocao:all', function() { return db.collection('avaliacoes_promocao').get(); }),
                     cachedGet('liberacoes:all', function() { return db.collection('liberacoes').get(); }),
                     cachedGet('respostas:all', function() { return db.collection('respostas').get(); })
                 ]);
@@ -3000,23 +2744,13 @@
                     else libPendentes++;
                 });
 
-                var totalEvo = evoSnap.size;
-                var evoNotaSum = 0; var evoNotaCount = 0;
-                var evoNotaDist = { alta: 0, media: 0, baixa: 0 };
-                evoSnap.forEach(function(doc) {
+                var totalFichas = fichasSnap.size;
+                var totalPromo = promoSnap.size;
+                var totalRegistrosPromo = 0;
+                promoSnap.forEach(function(doc) {
                     var d = doc.data();
-                    var avals = d.avaliacoes || [];
-                    avals.forEach(function(a) {
-                        if (a.nota) {
-                            evoNotaSum += a.nota;
-                            evoNotaCount++;
-                            if (a.nota >= 7) evoNotaDist.alta++;
-                            else if (a.nota >= 4) evoNotaDist.media++;
-                            else evoNotaDist.baixa++;
-                        }
-                    });
+                    totalRegistrosPromo += (d.registros || []).length;
                 });
-                var evoMediaNota = evoNotaCount > 0 ? (evoNotaSum / evoNotaCount).toFixed(1) : '—';
 
                 // Pesquisas por mês (últimos 6 meses)
                 var pesquisasPorMes = {};
@@ -3069,10 +2803,10 @@
                 var taxaResposta = totalLiberacoes > 0 ? Math.round((libRespondidas / totalLiberacoes) * 100) : 0;
 
                 var html = '';
-                html += '<div class="stat-card"><div class="stat-icon blue">👥</div><div class="stat-info"><h3>' + totalUsers + '</h3><p>Usuários Cadastrados (' + activeUsers + ' ativos)</p></div></div>';
+                html += '<div class="stat-card"><div class="stat-icon blue">👤</div><div class="stat-info"><h3>' + totalFichas + '</h3><p>Fichas de Colaboradores</p></div></div>';
                 html += '<div class="stat-card"><div class="stat-icon green">📝</div><div class="stat-info"><h3>' + totalSurveys + '</h3><p>Pesquisas Respondidas</p></div></div>';
                 html += '<div class="stat-card"><div class="stat-icon orange">📊</div><div class="stat-info"><h3>' + taxaResposta + '%</h3><p>Taxa de Resposta (' + libRespondidas + '/' + totalLiberacoes + ')</p></div></div>';
-                html += '<div class="stat-card"><div class="stat-icon purple">📈</div><div class="stat-info"><h3>' + totalEvo + '</h3><p>Planos de Evolução (nota média: ' + evoMediaNota + ')</p></div></div>';
+                html += '<div class="stat-card"><div class="stat-icon purple">⭐</div><div class="stat-info"><h3>' + totalPromo + '</h3><p>Avaliações Promoção (' + totalRegistrosPromo + ' registros)</p></div></div>';
                 statsContainer.innerHTML = html;
 
                 // ── Charts ──
@@ -3128,11 +2862,18 @@
                     }
                 });
 
-                // 3) Evolução das Avaliações (Doughnut)
-                var pdiLabels = ['Alta (7-10)', 'Média (4-6)', 'Baixa (1-3)'];
-                var pdiValues = [evoNotaDist.alta, evoNotaDist.media, evoNotaDist.baixa];
-                var pdiColors = ['#2e7d32', '#f57f17', '#c62828'];
-                if (evoNotaCount === 0) { pdiLabels = ['Sem avaliações']; pdiValues = [1]; pdiColors = ['#e0e0e0']; }
+                // 3) Avaliações Promoção por tipo (Doughnut)
+                var promoTipos = { ponto_positivo: 0, ponto_negativo: 0, inconsistencia_ponto: 0, feedback: 0 };
+                promoSnap.forEach(function(doc) {
+                    var d = doc.data();
+                    (d.registros || []).forEach(function(r) {
+                        if (promoTipos.hasOwnProperty(r.tipo)) promoTipos[r.tipo]++;
+                    });
+                });
+                var pdiLabels = ['Ponto Positivo', 'Ponto Negativo', 'Inconsistência', 'Feedback'];
+                var pdiValues = [promoTipos.ponto_positivo, promoTipos.ponto_negativo, promoTipos.inconsistencia_ponto, promoTipos.feedback];
+                var pdiColors = ['#2e7d32', '#c62828', '#f57f17', '#7b1fa2'];
+                if (totalRegistrosPromo === 0) { pdiLabels = ['Sem registros']; pdiValues = [1]; pdiColors = ['#e0e0e0']; }
                 dashCharts.pdiStatus = new Chart(document.getElementById('chartPdiStatus'), {
                     type: 'doughnut',
                     data: {
@@ -3208,56 +2949,53 @@
         }
 
         async function loadLiberacoes() {
-            const container = document.getElementById('liberacoesContainer');
+            var container = document.getElementById('liberacoesContainer');
             container.innerHTML = '<div class="loading"></div>';
 
             try {
-                const [usuarios, liberacoes, respostas] = await Promise.all([
-                    cachedGet('usuarios:all', () => db.collection('usuarios').get()),
-                    cachedGet('liberacoes:all', () => db.collection('liberacoes').get()),
-                    cachedGet('respostas:all', () => db.collection('respostas').get())
+                var [fichasSnap, liberacoes, respostas] = await Promise.all([
+                    cachedGet('fichas:all', function() { return db.collection('fichas').get(); }),
+                    cachedGet('liberacoes:all', function() { return db.collection('liberacoes').get(); }),
+                    cachedGet('respostas:all', function() { return db.collection('respostas').get(); })
                 ]);
 
-                // Mapear respostas por colaborador+tipo
-                const respostasPorUserTipo = {};
-                respostas.forEach(doc => {
-                    const r = doc.data();
-                    const chave = (r.colaborador_id || r.usuario_id) + '|' + r.tipo_pesquisa;
-                    if (!respostasPorUserTipo[chave]) respostasPorUserTipo[chave] = [];
-                    respostasPorUserTipo[chave].push({
-                        data: formatDate(r.data_resposta)
-                    });
+                // Agrupar liberações por ficha
+                var liberacoesPorFicha = {};
+                liberacoes.forEach(function(doc) {
+                    var data = doc.data();
+                    if (!liberacoesPorFicha[data.colaborador_id]) liberacoesPorFicha[data.colaborador_id] = [];
+                    liberacoesPorFicha[data.colaborador_id].push({ id: doc.id, ...data });
                 });
 
-                // Agrupar liberações por usuário
-                const liberacoesPorUsuario = {};
-                liberacoes.forEach(doc => {
-                    const data = doc.data();
-                    if (!liberacoesPorUsuario[data.colaborador_id]) liberacoesPorUsuario[data.colaborador_id] = [];
-                    liberacoesPorUsuario[data.colaborador_id].push({ id: doc.id, ...data });
-                });
-
-                // Ordenar liberações de cada usuário por data (mais recente primeiro)
-                for (const uid in liberacoesPorUsuario) {
-                    liberacoesPorUsuario[uid].sort((a, b) => {
-                        const da = toDate(a.data_liberacao);
-                        const db2 = toDate(b.data_liberacao);
-                        return db2 - da;
+                // Ordenar liberações de cada ficha por data
+                for (var fid in liberacoesPorFicha) {
+                    liberacoesPorFicha[fid].sort(function(a, b) {
+                        return toDate(b.data_liberacao) - toDate(a.data_liberacao);
                     });
                 }
 
-                let html = '';
+                // Filter fichas by team for gestor/analista
+                var fichasList = [];
+                fichasSnap.forEach(function(doc) {
+                    var f = doc.data();
+                    if (currentUser.perfil === 'admin') {
+                        fichasList.push({ id: doc.id, ...f });
+                    } else if (f.gestor_responsavel_id === currentUser.id) {
+                        fichasList.push({ id: doc.id, ...f });
+                    }
+                });
 
-                usuarios.forEach(doc => {
-                    const u = doc.data();
-                    const uid = doc.id;
-                    const libs = liberacoesPorUsuario[uid] || [];
-                    const totalEnviadas = libs.length;
-                    let totalRespondidas = 0;
-                    libs.forEach(l => {
+                var html = '';
+
+                fichasList.forEach(function(f) {
+                    var uid = f.id;
+                    var libs = liberacoesPorFicha[uid] || [];
+                    var totalEnviadas = libs.length;
+                    var totalRespondidas = 0;
+                    libs.forEach(function(l) {
                         if (l.respondida) totalRespondidas++;
                     });
-                    const totalPendentes = totalEnviadas - totalRespondidas;
+                    var totalPendentes = totalEnviadas - totalRespondidas;
 
                     // Card por colaborador
                     html += '<div class="card" style="margin-bottom:12px;">';
@@ -3265,9 +3003,9 @@
                     // Header clicável
                     html += '<div class="card-header" style="cursor:pointer;" onclick="toggleLibPanel(\'' + uid + '\')">';
                     html += '<div style="display:flex;align-items:center;gap:12px;flex:1;flex-wrap:wrap;">';
-                    html += '<strong style="font-size:15px;">' + u.nome + '</strong>';
-                    html += '<span class="badge badge-primary">' + (u.perfil || 'sem perfil') + '</span>';
-                    if (u.lider) html += '<span style="color:#636E72;font-size:13px;">Gestor: ' + u.lider + '</span>';
+                    html += '<strong style="font-size:15px;">' + f.nome + '</strong>';
+                    if (f.cargo) html += '<span class="badge badge-primary">' + f.cargo + '</span>';
+                    if (f.departamento) html += '<span style="color:#636E72;font-size:13px;">' + f.departamento + '</span>';
                     html += '</div>';
                     html += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">';
                     if (totalEnviadas > 0) {
@@ -3276,7 +3014,7 @@
                     } else {
                         html += '<span style="font-size:12px;color:#636E72;">Nenhum envio</span>';
                     }
-                    html += '<button class="btn btn-primary btn-small" onclick="event.stopPropagation();openLiberacaoForm(\'' + uid + '\', \'' + (u.nome || '').replace(/'/g, "\\'") + '\')">+ Enviar</button>';
+                    html += '<button class="btn btn-primary btn-small" onclick="event.stopPropagation();openLiberacaoForm(\'' + uid + '\', \'' + (f.nome || '').replace(/'/g, "\\'") + '\')">+ Enviar</button>';
                     html += '<span id="libArrow_' + uid + '" style="font-size:18px;transition:transform 0.2s;">▸</span>';
                     html += '</div>';
                     html += '</div>';
@@ -3383,10 +3121,8 @@
                 '<label><strong>Enviar nova pesquisa:</strong></label>' +
                 '<select id="libTipoPesquisa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-top:5px;">' +
                 '<option value="">-- Selecione o tipo --</option>' +
-                '<option value="experiencia_45_colab">Pesquisa de Experiência 45 dias - Colaborador</option>' +
-                '<option value="desempenho_90_colab">Avaliação 360° - Autoavaliação (90 dias)</option>' +
-                '<option value="experiencia_45_empresa">Avaliação 360° - Pelo Gestor (45 dias)</option>' +
-                '<option value="desempenho_90_empresa">Avaliação 360° - Pelo Gestor (90 dias)</option>' +
+                '<option value="experiencia_45_etapa1">Experiência 45 dias - Etapa 1 (RH)</option>' +
+                '<option value="experiencia_45_etapa2">Experiência 45 dias - Etapa 2 (Gestor)</option>' +
                 '</select>' +
                 '</div>';
 
@@ -3557,195 +3293,6 @@
             }
         }
 
-        async function loadColaboradores() {
-            const container = document.getElementById('colaboradoresContainer');
-            container.innerHTML = '<div class="loading"></div>';
-
-            try {
-                const usuarios = await cachedGet('usuarios:colaboradores', () =>
-                    db.collection('usuarios').where('perfil', '==', 'colaborador').get());
-
-                let html = '';
-                if (usuarios.empty) {
-                    html = '<div class="alert alert-info">Nenhum colaborador cadastrado.</div>';
-                } else {
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Nome</th><th>Email</th><th>Líder</th><th>Status</th></tr></thead>';
-                    html += '<tbody>';
-
-                    usuarios.forEach(doc => {
-                        const u = doc.data();
-                        html += '<tr>';
-                        html += '<td>' + u.nome + '</td>';
-                        html += '<td>' + u.email + '</td>';
-                        html += '<td>' + (u.lider || 'N/A') + '</td>';
-                        html += '<td>' + (u.ativo ? 'Ativo' : 'Inativo') + '</td>';
-                        html += '</tr>';
-                    });
-
-                    html += '</tbody></table></div>';
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar colaboradores:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar colaboradores</div>';
-            }
-        }
-
-        async function loadSubordinates() {
-            const container = document.getElementById('subordinatesContainer');
-            container.innerHTML = '<div class="loading"></div>';
-
-            try {
-                const subordinados = await cachedGet('usuarios:subordinados:' + currentUser.id, () =>
-                    db.collection('usuarios').where('gestor_id', '==', currentUser.id).get());
-
-                let html = '';
-                if (subordinados.empty) {
-                    html = '<div class="alert alert-info">Nenhum subordinado encontrado.</div>';
-                } else {
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th></tr></thead>';
-                    html += '<tbody>';
-
-                    subordinados.forEach(doc => {
-                        const u = doc.data();
-                        html += '<tr>';
-                        html += '<td>' + u.nome + '</td>';
-                        html += '<td>' + u.email + '</td>';
-                        html += '<td>' + (u.perfil || 'N/A') + '</td>';
-                        html += '<td>' + (u.ativo ? 'Ativo' : 'Inativo') + '</td>';
-                        html += '</tr>';
-                    });
-
-                    html += '</tbody></table></div>';
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar subordinados:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar subordinados</div>';
-            }
-        }
-
-        async function loadRespostas() {
-            var container = document.getElementById('respostasContainer');
-            container.innerHTML = '<div class="loading"></div>';
-
-            try {
-                var respostas = await db.collection('respostas')
-                    .where('usuario_id', '==', currentUser.id)
-                    .get();
-
-                var html = '';
-                if (respostas.empty) {
-                    html = '<div class="alert alert-info">Nenhuma resposta registrada.</div>';
-                } else {
-                    var lista = [];
-                    respostas.forEach(function(doc) { lista.push({ id: doc.id, ...doc.data() }); });
-                    lista.sort(function(a, b) { return toDate(b.data_resposta) - toDate(a.data_resposta); });
-
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Tipo de Pesquisa</th><th>Data</th><th>Ação</th></tr></thead>';
-                    html += '<tbody>';
-
-                    lista.forEach(function(r) {
-                        var tipoLabel = PESQUISA_LABELS[r.tipo_pesquisa] || r.tipo_pesquisa;
-                        html += '<tr>';
-                        html += '<td>' + tipoLabel + '</td>';
-                        html += '<td>' + formatDate(r.data_resposta) + '</td>';
-                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + r.id + '\', \'respostas\')">👁 Ver</button></td>';
-                        html += '</tr>';
-                    });
-
-                    html += '</tbody></table></div>';
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar respostas:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar respostas</div>';
-            }
-        }
-
-        async function loadAvaliadoresTab() {
-            var container = document.getElementById('gestoresContainer');
-            container.innerHTML = '<div class="loading"></div>';
-
-            try {
-                var [pesquisas, usuarios] = await Promise.all([
-                    cachedGet('pesquisas:all', function() { return db.collection('pesquisas').get(); }),
-                    cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); })
-                ]);
-                var nomeMap = {};
-                usuarios.forEach(function(doc) { nomeMap[doc.id] = doc.data().nome || doc.data().email; });
-
-                var html = '';
-                if (pesquisas.empty) {
-                    html = '<div class="alert alert-info">Nenhuma avaliação realizada.</div>';
-                } else {
-                    var lista = [];
-                    pesquisas.forEach(function(doc) { lista.push({ id: doc.id, ...doc.data() }); });
-                    lista.sort(function(a, b) { return toDate(b.data_avaliacao) - toDate(a.data_avaliacao); });
-
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Avaliador</th><th>Colaborador</th><th>Tipo</th><th>Data</th><th>Ação</th></tr></thead>';
-                    html += '<tbody>';
-                    lista.forEach(function(p) {
-                        var tipoLabel = PESQUISA_LABELS[p.tipo_pesquisa] || p.tipo_pesquisa;
-                        html += '<tr>';
-                        html += '<td>' + (p.avaliador_nome || 'N/A') + '</td>';
-                        html += '<td>' + (nomeMap[p.colaborador_id] || p.colaborador_id) + '</td>';
-                        html += '<td style="font-size:12px;">' + tipoLabel + '</td>';
-                        html += '<td>' + formatDate(p.data_avaliacao) + '</td>';
-                        html += '<td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="verRespostaDetalhe(\'' + p.id + '\', \'pesquisas\')">👁 Ver</button></td>';
-                        html += '</tr>';
-                    });
-                    html += '</tbody></table></div>';
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar avaliações dos gestores:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações</div>';
-            }
-        }
-
-        async function loadPesquisasColabTab() {
-            const container = document.getElementById('pesquisasColabContainer');
-            container.innerHTML = '<div class="loading"></div>';
-
-            try {
-                const liberacoes = await cachedGet('liberacoes:all', () => db.collection('liberacoes').get());
-                let html = '';
-
-                if (liberacoes.empty) {
-                    html = '<div class="alert alert-info">Nenhuma pesquisa liberada.</div>';
-                } else {
-                    html += '<div class="table-wrapper"><table class="table">';
-                    html += '<thead><tr><th>Colaborador</th><th>Tipo de Pesquisa</th><th>Data de Liberação</th></tr></thead>';
-                    html += '<tbody>';
-
-                    liberacoes.forEach(doc => {
-                        const l = doc.data();
-                        html += '<tr>';
-                        html += '<td>' + l.colaborador_id + '</td>';
-                        html += '<td>' + l.tipo_pesquisa + '</td>';
-                        html += '<td>' + (formatDate(l.data_liberacao)) + '</td>';
-                        html += '</tr>';
-                    });
-
-                    html += '</tbody></table></div>';
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar pesquisas dos colaboradores:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar pesquisas</div>';
-            }
-        }
-
         async function loadUsuarios() {
             const container = document.getElementById('usuariosContainer');
             container.innerHTML = '<div class="loading"></div>';
@@ -3811,7 +3358,6 @@
                 <div class="pdi-form-section">
                     <label>Perfil de Acesso:</label>
                     <select id="newUserPerfil">
-                        <option value="colaborador">Colaborador</option>
                         <option value="gestor">Gestor</option>
                         <option value="analista">Analista</option>
                         <option value="diretoria">Diretoria</option>
@@ -4134,7 +3680,6 @@
                     <div class="pdi-form-section">
                         <label>Perfil:</label>
                         <select id="editUserPerfil">
-                            <option value="colaborador" ${u.perfil === 'colaborador' ? 'selected' : ''}>Colaborador</option>
                             <option value="gestor" ${u.perfil === 'gestor' ? 'selected' : ''}>Gestor</option>
                             <option value="analista" ${u.perfil === 'analista' ? 'selected' : ''}>Analista</option>
                             <option value="diretoria" ${u.perfil === 'diretoria' ? 'selected' : ''}>Diretoria</option>
@@ -4252,41 +3797,12 @@
         }
 
         // ══════════════════════════════════════════════════════
-        // ══  PLANO DE ACOMPANHAMENTO DE EVOLUÇÃO
+        // ══  FICHA DO COLABORADOR
         // ══════════════════════════════════════════════════════
 
-        var COMPETENCIAS_SUGERIDAS = [
-            'Comunicação', 'Liderança', 'Trabalho em Equipe', 'Resolução de Problemas',
-            'Gestão de Tempo', 'Adaptabilidade', 'Criatividade', 'Pensamento Analítico',
-            'Conhecimento Técnico', 'Atendimento ao Cliente', 'Negociação',
-            'Organização', 'Proatividade', 'Inteligência Emocional', 'Outro'
-        ];
+        var DEPARTAMENTOS_FICHA = ['RH', 'Financeiro', 'Projetos', 'Qualidade', 'Operações', 'Desenvolvimento', 'Comercial', 'TI'];
 
-        var NIVEL_LABELS = ['Iniciante', 'Básico', 'Intermediário', 'Avançado', 'Especialista'];
-
-        var META_STATUS_LABELS = {
-            'pendente': { label: 'Pendente', bg: '#f0f0f0', color: '#636E72' },
-            'em_andamento': { label: 'Em Andamento', bg: '#e3f2fd', color: '#1565c0' },
-            'concluida': { label: 'Concluída', bg: '#e8f5e9', color: '#2e7d32' },
-            'cancelada': { label: 'Cancelada', bg: '#ffebee', color: '#c62828' }
-        };
-
-        function evoNivelDots(nivel) {
-            var html = '<div class="comp-level">';
-            for (var i = 1; i <= 5; i++) {
-                html += '<span class="comp-level-dot' + (i <= nivel ? ' filled' : '') + '"></span>';
-            }
-            html += '</div>';
-            return html;
-        }
-
-        function evoNotaClass(nota) {
-            if (nota >= 7) return 'alta';
-            if (nota >= 4) return 'media';
-            return 'baixa';
-        }
-
-        function evoTempoEmpresa(dataAdm) {
+        function fichaTempoEmpresa(dataAdm) {
             if (!dataAdm) return '';
             var d = dataAdm.toDate ? dataAdm.toDate() : new Date(dataAdm);
             var now = new Date();
@@ -4300,941 +3816,573 @@
             return years + (years === 1 ? ' ano' : ' anos') + (remMonths > 0 ? ' e ' + remMonths + 'm' : '');
         }
 
-        function renderEvoCard(evo, docId, canEdit) {
-            var comps = evo.competencias || [];
-            var metas = evo.metas || [];
-            var avals = evo.avaliacoes || [];
-            var timeline = evo.timeline || [];
-            var lastAval = avals.length > 0 ? avals[avals.length - 1] : null;
-
-            var html = '<div class="evo-card">';
-            html += '<div class="evo-card-top">';
-            html += '<div class="evo-card-info">';
-            html += '<h3>' + (evo.colaborador_nome || '—') + '</h3>';
-            html += '<div class="evo-card-badges">';
-            if (evo.cargo) html += '<span class="evo-badge evo-badge-cargo">' + evo.cargo + '</span>';
-            if (evo.departamento) html += '<span class="evo-badge evo-badge-depto">' + evo.departamento + '</span>';
-            if (evo.data_admissao) html += '<span class="evo-badge evo-badge-tempo">⏱ ' + evoTempoEmpresa(evo.data_admissao) + '</span>';
-            html += '</div>';
-            html += '</div>';
-            html += '<div class="evo-card-actions">';
-            html += '<button class="btn btn-primary btn-small" onclick="viewEvoPlano(\'' + docId + '\')">📋 Ver Plano</button>';
-            if (canEdit) html += '<button class="btn btn-secondary btn-small" onclick="openEvoForm(\'' + docId + '\')">✏️ Editar</button>';
-            html += '</div>';
-            html += '</div>';
-            html += '<div class="evo-card-bottom">';
-            html += '<div class="evo-metric">🎯 Metas: <strong>' + metas.length + '</strong></div>';
-            html += '<div class="evo-metric">📊 Competências: <strong>' + comps.length + '</strong></div>';
-            if (lastAval) html += '<div class="evo-metric">⭐ Última nota: <strong>' + lastAval.nota + '/10</strong></div>';
-            html += '<div class="evo-metric">📌 Marcos: <strong>' + timeline.length + '</strong></div>';
-            html += '</div>';
-            html += '</div>';
-            return html;
+        function fichaInitials(nome) {
+            return (nome || '?').split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
         }
 
-        function renderEvoCompetencias(comps, docId, canEdit) {
-            if (!comps || comps.length === 0) {
-                return '<p style="color:#636E72;font-size:13px;">Nenhuma competência registrada.</p>';
-            }
-            var html = '<div class="comp-grid">';
-            comps.forEach(function(c, idx) {
-                html += '<div class="comp-card">';
-                html += '<div class="comp-card-header">';
-                html += '<h4>' + (c.nome || '—') + '</h4>';
-                if (canEdit) html += '<button class="btn btn-secondary btn-small" onclick="editCompetencia(\'' + docId + '\',' + idx + ')" style="padding:2px 8px;font-size:11px;">✏️</button>';
-                html += '</div>';
-                html += evoNivelDots(c.nivel || 0);
-                html += '<div class="comp-level-label">' + (NIVEL_LABELS[(c.nivel || 1) - 1] || '') + '</div>';
-                if (c.descricao) html += '<p style="font-size:12px;color:#636E72;margin-top:6px;">' + c.descricao + '</p>';
-                html += '</div>';
-            });
-            html += '</div>';
-            return html;
-        }
-
-        function renderEvoMetas(metas, docId, canEdit) {
-            if (!metas || metas.length === 0) {
-                return '<p style="color:#636E72;font-size:13px;">Nenhuma meta registrada.</p>';
-            }
-            var html = '';
-            metas.forEach(function(m, idx) {
-                var si = META_STATUS_LABELS[m.status] || META_STATUS_LABELS['pendente'];
-                html += '<div class="meta-item">';
-                html += '<div class="meta-info">';
-                html += '<h4>' + (m.titulo || '—') + ' <span class="badge" style="background:' + si.bg + ';color:' + si.color + ';font-size:10px;">' + si.label + '</span></h4>';
-                html += '<p>' + (m.descricao || '') + '</p>';
-                if (m.prazo) {
-                    var prazoD = m.prazo.toDate ? m.prazo.toDate() : new Date(m.prazo);
-                    html += '<p style="margin-top:4px;">📅 Prazo: ' + formatDate(prazoD) + '</p>';
-                }
-                if (canEdit) html += '<button class="btn btn-secondary btn-small" onclick="editMeta(\'' + docId + '\',' + idx + ')" style="margin-top:6px;padding:2px 8px;font-size:11px;">✏️ Editar</button>';
-                html += '</div>';
-                html += '<div class="meta-progress">';
-                html += '<div class="pct">' + (m.progresso || 0) + '%</div>';
-                html += '<div class="pct-label">progresso</div>';
-                html += '</div>';
-                html += '</div>';
-            });
-            return html;
-        }
-
-        function renderEvoAvaliacoes(avals, docId, canEdit) {
-            if (!avals || avals.length === 0) {
-                return '<p style="color:#636E72;font-size:13px;">Nenhuma avaliação registrada.</p>';
-            }
-            var html = '';
-            avals.slice().reverse().forEach(function(a) {
-                var nc = evoNotaClass(a.nota);
-                html += '<div class="aval-card">';
-                html += '<div class="aval-card-header">';
-                html += '<h4>' + (a.periodo || '—') + '</h4>';
-                var dt = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : null;
-                html += '<span class="aval-date">' + (dt ? formatDate(dt) : '') + '</span>';
-                html += '</div>';
-                html += '<span class="aval-nota ' + nc + '">⭐ ' + a.nota + '/10</span>';
-                if (a.observacoes) html += '<p style="margin-top:10px;font-size:13px;color:#555;line-height:1.5;">' + a.observacoes + '</p>';
-                if (a.autor) html += '<p style="margin-top:6px;font-size:12px;color:#999;">Por: ' + a.autor + '</p>';
-                html += '</div>';
-            });
-            return html;
-        }
-
-        function renderEvoTimeline(timeline) {
-            if (!timeline || timeline.length === 0) {
-                return '<p style="color:#636E72;font-size:13px;">Nenhum registro na timeline.</p>';
-            }
-            var html = '<div class="evo-timeline">';
-            var sorted = timeline.slice().sort(function(a, b) {
-                var da = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : new Date(0);
-                var db2 = b.data ? (b.data.toDate ? b.data.toDate() : new Date(b.data)) : new Date(0);
-                return db2 - da;
-            });
-            sorted.forEach(function(item) {
-                var tipo = item.tipo || 'marco';
-                var dt = item.data ? (item.data.toDate ? item.data.toDate() : new Date(item.data)) : null;
-                html += '<div class="evo-timeline-item tipo-' + tipo + '">';
-                html += '<div class="tl-header">';
-                html += '<span class="tl-tipo tl-tipo-' + tipo + '">' + tipo + '</span>';
-                if (dt) html += '<span class="tl-date">' + formatDate(dt) + '</span>';
-                html += '</div>';
-                if (item.autor) html += '<div class="tl-author">' + item.autor + '</div>';
-                html += '<div class="tl-text">' + (item.texto || '') + '</div>';
-                html += '</div>';
-            });
-            html += '</div>';
-            return html;
-        }
-
-        function renderEvoPlanoTabs(evo, docId, canEdit) {
-            var html = '<div class="evo-tabs">';
-            html += '<button class="evo-tab-btn active" onclick="switchEvoTab(\'comp\',this)">Competências</button>';
-            html += '<button class="evo-tab-btn" onclick="switchEvoTab(\'metas\',this)">Metas</button>';
-            html += '<button class="evo-tab-btn" onclick="switchEvoTab(\'aval\',this)">Avaliações</button>';
-            html += '<button class="evo-tab-btn" onclick="switchEvoTab(\'timeline\',this)">Timeline</button>';
-            html += '</div>';
-
-            html += '<div class="evo-section active" id="evoSecComp">';
-            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addCompetencia(\'' + docId + '\')" style="margin-bottom:12px;">+ Competência</button>';
-            html += renderEvoCompetencias(evo.competencias, docId, canEdit);
-            html += '</div>';
-
-            html += '<div class="evo-section" id="evoSecMetas">';
-            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addMeta(\'' + docId + '\')" style="margin-bottom:12px;">+ Meta</button>';
-            html += renderEvoMetas(evo.metas, docId, canEdit);
-            html += '</div>';
-
-            html += '<div class="evo-section" id="evoSecAval">';
-            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addAvaliacao(\'' + docId + '\')" style="margin-bottom:12px;">+ Avaliação</button>';
-            html += renderEvoAvaliacoes(evo.avaliacoes, docId, canEdit);
-            html += '</div>';
-
-            html += '<div class="evo-section" id="evoSecTimeline">';
-            if (canEdit) html += '<button class="btn btn-primary btn-small" onclick="addMarco(\'' + docId + '\')" style="margin-bottom:12px;">+ Registro</button>';
-            html += renderEvoTimeline(evo.timeline);
-            html += '</div>';
-
-            return html;
-        }
-
-        function switchEvoTab(tab, btn) {
-            var sectionMap = { comp: 'evoSecComp', metas: 'evoSecMetas', aval: 'evoSecAval', timeline: 'evoSecTimeline' };
-            document.querySelectorAll('.evo-tab-btn').forEach(function(b) { b.classList.remove('active'); });
-            document.querySelectorAll('.evo-section').forEach(function(s) { s.classList.remove('active'); });
-            if (btn) btn.classList.add('active');
-            var sec = document.getElementById(sectionMap[tab]);
-            if (sec) sec.classList.add('active');
-        }
-
-        async function loadPDI() {
-            var container = document.getElementById('pdiContainer');
+        async function loadFichas() {
+            var container = document.getElementById('fichasContainer');
             container.innerHTML = '<div class="loading"></div>';
+
             try {
-                if (currentUser.perfil === 'colaborador') {
-                    await loadEvoColaborador();
-                } else if (currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
-                    await loadEvoGestor();
-                } else if (currentUser.perfil === 'admin' || currentUser.perfil === 'diretoria') {
-                    await loadEvoAdmin();
-                }
-            } catch (error) {
-                console.error('Erro ao carregar Evolução:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar plano de evolução</div>';
-            }
-        }
+                var fichasSnap = await cachedGet('fichas:all', function() { return db.collection('fichas').get(); });
 
-        async function loadEvoAdmin() {
-            var container = document.getElementById('pdiContainer');
-            var db = await getDb();
-            try {
-                var evoSnap = await cachedGet('evolucao:all', function() { return db.collection('evolucao').get(); });
-                var usuariosSnap = await cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); });
-
-                var userMap = {};
-                usuariosSnap.forEach(function(doc) {
-                    var u = doc.data();
-                    userMap[doc.id] = u;
-                });
-
-                var evoList = [];
-                var totalMetas = 0; var totalNotas = 0; var countNotas = 0;
-                evoSnap.forEach(function(doc) {
-                    var d = doc.data();
-                    if (!d.colaborador_nome && d.colaborador_id && userMap[d.colaborador_id]) {
-                        d.colaborador_nome = userMap[d.colaborador_id].nome || userMap[d.colaborador_id].email || d.colaborador_id;
+                var fichasList = [];
+                fichasSnap.forEach(function(doc) {
+                    var f = doc.data();
+                    if (currentUser.perfil === 'admin' || currentUser.perfil === 'diretoria') {
+                        fichasList.push({ id: doc.id, ...f });
+                    } else if (f.gestor_responsavel_id === currentUser.id) {
+                        fichasList.push({ id: doc.id, ...f });
                     }
-                    totalMetas += (d.metas || []).length;
-                    (d.avaliacoes || []).forEach(function(a) { if (a.nota) { totalNotas += a.nota; countNotas++; } });
-                    evoList.push({ id: doc.id, data: d });
                 });
 
-                var mediaNotas = countNotas > 0 ? (totalNotas / countNotas).toFixed(1) : '—';
-                var mediaMetas = evoList.length > 0 ? (totalMetas / evoList.length).toFixed(1) : '0';
-
-                var html = '<div class="evo-header">';
-                html += '<h2 style="font-size:20px;font-weight:700;">📈 Plano de Acompanhamento de Evolução</h2>';
-                html += '<button class="btn btn-primary" onclick="openEvoForm()">+ Novo Plano</button>';
+                var html = '<div class="ficha-search">';
+                html += '<input type="text" id="fichaSearchInput" placeholder="Buscar colaborador..." oninput="filterFichas()">';
+                if (currentUser.perfil === 'admin') {
+                    html += '<button class="btn btn-primary" onclick="openFichaForm()">+ Nova Ficha</button>';
+                }
                 html += '</div>';
 
-                html += '<div class="evo-stats">';
-                html += '<div class="evo-stat-card"><div class="stat-number">' + evoList.length + '</div><div class="stat-label">Colaboradores com Plano</div></div>';
-                html += '<div class="evo-stat-card"><div class="stat-number">' + mediaMetas + '</div><div class="stat-label">Média de Metas</div></div>';
-                html += '<div class="evo-stat-card"><div class="stat-number">' + mediaNotas + '</div><div class="stat-label">Nota Média</div></div>';
-                html += '</div>';
-
-                if (evoList.length === 0) {
-                    html += '<div class="alert alert-info">Nenhum plano de evolução encontrado.</div>';
+                if (fichasList.length === 0) {
+                    html += '<div class="alert alert-info">Nenhuma ficha de colaborador encontrada.</div>';
                 } else {
-                    evoList.forEach(function(item) {
-                        html += renderEvoCard(item.data, item.id, true);
+                    html += '<div class="ficha-grid" id="fichaGrid">';
+                    fichasList.forEach(function(f) {
+                        var initials = fichaInitials(f.nome);
+                        var avatarHtml = f.foto_url
+                            ? '<div class="ficha-avatar"><img src="' + f.foto_url + '" alt="' + f.nome + '"></div>'
+                            : '<div class="ficha-avatar">' + initials + '</div>';
+                        var tempo = f.data_admissao ? fichaTempoEmpresa(f.data_admissao) : '';
+
+                        html += '<div class="ficha-card" data-nome="' + (f.nome || '').toLowerCase() + '">';
+                        html += '<div class="ficha-card-top">';
+                        html += avatarHtml;
+                        html += '<div class="ficha-info">';
+                        html += '<h3>' + (f.nome || 'Sem nome') + '</h3>';
+                        html += '<p>' + (f.cargo || 'Sem cargo') + '</p>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '<div class="ficha-badges">';
+                        if (f.departamento) html += '<span class="evo-badge evo-badge-depto">' + f.departamento + '</span>';
+                        if (tempo) html += '<span class="evo-badge evo-badge-tempo">⏱ ' + tempo + '</span>';
+                        html += '</div>';
+                        html += '<div class="ficha-actions">';
+                        html += '<button class="btn btn-secondary btn-small" onclick="viewFicha(\'' + f.id + '\')">Ver Ficha</button>';
+                        if (currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
+                            html += '<button class="btn btn-primary btn-small" onclick="editFicha(\'' + f.id + '\')">Editar</button>';
+                        }
+                        if (currentUser.perfil === 'admin') {
+                            html += '<button class="btn btn-danger btn-small" onclick="deleteFicha(\'' + f.id + '\')">Excluir</button>';
+                        }
+                        html += '</div>';
+                        html += '</div>';
                     });
-                }
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar evolução admin:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar dados</div>';
-            }
-        }
-
-        async function loadEvoGestor() {
-            var container = document.getElementById('pdiContainer');
-            var db = await getDb();
-            try {
-                var subordinados = await cachedGet('usuarios:subordinados:' + currentUser.id, function() {
-                    return db.collection('usuarios').where('gestor_id', '==', currentUser.id).get();
-                });
-
-                var subordinadoIds = [];
-                var subordinadoMap = {};
-                subordinados.forEach(function(doc) {
-                    subordinadoIds.push(doc.id);
-                    var u = doc.data();
-                    subordinadoMap[doc.id] = u.nome || u.email || doc.id;
-                });
-
-                var html = '<div class="evo-header">';
-                html += '<h2 style="font-size:20px;font-weight:700;">📈 Acompanhamento da Equipe</h2>';
-                html += '<button class="btn btn-primary" onclick="openEvoForm()">+ Novo Plano</button>';
-                html += '</div>';
-
-                // Meu plano
-                var myEvo = await cachedGet('evolucao:user:' + currentUser.id, function() {
-                    return db.collection('evolucao').where('colaborador_id', '==', currentUser.id).get();
-                });
-                html += '<h3 style="margin-bottom:15px;">📈 Meu Plano</h3>';
-                if (myEvo.empty) {
-                    html += '<div class="alert alert-info">Você ainda não tem um plano de evolução.</div>';
-                } else {
-                    myEvo.forEach(function(doc) {
-                        html += renderEvoCard(doc.data(), doc.id, true);
-                    });
-                }
-
-                // Equipe
-                html += '<h3 style="margin-top:30px;margin-bottom:15px;">👥 Equipe</h3>';
-                if (subordinadoIds.length === 0) {
-                    html += '<div class="alert alert-info">Nenhum subordinado encontrado.</div>';
-                } else {
-                    var teamEvo = [];
-                    // Firestore 'in' supports max 10
-                    for (var i = 0; i < subordinadoIds.length; i += 10) {
-                        var batch = subordinadoIds.slice(i, i + 10);
-                        var snap = await db.collection('evolucao').where('colaborador_id', 'in', batch).get();
-                        snap.forEach(function(doc) {
-                            var d = doc.data();
-                            d.colaborador_nome = subordinadoMap[d.colaborador_id] || d.colaborador_nome || d.colaborador_id;
-                            teamEvo.push({ id: doc.id, data: d });
-                        });
-                    }
-                    if (teamEvo.length === 0) {
-                        html += '<div class="alert alert-info">Nenhum plano de evolução encontrado para sua equipe.</div>';
-                    } else {
-                        teamEvo.forEach(function(item) {
-                            html += renderEvoCard(item.data, item.id, true);
-                        });
-                    }
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erro ao carregar evolução gestor:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar dados</div>';
-            }
-        }
-
-        async function loadEvoColaborador() {
-            var container = document.getElementById('pdiContainer');
-            var db = await getDb();
-            try {
-                var snap = await cachedGet('evolucao:user:' + currentUser.id, function() {
-                    return db.collection('evolucao').where('colaborador_id', '==', currentUser.id).get();
-                });
-
-                if (snap.empty) {
-                    container.innerHTML = '<div class="alert alert-info">Nenhum plano de evolução encontrado para você.</div>';
-                    return;
-                }
-
-                var html = '<h2 style="font-size:20px;font-weight:700;margin-bottom:20px;">📈 Minha Evolução</h2>';
-                snap.forEach(function(doc) {
-                    var evo = doc.data();
-                    var docId = doc.id;
-
-                    // Stats
-                    var comps = evo.competencias || [];
-                    var metas = evo.metas || [];
-                    var avals = evo.avaliacoes || [];
-                    var lastAval = avals.length > 0 ? avals[avals.length - 1] : null;
-                    var metasConcl = metas.filter(function(m) { return m.status === 'concluida'; }).length;
-
-                    html += '<div class="evo-stats">';
-                    html += '<div class="evo-stat-card"><div class="stat-number">' + comps.length + '</div><div class="stat-label">Competências</div></div>';
-                    html += '<div class="evo-stat-card"><div class="stat-number">' + metas.length + '</div><div class="stat-label">Metas</div></div>';
-                    html += '<div class="evo-stat-card"><div class="stat-number">' + metasConcl + '</div><div class="stat-label">Metas Concluídas</div></div>';
-                    html += '<div class="evo-stat-card"><div class="stat-number">' + (lastAval ? lastAval.nota + '/10' : '—') + '</div><div class="stat-label">Última Avaliação</div></div>';
                     html += '</div>';
-
-                    html += renderEvoPlanoTabs(evo, docId, false);
-                });
+                }
 
                 container.innerHTML = html;
             } catch (error) {
-                console.error('Erro ao carregar evolução colaborador:', error);
-                container.innerHTML = '<div class="alert alert-error">Erro ao carregar dados</div>';
+                console.error('Erro ao carregar fichas:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar fichas</div>';
             }
         }
 
-        async function viewEvoPlano(docId) {
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                if (!docSnap.exists) { showToast('error', 'Erro', 'Plano não encontrado.'); return; }
-                var evo = docSnap.data();
-                var canEdit = currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista' || currentUser.perfil === 'diretoria';
-
-                var html = '';
-                // Header info
-                html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">';
-                if (evo.cargo) html += '<span class="evo-badge evo-badge-cargo">' + evo.cargo + '</span>';
-                if (evo.departamento) html += '<span class="evo-badge evo-badge-depto">' + evo.departamento + '</span>';
-                if (evo.data_admissao) html += '<span class="evo-badge evo-badge-tempo">⏱ ' + evoTempoEmpresa(evo.data_admissao) + '</span>';
-                html += '</div>';
-
-                html += renderEvoPlanoTabs(evo, docId, canEdit);
-
-                var buttons = [{ text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }];
-                if (canEdit) {
-                    buttons.push({ text: '🗑 Excluir', onclick: 'deleteEvo("' + docId + '")', class: 'btn-secondary', style: 'color:#c62828;' });
-                }
-
-                openModal('📈 ' + (evo.colaborador_nome || 'Plano de Evolução'), html, buttons);
-            } catch (error) {
-                console.error('Erro ao visualizar plano:', error);
-                showToast('error', 'Erro', error.message);
-            }
+        function filterFichas() {
+            var term = (document.getElementById('fichaSearchInput').value || '').toLowerCase();
+            var cards = document.querySelectorAll('#fichaGrid .ficha-card');
+            cards.forEach(function(card) {
+                card.style.display = card.getAttribute('data-nome').indexOf(term) >= 0 ? '' : 'none';
+            });
         }
 
-        async function openEvoForm(docId) {
-            var db = await getDb();
+        async function openFichaForm(docId) {
             var isEdit = !!docId;
-            var evo = {};
+            var f = {};
 
             if (isEdit) {
                 try {
-                    var docSnap = await db.collection('evolucao').doc(docId).get();
-                    if (docSnap.exists) evo = docSnap.data();
+                    var docSnap = await db.collection('fichas').doc(docId).get();
+                    if (docSnap.exists) f = docSnap.data();
                 } catch(e) {}
             }
 
-            var html = '';
+            // Build gestor select from usuarios
+            var usuarios = await cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); });
+            var gestorOptions = '<option value="">-- Sem gestor --</option>';
+            usuarios.forEach(function(doc) {
+                var u = doc.data();
+                if (u.perfil === 'gestor' || u.perfil === 'analista' || u.perfil === 'admin') {
+                    var sel = (f.gestor_responsavel_id === doc.id) ? 'selected' : '';
+                    gestorOptions += '<option value="' + doc.id + '" data-nome="' + (u.nome || '').replace(/"/g, '&quot;') + '" ' + sel + '>' + u.nome + ' (' + u.perfil + ')</option>';
+                }
+            });
 
-            if (!isEdit) {
-                html += '<div class="form-section">';
-                html += '<label>Colaborador: *</label>';
-                html += '<select id="evoColaborador"><option value="">-- Selecione --</option></select>';
-                html += '</div>';
+            var deptoOptions = '<option value="">-- Selecione --</option>';
+            DEPARTAMENTOS_FICHA.forEach(function(d) {
+                var sel = (f.departamento === d) ? 'selected' : '';
+                deptoOptions += '<option value="' + d + '" ' + sel + '>' + d + '</option>';
+            });
+
+            var admVal = '';
+            if (f.data_admissao) {
+                var ad = f.data_admissao.toDate ? f.data_admissao.toDate() : new Date(f.data_admissao);
+                admVal = ad.toISOString().split('T')[0];
             }
+            var nascVal = '';
+            if (f.data_nascimento) {
+                var nd = f.data_nascimento.toDate ? f.data_nascimento.toDate() : new Date(f.data_nascimento);
+                nascVal = nd.toISOString().split('T')[0];
+            }
+
+            var html = '<div class="form-row">';
+            html += '<div class="form-section"><label>Nome: *</label>';
+            html += '<input type="text" id="fichaNome" value="' + ((f.nome || '').replace(/"/g, '&quot;')) + '"></div>';
+            html += '<div class="form-section"><label>CPF:</label>';
+            html += '<input type="text" id="fichaCpf" value="' + ((f.cpf || '').replace(/"/g, '&quot;')) + '" placeholder="000.000.000-00"></div>';
+            html += '</div>';
 
             html += '<div class="form-row">';
             html += '<div class="form-section"><label>Cargo:</label>';
-            html += '<input type="text" id="evoCargo" value="' + ((evo.cargo || '').replace(/"/g, '&quot;')) + '"></div>';
+            html += '<input type="text" id="fichaCargo" value="' + ((f.cargo || '').replace(/"/g, '&quot;')) + '"></div>';
             html += '<div class="form-section"><label>Departamento:</label>';
-            html += '<input type="text" id="evoDepto" value="' + ((evo.departamento || '').replace(/"/g, '&quot;')) + '"></div>';
+            html += '<select id="fichaDepto">' + deptoOptions + '</select></div>';
             html += '</div>';
 
+            html += '<div class="form-row">';
             html += '<div class="form-section"><label>Data de Admissão:</label>';
-            var admVal = '';
-            if (evo.data_admissao) {
-                var ad = evo.data_admissao.toDate ? evo.data_admissao.toDate() : new Date(evo.data_admissao);
-                admVal = ad.toISOString().split('T')[0];
-            }
-            html += '<input type="date" id="evoAdmissao" value="' + admVal + '"></div>';
+            html += '<input type="date" id="fichaAdmissao" value="' + admVal + '"></div>';
+            html += '<div class="form-section"><label>Data de Nascimento:</label>';
+            html += '<input type="date" id="fichaNascimento" value="' + nascVal + '"></div>';
+            html += '</div>';
 
-            if (isEdit) {
-                html += '<h4 style="margin:16px 0 10px;font-size:14px;">Competências atuais: ' + (evo.competencias || []).length + '</h4>';
-                html += '<p style="font-size:12px;color:#636E72;">Use os botões no plano para gerenciar competências individualmente.</p>';
-            } else {
-                html += '<h4 style="margin:16px 0 10px;font-size:14px;">Competências Iniciais</h4>';
-                html += '<div id="evoCompRows">';
-                html += renderEvoCompRow(0);
-                html += '</div>';
-                html += '<button class="btn btn-secondary btn-small" onclick="addEvoCompRow()" style="margin-top:8px;">+ Competência</button>';
-            }
+            html += '<div class="form-row">';
+            html += '<div class="form-section"><label>Telefone:</label>';
+            html += '<input type="text" id="fichaTelefone" value="' + ((f.telefone || '').replace(/"/g, '&quot;')) + '"></div>';
+            html += '<div class="form-section"><label>Email Pessoal:</label>';
+            html += '<input type="text" id="fichaEmail" value="' + ((f.email_pessoal || '').replace(/"/g, '&quot;')) + '"></div>';
+            html += '</div>';
 
-            var title = isEdit ? '✏️ Editar Plano de Evolução' : '📈 Novo Plano de Evolução';
+            html += '<div class="form-section"><label>Endereço:</label>';
+            html += '<input type="text" id="fichaEndereco" value="' + ((f.endereco || '').replace(/"/g, '&quot;')) + '" style="width:100%;"></div>';
+
+            html += '<div class="form-section"><label>Gestor Responsável:</label>';
+            html += '<select id="fichaGestor">' + gestorOptions + '</select></div>';
+
+            html += '<div class="form-section"><label>Foto URL:</label>';
+            html += '<input type="text" id="fichaFoto" value="' + ((f.foto_url || '').replace(/"/g, '&quot;')) + '" placeholder="https://..."></div>';
+
+            var title = isEdit ? 'Editar Ficha' : 'Nova Ficha do Colaborador';
             openModal(title, html, [
                 { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'saveEvo(' + (isEdit ? '"' + docId + '"' : '') + ')', class: 'btn-primary' }
-            ]);
-
-            if (!isEdit) loadEvoColaboradorSelect();
-        }
-
-        var _evoCompRowCount = 1;
-
-        function renderEvoCompRow(idx) {
-            var html = '<div class="form-row" style="margin-bottom:8px;" id="evoCompRow' + idx + '">';
-            html += '<div class="form-section" style="margin-bottom:0;"><select id="evoCompNome' + idx + '">';
-            html += '<option value="">Selecione...</option>';
-            COMPETENCIAS_SUGERIDAS.forEach(function(c) { html += '<option value="' + c + '">' + c + '</option>'; });
-            html += '</select></div>';
-            html += '<div class="form-section" style="margin-bottom:0;display:flex;gap:8px;">';
-            html += '<select id="evoCompNivel' + idx + '" style="width:auto;">';
-            for (var i = 1; i <= 5; i++) { html += '<option value="' + i + '">' + i + ' - ' + NIVEL_LABELS[i-1] + '</option>'; }
-            html += '</select>';
-            html += '<button class="btn btn-secondary btn-small" onclick="document.getElementById(\'evoCompRow' + idx + '\').remove()" style="padding:4px 8px;color:#c62828;">✕</button>';
-            html += '</div></div>';
-            return html;
-        }
-
-        function addEvoCompRow() {
-            var container = document.getElementById('evoCompRows');
-            if (!container) return;
-            var div = document.createElement('div');
-            div.innerHTML = renderEvoCompRow(_evoCompRowCount);
-            container.appendChild(div.firstElementChild);
-            _evoCompRowCount++;
-        }
-
-        async function loadEvoColaboradorSelect() {
-            try {
-                var db = await getDb();
-                var select = document.getElementById('evoColaborador');
-                if (!select) return;
-                var usuarios = await cachedGet('usuarios:all', function() { return db.collection('usuarios').get(); });
-                usuarios.forEach(function(doc) {
-                    var option = document.createElement('option');
-                    option.value = doc.id;
-                    var u = doc.data();
-                    option.textContent = (u.nome || u.email || doc.id) + ' (' + (u.perfil || '') + ')';
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Erro ao carregar colaboradores:', error);
-            }
-        }
-
-        async function saveEvo(docId) {
-            var db = await getDb();
-            var isEdit = !!docId;
-
-            var cargo = document.getElementById('evoCargo').value.trim();
-            var depto = document.getElementById('evoDepto').value.trim();
-            var admissaoVal = document.getElementById('evoAdmissao').value;
-
-            if (isEdit) {
-                try {
-                    var updateData = {
-                        cargo: cargo,
-                        departamento: depto,
-                        ultima_atualizacao: new Date()
-                    };
-                    if (admissaoVal) updateData.data_admissao = new Date(admissaoVal + 'T12:00:00');
-                    await db.collection('evolucao').doc(docId).update(updateData);
-                    invalidateCache('evolucao:');
-                    showToast('success', 'Plano atualizado!', 'Alterações salvas com sucesso.');
-                    closeModal();
-                    loadPDI();
-                } catch(error) {
-                    console.error('Erro ao salvar plano:', error);
-                    showToast('error', 'Erro', error.message);
-                }
-                return;
-            }
-
-            var colabSelect = document.getElementById('evoColaborador');
-            var colaboradorId = colabSelect ? colabSelect.value : '';
-
-            if (!colaboradorId) {
-                showToast('warn', 'Atenção', 'Selecione um colaborador.');
-                return;
-            }
-
-            // Get collaborator name
-            var colabNome = colaboradorId;
-            try {
-                var colabDoc = await db.collection('usuarios').doc(colaboradorId).get();
-                if (colabDoc.exists) colabNome = colabDoc.data().nome || colabDoc.data().email || colaboradorId;
-            } catch(e) {}
-
-            // Collect competencies
-            var competencias = [];
-            for (var i = 0; i < _evoCompRowCount; i++) {
-                var nomeEl = document.getElementById('evoCompNome' + i);
-                var nivelEl = document.getElementById('evoCompNivel' + i);
-                if (nomeEl && nivelEl && nomeEl.value) {
-                    competencias.push({
-                        nome: nomeEl.value,
-                        nivel: parseInt(nivelEl.value) || 1,
-                        descricao: ''
-                    });
-                }
-            }
-
-            try {
-                await db.collection('evolucao').add({
-                    colaborador_id: colaboradorId,
-                    colaborador_nome: colabNome,
-                    cargo: cargo,
-                    departamento: depto,
-                    data_admissao: admissaoVal ? new Date(admissaoVal + 'T12:00:00') : null,
-                    competencias: competencias,
-                    metas: [],
-                    avaliacoes: [],
-                    timeline: [{
-                        tipo: 'marco',
-                        texto: 'Plano de evolução criado',
-                        autor: currentUser.nome,
-                        data: new Date()
-                    }],
-                    criado_por: currentUser.id,
-                    data_criacao: new Date(),
-                    ultima_atualizacao: new Date()
-                });
-                _evoCompRowCount = 1;
-                invalidateCache('evolucao:');
-                showToast('success', 'Plano criado!', 'Plano de evolução registrado com sucesso.');
-                closeModal();
-                loadPDI();
-            } catch (error) {
-                console.error('Erro ao criar plano:', error);
-                showToast('error', 'Erro ao criar plano', error.message);
-            }
-        }
-
-        function addMeta(docId) {
-            var html = '<div class="form-section"><label>Título da Meta: *</label>';
-            html += '<input type="text" id="metaTitulo" placeholder="Ex: Concluir certificação PMP"></div>';
-            html += '<div class="form-section"><label>Descrição:</label>';
-            html += '<textarea id="metaDescricao" placeholder="Detalhes da meta..."></textarea></div>';
-            html += '<div class="form-row">';
-            html += '<div class="form-section"><label>Prazo:</label>';
-            html += '<input type="date" id="metaPrazo"></div>';
-            html += '<div class="form-section"><label>Progresso (0-100):</label>';
-            html += '<input type="number" id="metaProgresso" min="0" max="100" value="0"></div>';
-            html += '</div>';
-            html += '<div class="form-section"><label>Status:</label>';
-            html += '<select id="metaStatus">';
-            html += '<option value="pendente">Pendente</option>';
-            html += '<option value="em_andamento">Em Andamento</option>';
-            html += '<option value="concluida">Concluída</option>';
-            html += '<option value="cancelada">Cancelada</option>';
-            html += '</select></div>';
-
-            openModal('🎯 Nova Meta', html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'saveNewMeta("' + docId + '")', class: 'btn-primary' }
+                { text: 'Salvar', onclick: 'saveFicha(' + (isEdit ? '"' + docId + '"' : '') + ')', class: 'btn-primary' }
             ]);
         }
 
-        async function saveNewMeta(docId) {
-            var titulo = document.getElementById('metaTitulo').value.trim();
-            if (!titulo) { showToast('warn', 'Atenção', 'Informe o título da meta.'); return; }
+        async function saveFicha(docId) {
+            var nome = document.getElementById('fichaNome').value.trim();
+            if (!nome) { showToast('warn', 'Atenção', 'Informe o nome do colaborador.'); return; }
 
-            var db = await getDb();
+            var gestorSelect = document.getElementById('fichaGestor');
+            var gestorId = gestorSelect.value || null;
+            var gestorNome = gestorSelect.selectedOptions[0] ? gestorSelect.selectedOptions[0].getAttribute('data-nome') || null : null;
+
+            var admVal = document.getElementById('fichaAdmissao').value;
+            var nascVal = document.getElementById('fichaNascimento').value;
+
+            var data = {
+                nome: nome,
+                cpf: document.getElementById('fichaCpf').value.trim(),
+                cargo: document.getElementById('fichaCargo').value.trim(),
+                departamento: document.getElementById('fichaDepto').value,
+                data_admissao: admVal ? new Date(admVal + 'T12:00:00') : null,
+                data_nascimento: nascVal ? new Date(nascVal + 'T12:00:00') : null,
+                telefone: document.getElementById('fichaTelefone').value.trim(),
+                email_pessoal: document.getElementById('fichaEmail').value.trim(),
+                endereco: document.getElementById('fichaEndereco').value.trim(),
+                gestor_responsavel_id: gestorId,
+                gestor_responsavel_nome: gestorNome,
+                foto_url: document.getElementById('fichaFoto').value.trim(),
+                ultima_atualizacao: new Date()
+            };
+
             try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var metas = evo.metas || [];
-                var timeline = evo.timeline || [];
-                var prazoVal = document.getElementById('metaPrazo').value;
-
-                metas.push({
-                    titulo: titulo,
-                    descricao: document.getElementById('metaDescricao').value.trim(),
-                    prazo: prazoVal ? new Date(prazoVal + 'T12:00:00') : null,
-                    progresso: parseInt(document.getElementById('metaProgresso').value) || 0,
-                    status: document.getElementById('metaStatus').value
-                });
-
-                timeline.push({
-                    tipo: 'meta',
-                    texto: 'Meta adicionada: ' + titulo,
-                    autor: currentUser.nome,
-                    data: new Date()
-                });
-
-                await db.collection('evolucao').doc(docId).update({ metas: metas, timeline: timeline, ultima_atualizacao: new Date() });
-                invalidateCache('evolucao:');
-                showToast('success', 'Meta adicionada!', '');
+                if (docId) {
+                    await db.collection('fichas').doc(docId).update(data);
+                } else {
+                    data.data_criacao = new Date();
+                    data.criado_por = currentUser.id;
+                    await db.collection('fichas').add(data);
+                }
+                invalidateCache('fichas:');
+                showToast('success', docId ? 'Ficha atualizada!' : 'Ficha criada!', '');
                 closeModal();
-                viewEvoPlano(docId);
+                loadFichas();
             } catch (error) {
-                console.error('Erro ao adicionar meta:', error);
-                showToast('error', 'Erro', error.message);
+                console.error('Erro ao salvar ficha:', error);
+                showToast('error', 'Erro ao salvar', error.message);
             }
         }
 
-        async function editMeta(docId, metaIndex) {
-            var db = await getDb();
+        async function viewFicha(docId) {
             try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var meta = (evo.metas || [])[metaIndex];
-                if (!meta) { showToast('error', 'Erro', 'Meta não encontrada.'); return; }
+                var docSnap = await db.collection('fichas').doc(docId).get();
+                if (!docSnap.exists) { showToast('error', 'Erro', 'Ficha não encontrada.'); return; }
+                var f = docSnap.data();
 
-                var prazoVal = '';
-                if (meta.prazo) {
-                    var pd = meta.prazo.toDate ? meta.prazo.toDate() : new Date(meta.prazo);
-                    prazoVal = pd.toISOString().split('T')[0];
-                }
+                var initials = fichaInitials(f.nome);
+                var avatarHtml = f.foto_url
+                    ? '<div class="ficha-detail-avatar"><img src="' + f.foto_url + '" alt="' + f.nome + '"></div>'
+                    : '<div class="ficha-detail-avatar">' + initials + '</div>';
 
-                var html = '<div class="form-section"><label>Título da Meta: *</label>';
-                html += '<input type="text" id="metaTitulo" value="' + (meta.titulo || '').replace(/"/g, '&quot;') + '"></div>';
-                html += '<div class="form-section"><label>Descrição:</label>';
-                html += '<textarea id="metaDescricao">' + (meta.descricao || '') + '</textarea></div>';
-                html += '<div class="form-row">';
-                html += '<div class="form-section"><label>Prazo:</label>';
-                html += '<input type="date" id="metaPrazo" value="' + prazoVal + '"></div>';
-                html += '<div class="form-section"><label>Progresso (0-100):</label>';
-                html += '<input type="number" id="metaProgresso" min="0" max="100" value="' + (meta.progresso || 0) + '"></div>';
+                var html = '<div class="ficha-detail-header">';
+                html += avatarHtml;
+                html += '<div class="ficha-detail-info">';
+                html += '<h2>' + (f.nome || 'Sem nome') + '</h2>';
+                html += '<p>' + (f.cargo || 'Sem cargo') + (f.departamento ? ' - ' + f.departamento : '') + '</p>';
+                if (f.data_admissao) html += '<p>Na empresa há ' + fichaTempoEmpresa(f.data_admissao) + '</p>';
                 html += '</div>';
-                html += '<div class="form-section"><label>Status:</label>';
-                html += '<select id="metaStatus">';
-                ['pendente', 'em_andamento', 'concluida', 'cancelada'].forEach(function(s) {
-                    var si = META_STATUS_LABELS[s];
-                    html += '<option value="' + s + '"' + (meta.status === s ? ' selected' : '') + '>' + si.label + '</option>';
-                });
-                html += '</select></div>';
+                html += '</div>';
 
-                openModal('✏️ Editar Meta', html, [
-                    { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                    { text: 'Salvar', onclick: 'saveEditMeta("' + docId + '",' + metaIndex + ')', class: 'btn-primary' }
+                html += '<div class="ficha-detail-grid">';
+                html += '<div class="ficha-detail-item"><label>CPF</label><p>' + (f.cpf || 'N/A') + '</p></div>';
+                html += '<div class="ficha-detail-item"><label>Telefone</label><p>' + (f.telefone || 'N/A') + '</p></div>';
+                html += '<div class="ficha-detail-item"><label>Email Pessoal</label><p>' + (f.email_pessoal || 'N/A') + '</p></div>';
+                html += '<div class="ficha-detail-item"><label>Data de Nascimento</label><p>' + formatDate(f.data_nascimento) + '</p></div>';
+                html += '<div class="ficha-detail-item"><label>Data de Admissão</label><p>' + formatDate(f.data_admissao) + '</p></div>';
+                html += '<div class="ficha-detail-item"><label>Gestor Responsável</label><p>' + (f.gestor_responsavel_nome || 'N/A') + '</p></div>';
+                html += '<div class="ficha-detail-item" style="grid-column:1/-1;"><label>Endereço</label><p>' + (f.endereco || 'N/A') + '</p></div>';
+                html += '</div>';
+
+                openModal('Ficha do Colaborador', html, [
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }
                 ]);
             } catch (error) {
-                console.error('Erro:', error);
+                console.error('Erro ao visualizar ficha:', error);
                 showToast('error', 'Erro', error.message);
             }
         }
 
-        async function saveEditMeta(docId, metaIndex) {
-            var titulo = document.getElementById('metaTitulo').value.trim();
-            if (!titulo) { showToast('warn', 'Atenção', 'Informe o título.'); return; }
-
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var metas = evo.metas || [];
-                var timeline = evo.timeline || [];
-                var prazoVal = document.getElementById('metaPrazo').value;
-
-                metas[metaIndex] = {
-                    titulo: titulo,
-                    descricao: document.getElementById('metaDescricao').value.trim(),
-                    prazo: prazoVal ? new Date(prazoVal + 'T12:00:00') : null,
-                    progresso: parseInt(document.getElementById('metaProgresso').value) || 0,
-                    status: document.getElementById('metaStatus').value
-                };
-
-                timeline.push({
-                    tipo: 'meta',
-                    texto: 'Meta atualizada: ' + titulo,
-                    autor: currentUser.nome,
-                    data: new Date()
-                });
-
-                await db.collection('evolucao').doc(docId).update({ metas: metas, timeline: timeline, ultima_atualizacao: new Date() });
-                invalidateCache('evolucao:');
-                showToast('success', 'Meta atualizada!', '');
-                closeModal();
-                viewEvoPlano(docId);
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('error', 'Erro', error.message);
-            }
+        async function editFicha(docId) {
+            await openFichaForm(docId);
         }
 
-        function addAvaliacao(docId) {
-            var html = '<div class="form-section"><label>Período: *</label>';
-            html += '<input type="text" id="avalPeriodo" placeholder="Ex: Q3 2026, Out/2026"></div>';
-            html += '<div class="form-section"><label>Nota (1-10): *</label>';
-            html += '<input type="number" id="avalNota" min="1" max="10" value="5"></div>';
-            html += '<div class="form-section"><label>Observações:</label>';
-            html += '<textarea id="avalObs" placeholder="Comentários sobre o desempenho..."></textarea></div>';
-
-            openModal('⭐ Nova Avaliação', html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'saveNewAvaliacao("' + docId + '")', class: 'btn-primary' }
-            ]);
-        }
-
-        async function saveNewAvaliacao(docId) {
-            var periodo = document.getElementById('avalPeriodo').value.trim();
-            var nota = parseInt(document.getElementById('avalNota').value);
-            if (!periodo) { showToast('warn', 'Atenção', 'Informe o período.'); return; }
-            if (!nota || nota < 1 || nota > 10) { showToast('warn', 'Atenção', 'Nota deve ser entre 1 e 10.'); return; }
-
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var avaliacoes = evo.avaliacoes || [];
-                var timeline = evo.timeline || [];
-
-                avaliacoes.push({
-                    periodo: periodo,
-                    nota: nota,
-                    observacoes: document.getElementById('avalObs').value.trim(),
-                    autor: currentUser.nome,
-                    data: new Date()
-                });
-
-                timeline.push({
-                    tipo: 'avaliacao',
-                    texto: 'Avaliação ' + periodo + ': nota ' + nota + '/10',
-                    autor: currentUser.nome,
-                    data: new Date()
-                });
-
-                await db.collection('evolucao').doc(docId).update({ avaliacoes: avaliacoes, timeline: timeline, ultima_atualizacao: new Date() });
-                invalidateCache('evolucao:');
-                showToast('success', 'Avaliação registrada!', '');
-                closeModal();
-                viewEvoPlano(docId);
-            } catch (error) {
-                console.error('Erro ao adicionar avaliação:', error);
-                showToast('error', 'Erro', error.message);
-            }
-        }
-
-        function addCompetencia(docId) {
-            var html = '<div class="form-section"><label>Competência: *</label>';
-            html += '<select id="compNome"><option value="">Selecione...</option>';
-            COMPETENCIAS_SUGERIDAS.forEach(function(c) { html += '<option value="' + c + '">' + c + '</option>'; });
-            html += '</select></div>';
-            html += '<div class="form-section"><label>Nível (1-5): *</label>';
-            html += '<select id="compNivel">';
-            for (var i = 1; i <= 5; i++) { html += '<option value="' + i + '">' + i + ' - ' + NIVEL_LABELS[i-1] + '</option>'; }
-            html += '</select></div>';
-            html += '<div class="form-section"><label>Descrição:</label>';
-            html += '<textarea id="compDesc" placeholder="Observações sobre essa competência..."></textarea></div>';
-
-            openModal('📊 Nova Competência', html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'saveNewCompetencia("' + docId + '")', class: 'btn-primary' }
-            ]);
-        }
-
-        async function saveNewCompetencia(docId) {
-            var nome = document.getElementById('compNome').value;
-            if (!nome) { showToast('warn', 'Atenção', 'Selecione uma competência.'); return; }
-
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var competencias = evo.competencias || [];
-                var timeline = evo.timeline || [];
-                var nivel = parseInt(document.getElementById('compNivel').value) || 1;
-
-                competencias.push({
-                    nome: nome,
-                    nivel: nivel,
-                    descricao: document.getElementById('compDesc').value.trim()
-                });
-
-                timeline.push({
-                    tipo: 'competencia',
-                    texto: 'Competência adicionada: ' + nome + ' (Nível ' + nivel + ' - ' + NIVEL_LABELS[nivel-1] + ')',
-                    autor: currentUser.nome,
-                    data: new Date()
-                });
-
-                await db.collection('evolucao').doc(docId).update({ competencias: competencias, timeline: timeline, ultima_atualizacao: new Date() });
-                invalidateCache('evolucao:');
-                showToast('success', 'Competência adicionada!', '');
-                closeModal();
-                viewEvoPlano(docId);
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('error', 'Erro', error.message);
-            }
-        }
-
-        async function editCompetencia(docId, compIndex) {
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var comp = (evo.competencias || [])[compIndex];
-                if (!comp) { showToast('error', 'Erro', 'Competência não encontrada.'); return; }
-
-                var html = '<div class="form-section"><label>Competência:</label>';
-                html += '<input type="text" id="compNome" value="' + (comp.nome || '').replace(/"/g, '&quot;') + '" readonly style="background:#f0f0f0;"></div>';
-                html += '<div class="form-section"><label>Nível (1-5): *</label>';
-                html += '<select id="compNivel">';
-                for (var i = 1; i <= 5; i++) { html += '<option value="' + i + '"' + (comp.nivel === i ? ' selected' : '') + '>' + i + ' - ' + NIVEL_LABELS[i-1] + '</option>'; }
-                html += '</select></div>';
-                html += '<div class="form-section"><label>Descrição:</label>';
-                html += '<textarea id="compDesc">' + (comp.descricao || '') + '</textarea></div>';
-
-                openModal('✏️ Editar Competência', html, [
-                    { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                    { text: 'Salvar', onclick: 'saveEditCompetencia("' + docId + '",' + compIndex + ')', class: 'btn-primary' }
-                ]);
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('error', 'Erro', error.message);
-            }
-        }
-
-        async function saveEditCompetencia(docId, compIndex) {
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var competencias = evo.competencias || [];
-                var timeline = evo.timeline || [];
-                var oldNivel = competencias[compIndex].nivel;
-                var newNivel = parseInt(document.getElementById('compNivel').value) || 1;
-
-                competencias[compIndex].nivel = newNivel;
-                competencias[compIndex].descricao = document.getElementById('compDesc').value.trim();
-
-                if (oldNivel !== newNivel) {
-                    timeline.push({
-                        tipo: 'competencia',
-                        texto: competencias[compIndex].nome + ': nível ' + oldNivel + ' → ' + newNivel + ' (' + NIVEL_LABELS[newNivel-1] + ')',
-                        autor: currentUser.nome,
-                        data: new Date()
-                    });
-                }
-
-                await db.collection('evolucao').doc(docId).update({ competencias: competencias, timeline: timeline, ultima_atualizacao: new Date() });
-                invalidateCache('evolucao:');
-                showToast('success', 'Competência atualizada!', '');
-                closeModal();
-                viewEvoPlano(docId);
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('error', 'Erro', error.message);
-            }
-        }
-
-        function addMarco(docId) {
-            var html = '<div class="form-section"><label>Tipo: *</label>';
-            html += '<select id="marcoTipo">';
-            html += '<option value="marco">Marco</option>';
-            html += '<option value="feedback">Feedback</option>';
-            html += '</select></div>';
-            html += '<div class="form-section"><label>Descrição: *</label>';
-            html += '<textarea id="marcoTexto" placeholder="Descreva o marco ou feedback..."></textarea></div>';
-
-            openModal('📌 Novo Registro', html, [
-                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Salvar', onclick: 'saveNewMarco("' + docId + '")', class: 'btn-primary' }
-            ]);
-        }
-
-        async function saveNewMarco(docId) {
-            var texto = document.getElementById('marcoTexto').value.trim();
-            var tipo = document.getElementById('marcoTipo').value;
-            if (!texto) { showToast('warn', 'Atenção', 'Informe a descrição.'); return; }
-
-            var db = await getDb();
-            try {
-                var docSnap = await db.collection('evolucao').doc(docId).get();
-                var evo = docSnap.data();
-                var timeline = evo.timeline || [];
-
-                timeline.push({
-                    tipo: tipo,
-                    texto: texto,
-                    autor: currentUser.nome,
-                    data: new Date()
-                });
-
-                await db.collection('evolucao').doc(docId).update({ timeline: timeline, ultima_atualizacao: new Date() });
-                invalidateCache('evolucao:');
-                showToast('success', 'Registro adicionado!', '');
-                closeModal();
-                viewEvoPlano(docId);
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('error', 'Erro', error.message);
-            }
-        }
-
-        function deleteEvo(docId) {
-            showConfirm('⚠️', 'Excluir Plano', 'Tem certeza que deseja excluir este plano de evolução? Esta ação é irreversível.', 'Excluir', async function() {
-                var db = await getDb();
+        function deleteFicha(docId) {
+            showConfirm('⚠️', 'Excluir Ficha', 'Tem certeza que deseja excluir esta ficha? Esta ação é irreversível.', 'Excluir', async function() {
                 try {
-                    await db.collection('evolucao').doc(docId).delete();
-                    invalidateCache('evolucao:');
-                    showToast('success', 'Plano excluído', 'Plano de evolução removido com sucesso.');
-                    closeModal();
-                    loadPDI();
+                    await db.collection('fichas').doc(docId).delete();
+                    invalidateCache('fichas:');
+                    showToast('success', 'Ficha excluída', 'Ficha removida com sucesso.');
+                    loadFichas();
                 } catch (error) {
-                    console.error('Erro ao excluir plano:', error);
+                    console.error('Erro ao excluir ficha:', error);
                     showToast('error', 'Erro', error.message);
                 }
             });
         }
 
-        function closePDIForm() {
-            closeModal();
+        // ══════════════════════════════════════════════════════
+        // ══  AVALIAÇÃO PARA PROMOÇÃO
+        // ══════════════════════════════════════════════════════
+
+        var PROMO_TIPO_LABELS = {
+            ponto_positivo: 'Ponto Positivo',
+            ponto_negativo: 'Ponto Negativo',
+            inconsistencia_ponto: 'Inconsistência de Ponto',
+            feedback: 'Feedback'
+        };
+
+        async function loadPromocao() {
+            var container = document.getElementById('promocaoContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                var [promoSnap, fichasSnap] = await Promise.all([
+                    cachedGet('avaliacoes_promocao:all', function() { return db.collection('avaliacoes_promocao').get(); }),
+                    cachedGet('fichas:all', function() { return db.collection('fichas').get(); })
+                ]);
+
+                // Build ficha name map
+                var fichaMap = {};
+                fichasSnap.forEach(function(doc) {
+                    var f = doc.data();
+                    fichaMap[doc.id] = f;
+                });
+
+                // Filter by team for gestor/analista
+                var promoList = [];
+                promoSnap.forEach(function(doc) {
+                    var d = doc.data();
+                    var ficha = fichaMap[d.ficha_id];
+                    if (currentUser.perfil === 'admin' || currentUser.perfil === 'diretoria') {
+                        promoList.push({ id: doc.id, ...d });
+                    } else if (ficha && ficha.gestor_responsavel_id === currentUser.id) {
+                        promoList.push({ id: doc.id, ...d });
+                    }
+                });
+
+                var html = '<div class="ficha-search">';
+                html += '<input type="text" id="promoSearchInput" placeholder="Buscar colaborador..." oninput="filterPromo()">';
+                html += '<button class="btn btn-primary" onclick="addRegistroPromocao()">+ Adicionar Registro</button>';
+                html += '</div>';
+
+                if (promoList.length === 0) {
+                    html += '<div class="alert alert-info">Nenhuma avaliação de promoção encontrada.</div>';
+                } else {
+                    html += '<div id="promoList">';
+                    promoList.forEach(function(p) {
+                        var registros = p.registros || [];
+                        var counts = { ponto_positivo: 0, ponto_negativo: 0, inconsistencia_ponto: 0, feedback: 0 };
+                        var lastDate = null;
+                        registros.forEach(function(r) {
+                            if (counts.hasOwnProperty(r.tipo)) counts[r.tipo]++;
+                            var rd = r.data ? (r.data.toDate ? r.data.toDate() : new Date(r.data)) : null;
+                            if (rd && (!lastDate || rd > lastDate)) lastDate = rd;
+                        });
+
+                        html += '<div class="promo-card" data-nome="' + (p.colaborador_nome || '').toLowerCase() + '">';
+                        html += '<div class="promo-card-header">';
+                        html += '<h3>' + (p.colaborador_nome || 'Colaborador') + '</h3>';
+                        html += '<div style="display:flex;gap:6px;">';
+                        html += '<button class="btn btn-secondary btn-small" onclick="viewHistoricoPromocao(\'' + p.id + '\')">Ver Histórico</button>';
+                        html += '<button class="btn btn-primary btn-small" onclick="addRegistroPromocao(\'' + p.ficha_id + '\',\'' + (p.colaborador_nome || '').replace(/'/g, "\\'") + '\',\'' + p.id + '\')">+ Registro</button>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '<div class="promo-counts">';
+                        if (counts.ponto_positivo > 0) html += '<span class="promo-count-badge promo-tipo-ponto_positivo">👍 ' + counts.ponto_positivo + ' Positivo' + (counts.ponto_positivo > 1 ? 's' : '') + '</span>';
+                        if (counts.ponto_negativo > 0) html += '<span class="promo-count-badge promo-tipo-ponto_negativo">👎 ' + counts.ponto_negativo + ' Negativo' + (counts.ponto_negativo > 1 ? 's' : '') + '</span>';
+                        if (counts.inconsistencia_ponto > 0) html += '<span class="promo-count-badge promo-tipo-inconsistencia_ponto">⚠ ' + counts.inconsistencia_ponto + ' Inconsistência' + (counts.inconsistencia_ponto > 1 ? 's' : '') + '</span>';
+                        if (counts.feedback > 0) html += '<span class="promo-count-badge promo-tipo-feedback">💬 ' + counts.feedback + ' Feedback' + (counts.feedback > 1 ? 's' : '') + '</span>';
+                        html += '</div>';
+                        if (lastDate) html += '<p style="font-size:11px;color:#999;">Último registro: ' + formatDate(lastDate) + '</p>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar avaliações de promoção:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações de promoção</div>';
+            }
         }
 
+        function filterPromo() {
+            var term = (document.getElementById('promoSearchInput').value || '').toLowerCase();
+            var cards = document.querySelectorAll('#promoList .promo-card');
+            cards.forEach(function(card) {
+                card.style.display = card.getAttribute('data-nome').indexOf(term) >= 0 ? '' : 'none';
+            });
+        }
+
+        async function viewHistoricoPromocao(docId) {
+            try {
+                var docSnap = await db.collection('avaliacoes_promocao').doc(docId).get();
+                if (!docSnap.exists) { showToast('error', 'Erro', 'Registro não encontrado.'); return; }
+                var p = docSnap.data();
+                var registros = p.registros || [];
+
+                var html = '<h3 style="margin-bottom:16px;">' + (p.colaborador_nome || 'Colaborador') + '</h3>';
+
+                html += '<div class="promo-filters">';
+                html += '<button class="promo-filter-btn active" onclick="filterPromoTimeline(\'todos\',this)">Todos (' + registros.length + ')</button>';
+                var tipoCount = { ponto_positivo: 0, ponto_negativo: 0, inconsistencia_ponto: 0, feedback: 0 };
+                registros.forEach(function(r) { if (tipoCount.hasOwnProperty(r.tipo)) tipoCount[r.tipo]++; });
+                if (tipoCount.ponto_positivo > 0) html += '<button class="promo-filter-btn" onclick="filterPromoTimeline(\'ponto_positivo\',this)">Positivo (' + tipoCount.ponto_positivo + ')</button>';
+                if (tipoCount.ponto_negativo > 0) html += '<button class="promo-filter-btn" onclick="filterPromoTimeline(\'ponto_negativo\',this)">Negativo (' + tipoCount.ponto_negativo + ')</button>';
+                if (tipoCount.inconsistencia_ponto > 0) html += '<button class="promo-filter-btn" onclick="filterPromoTimeline(\'inconsistencia_ponto\',this)">Inconsistência (' + tipoCount.inconsistencia_ponto + ')</button>';
+                if (tipoCount.feedback > 0) html += '<button class="promo-filter-btn" onclick="filterPromoTimeline(\'feedback\',this)">Feedback (' + tipoCount.feedback + ')</button>';
+                html += '</div>';
+
+                // Sort by date desc
+                var sorted = registros.slice().sort(function(a, b) {
+                    var da = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : new Date(0);
+                    var db2 = b.data ? (b.data.toDate ? b.data.toDate() : new Date(b.data)) : new Date(0);
+                    return db2 - da;
+                });
+
+                html += '<div id="promoTimelineItems">';
+                if (sorted.length === 0) {
+                    html += '<p style="color:#636E72;">Nenhum registro encontrado.</p>';
+                } else {
+                    sorted.forEach(function(r, idx) {
+                        var dt = r.data ? (r.data.toDate ? r.data.toDate() : new Date(r.data)) : null;
+                        var tipoLabel = PROMO_TIPO_LABELS[r.tipo] || r.tipo;
+                        html += '<div class="promo-timeline-item tipo-' + r.tipo + '" data-tipo="' + r.tipo + '">';
+                        html += '<div class="promo-tipo-label" style="color:inherit;">' + tipoLabel + '</div>';
+                        html += '<div class="promo-text">' + (r.texto || '') + '</div>';
+                        html += '<div class="promo-meta">' + (r.autor || '') + (dt ? ' - ' + formatDate(dt) : '') + '</div>';
+                        if (currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
+                            html += '<button class="btn btn-danger btn-small" style="margin-top:6px;font-size:10px;padding:2px 8px;" onclick="deleteRegistro(\'' + docId + '\',' + idx + ')">Remover</button>';
+                        }
+                        html += '</div>';
+                    });
+                }
+                html += '</div>';
+
+                openModal('Histórico de Avaliação para Promoção', html, [
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: '+ Registro', onclick: 'addRegistroPromocao(\'' + p.ficha_id + '\',\'' + (p.colaborador_nome || '').replace(/'/g, "\\'") + '\',\'' + docId + '\')', class: 'btn-primary' }
+                ]);
+            } catch (error) {
+                console.error('Erro ao visualizar histórico:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        function filterPromoTimeline(tipo, btn) {
+            var items = document.querySelectorAll('#promoTimelineItems .promo-timeline-item');
+            items.forEach(function(item) {
+                if (tipo === 'todos') {
+                    item.style.display = '';
+                } else {
+                    item.style.display = item.getAttribute('data-tipo') === tipo ? '' : 'none';
+                }
+            });
+            var btns = document.querySelectorAll('.promo-filter-btn');
+            btns.forEach(function(b) { b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+        }
+
+        async function addRegistroPromocao(fichaId, colaboradorNome, promoDocId) {
+            var html = '';
+
+            if (!fichaId) {
+                // Select collaborator from fichas
+                var fichasSnap = await cachedGet('fichas:all', function() { return db.collection('fichas').get(); });
+                html += '<div class="form-section"><label>Colaborador: *</label>';
+                html += '<select id="promoFichaSelect"><option value="">-- Selecione --</option>';
+                fichasSnap.forEach(function(doc) {
+                    var f = doc.data();
+                    if (currentUser.perfil === 'admin' || f.gestor_responsavel_id === currentUser.id) {
+                        html += '<option value="' + doc.id + '" data-nome="' + (f.nome || '').replace(/"/g, '&quot;') + '">' + f.nome + ' (' + (f.cargo || '') + ')</option>';
+                    }
+                });
+                html += '</select></div>';
+            } else {
+                html += '<p style="margin-bottom:12px;font-size:13px;color:#636E72;">Colaborador: <strong>' + (colaboradorNome || '') + '</strong></p>';
+                html += '<input type="hidden" id="promoFichaSelect" value="' + fichaId + '" data-nome="' + (colaboradorNome || '').replace(/"/g, '&quot;') + '">';
+            }
+
+            html += '<div class="form-section"><label>Tipo: *</label>';
+            html += '<select id="promoTipo">';
+            html += '<option value="">-- Selecione --</option>';
+            html += '<option value="ponto_positivo">Ponto Positivo</option>';
+            html += '<option value="ponto_negativo">Ponto Negativo</option>';
+            html += '<option value="inconsistencia_ponto">Inconsistência de Ponto</option>';
+            html += '<option value="feedback">Feedback</option>';
+            html += '</select></div>';
+
+            html += '<div class="form-section"><label>Descrição: *</label>';
+            html += '<textarea id="promoTexto" placeholder="Descreva o registro..."></textarea></div>';
+
+            html += '<div class="form-section"><label>Data:</label>';
+            html += '<input type="date" id="promoData" value="' + new Date().toISOString().split('T')[0] + '"></div>';
+
+            openModal('Novo Registro de Avaliação', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveRegistroPromocao(' + (promoDocId ? '"' + promoDocId + '"' : '') + ')', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveRegistroPromocao(promoDocId) {
+            var fichaSelect = document.getElementById('promoFichaSelect');
+            var fichaId = fichaSelect.value || fichaSelect.getAttribute('value');
+            var fichaName = '';
+            if (fichaSelect.tagName === 'SELECT' && fichaSelect.selectedOptions[0]) {
+                fichaName = fichaSelect.selectedOptions[0].getAttribute('data-nome') || '';
+            } else {
+                fichaName = fichaSelect.getAttribute('data-nome') || '';
+            }
+
+            if (!fichaId) { showToast('warn', 'Atenção', 'Selecione um colaborador.'); return; }
+
+            var tipo = document.getElementById('promoTipo').value;
+            if (!tipo) { showToast('warn', 'Atenção', 'Selecione o tipo de registro.'); return; }
+
+            var texto = document.getElementById('promoTexto').value.trim();
+            if (!texto) { showToast('warn', 'Atenção', 'Informe a descrição.'); return; }
+
+            var dataVal = document.getElementById('promoData').value;
+
+            var registro = {
+                tipo: tipo,
+                texto: texto,
+                autor: currentUser.nome,
+                data: dataVal ? new Date(dataVal + 'T12:00:00') : new Date()
+            };
+
+            try {
+                if (promoDocId) {
+                    // Add to existing doc
+                    var docSnap = await db.collection('avaliacoes_promocao').doc(promoDocId).get();
+                    var data = docSnap.data();
+                    var registros = data.registros || [];
+                    registros.push(registro);
+                    await db.collection('avaliacoes_promocao').doc(promoDocId).update({ registros: registros });
+                } else {
+                    // Check if doc exists for this ficha
+                    var existing = await db.collection('avaliacoes_promocao').where('ficha_id', '==', fichaId).get();
+                    if (!existing.empty) {
+                        var existDoc = existing.docs[0];
+                        var existData = existDoc.data();
+                        var existRegs = existData.registros || [];
+                        existRegs.push(registro);
+                        await db.collection('avaliacoes_promocao').doc(existDoc.id).update({ registros: existRegs });
+                    } else {
+                        // Create new doc
+                        await db.collection('avaliacoes_promocao').add({
+                            ficha_id: fichaId,
+                            colaborador_nome: fichaName,
+                            registros: [registro],
+                            criado_por: currentUser.id,
+                            data_criacao: new Date()
+                        });
+                    }
+                }
+
+                invalidateCache('avaliacoes_promocao:');
+                showToast('success', 'Registro adicionado!', '');
+                closeModal();
+                loadPromocao();
+            } catch (error) {
+                console.error('Erro ao salvar registro:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        function deleteRegistro(docId, index) {
+            showConfirm('⚠️', 'Remover Registro', 'Tem certeza que deseja remover este registro?', 'Remover', async function() {
+                try {
+                    var docSnap = await db.collection('avaliacoes_promocao').doc(docId).get();
+                    var data = docSnap.data();
+                    var registros = data.registros || [];
+                    // Sort by date desc to match display order
+                    var sorted = registros.map(function(r, i) { return { ...r, _origIdx: i }; });
+                    sorted.sort(function(a, b) {
+                        var da = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : new Date(0);
+                        var db2 = b.data ? (b.data.toDate ? b.data.toDate() : new Date(b.data)) : new Date(0);
+                        return db2 - da;
+                    });
+                    var origIdx = sorted[index]._origIdx;
+                    registros.splice(origIdx, 1);
+                    await db.collection('avaliacoes_promocao').doc(docId).update({ registros: registros });
+                    invalidateCache('avaliacoes_promocao:');
+                    showToast('success', 'Registro removido', '');
+                    closeModal();
+                    loadPromocao();
+                } catch (error) {
+                    console.error('Erro ao remover registro:', error);
+                    showToast('error', 'Erro', error.message);
+                }
+            });
+        }
+
+        // (Evolution system removed — fichas and promoção replace it)
+
+        // (Evolution constants removed)
+
+        // (Evolution functions removed — evoNivelDots through closePDIForm)
 
         function openModal(title, body, buttons) {
             document.getElementById('modalTitle').textContent = title;
