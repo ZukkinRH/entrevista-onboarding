@@ -1769,9 +1769,6 @@
 
             <!-- Liberar Pesquisas Tab -->
             <div id="liberacoesTab" class="tab-content">
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
-                    <button class="btn btn-primary" onclick="openModal('Liberar Pesquisa', getLiberacoesForm(), [{text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary'}, {text: 'Liberar', onclick: 'saveLiberacao()', class: 'btn-primary'}])">+ Nova Liberação</button>
-                </div>
                 <div id="liberacoesContainer"></div>
             </div>
 
@@ -3205,14 +3202,7 @@
             });
         }
 
-        function getLiberacoesForm() {
-            return '<p>Use o botão "Gerenciar" para liberar pesquisas aos usuários.</p>';
-        }
-
-        function saveLiberacao() {
-            showToast('info', 'Dica', 'Use o botão "Gerenciar" para liberar pesquisas a cada usuário.');
-            closeModal();
-        }
+        // getLiberacoesForm e saveLiberacao removidos — liberação é feita via openLiberacaoForm por colaborador
 
         async function loadPesquisas() {
             var container = document.getElementById('pesquisasContainer');
