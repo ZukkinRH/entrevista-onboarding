@@ -1667,6 +1667,33 @@
             color: white;
             border-color: var(--primary);
         }
+        /* Competências */
+        .comp-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+        .comp-tab { padding: 10px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #636E72; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .comp-tab:hover { color: var(--primary); }
+        .comp-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .comp-table th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #636E72; border-bottom: 2px solid var(--border); }
+        .comp-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        .comp-table tr:hover { background: #fafafa; }
+        .comp-score-cell { text-align: center; width: 80px; }
+        .comp-score { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; font-weight: 700; font-size: 14px; }
+        .comp-score.s1 { background: #ffebee; color: #c62828; }
+        .comp-score.s2 { background: #fff3e0; color: #e65100; }
+        .comp-score.s3 { background: #fff8e1; color: #f57f17; }
+        .comp-score.s4 { background: #e8f5e9; color: #2e7d32; }
+        .comp-score.s5 { background: #e3f2fd; color: #1565c0; }
+        .comp-score-input { width: 50px; text-align: center; padding: 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-weight: 600; }
+        .comp-score-input:focus { outline: none; border-color: var(--primary); }
+        .comp-evidencia { font-size: 12px; color: #636E72; max-width: 300px; }
+        .comp-evidencia-input { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; resize: none; min-height: 36px; }
+        .comp-media { display: flex; gap: 20px; margin-top: 16px; padding: 16px; background: #f8f9fa; border-radius: 10px; }
+        .comp-media-item { text-align: center; flex: 1; }
+        .comp-media-item .comp-media-valor { font-size: 28px; font-weight: 800; color: var(--primary); }
+        .comp-media-item .comp-media-label { font-size: 11px; color: #636E72; text-transform: uppercase; letter-spacing: 0.5px; }
+        .comp-legend { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+        .comp-legend span { font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        .comp-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -1755,7 +1782,16 @@
 
             <!-- Promoção Tab -->
             <div id="promocaoTab" class="tab-content">
-                <div id="promocaoContainer"></div>
+                <div class="comp-tabs">
+                    <div class="comp-tab active" onclick="switchPromoSubTab('registros',this)">Registros</div>
+                    <div class="comp-tab" onclick="switchPromoSubTab('competencias',this)">Avaliação por Competências</div>
+                </div>
+                <div id="promoSubRegistros">
+                    <div id="promocaoContainer"></div>
+                </div>
+                <div id="promoSubCompetencias" style="display:none;">
+                    <div id="competenciasContainer"></div>
+                </div>
             </div>
 
             <!-- Usuários Tab -->
@@ -4378,11 +4414,308 @@
             });
         }
 
-        // (Evolution system removed — fichas and promoção replace it)
+        // ══  SUB-ABAS PROMOÇÃO
+        function switchPromoSubTab(sub, btn) {
+            document.getElementById('promoSubRegistros').style.display = sub === 'registros' ? '' : 'none';
+            document.getElementById('promoSubCompetencias').style.display = sub === 'competencias' ? '' : 'none';
+            document.querySelectorAll('.comp-tabs .comp-tab').forEach(function(t) { t.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+            if (sub === 'competencias') loadCompetencias();
+        }
 
-        // (Evolution constants removed)
+        // ══  AVALIAÇÃO POR COMPETÊNCIAS
+        var CRITERIOS_COMPETENCIA = [
+            'Responsabilidade e comprometimento',
+            'Pontualidade e procedimentos internos',
+            'Comunicação oral e escrita',
+            'Trabalho em equipe e relacionamento',
+            'Proatividade e iniciativa',
+            'Organização e gestão do tempo',
+            'Capacidade de receber feedbacks',
+            'Adaptabilidade e disposição para aprender',
+            'Autonomia compatível com a função',
+            'Foco no cliente e qualidade das entregas',
+            'Conhecimento das atividades da área',
+            'Qualidade das entregas',
+            'Cumprimento de prazos',
+            'Ferramentas e sistemas utilizados',
+            'Identificar e corrigir erros',
+            'Resolução de problemas',
+            'Aplicação de procedimentos e padrões',
+            'Evolução técnica desde o início',
+            'Execução com menor supervisão',
+            'Conhecimentos para o cargo CLT pretendido'
+        ];
 
-        // (Evolution functions removed — evoNivelDots through closePDIForm)
+        async function loadCompetencias() {
+            var container = document.getElementById('competenciasContainer');
+            container.innerHTML = '<div class="loading"></div>';
+
+            try {
+                var [compSnap, fichasSnap] = await Promise.all([
+                    cachedGet('avaliacoes_competencias:all', function() { return db.collection('avaliacoes_competencias').get(); }),
+                    cachedGet('fichas:all', function() { return db.collection('fichas').get(); })
+                ]);
+
+                var fichaMap = {};
+                fichasSnap.forEach(function(doc) { fichaMap[doc.id] = doc.data(); });
+
+                var compList = [];
+                compSnap.forEach(function(doc) {
+                    var d = doc.data();
+                    var ficha = fichaMap[d.ficha_id];
+                    if (currentUser.perfil === 'admin' || currentUser.perfil === 'diretoria') {
+                        compList.push({ id: doc.id, ...d });
+                    } else if (ficha && ficha.gestor_responsavel_id === currentUser.id) {
+                        compList.push({ id: doc.id, ...d });
+                    }
+                });
+
+                var html = '<div class="ficha-search">';
+                html += '<input type="text" id="compSearchInput" placeholder="Buscar colaborador..." oninput="filterCompetencias()">';
+                html += '<button class="btn btn-primary" onclick="openCompetenciaForm()">+ Nova Avaliação</button>';
+                html += '</div>';
+
+                if (compList.length === 0) {
+                    html += '<div class="alert alert-info">Nenhuma avaliação por competências encontrada.</div>';
+                } else {
+                    html += '<div id="compList">';
+                    compList.forEach(function(c) {
+                        var criterios = c.criterios || {};
+                        var gestor_scores = [], rh_scores = [];
+                        CRITERIOS_COMPETENCIA.forEach(function(cr) {
+                            var v = criterios[cr];
+                            if (v) {
+                                if (v.gestor) gestor_scores.push(v.gestor);
+                                if (v.rh) rh_scores.push(v.rh);
+                            }
+                        });
+                        var mediaGestor = gestor_scores.length > 0 ? (gestor_scores.reduce(function(a,b){return a+b;},0) / gestor_scores.length).toFixed(1) : '-';
+                        var mediaRH = rh_scores.length > 0 ? (rh_scores.reduce(function(a,b){return a+b;},0) / rh_scores.length).toFixed(1) : '-';
+                        var dt = c.data_atualizacao ? (c.data_atualizacao.toDate ? c.data_atualizacao.toDate() : new Date(c.data_atualizacao)) : null;
+
+                        html += '<div class="promo-card" data-nome="' + (c.colaborador_nome || '').toLowerCase() + '">';
+                        html += '<div class="promo-card-header">';
+                        html += '<h3>' + (c.colaborador_nome || 'Colaborador') + '</h3>';
+                        html += '<div style="display:flex;gap:6px;">';
+                        html += '<button class="btn btn-secondary btn-small" onclick="viewCompetencia(\'' + c.id + '\')">Ver Detalhes</button>';
+                        html += '<button class="btn btn-primary btn-small" onclick="openCompetenciaForm(\'' + c.ficha_id + '\',\'' + (c.colaborador_nome || '').replace(/'/g, "\\'") + '\',\'' + c.id + '\')">Editar</button>';
+                        if (currentUser.perfil === 'admin') {
+                            html += '<button class="btn btn-danger btn-small" onclick="deleteCompetencia(\'' + c.id + '\')">Excluir</button>';
+                        }
+                        html += '</div></div>';
+                        html += '<div class="comp-media" style="margin-top:8px;padding:10px;">';
+                        html += '<div class="comp-media-item"><div class="comp-media-valor">' + mediaGestor + '</div><div class="comp-media-label">Média Gestor</div></div>';
+                        html += '<div class="comp-media-item"><div class="comp-media-valor">' + mediaRH + '</div><div class="comp-media-label">Média RH</div></div>';
+                        var mediaGeral = (gestor_scores.length > 0 && rh_scores.length > 0) ? ((parseFloat(mediaGestor) + parseFloat(mediaRH)) / 2).toFixed(1) : '-';
+                        html += '<div class="comp-media-item"><div class="comp-media-valor">' + mediaGeral + '</div><div class="comp-media-label">Média Geral</div></div>';
+                        html += '</div>';
+                        if (dt) html += '<p style="font-size:11px;color:#999;margin-top:8px;">Última atualização: ' + formatDate(dt) + '</p>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar competências:', error);
+                container.innerHTML = '<div class="alert alert-error">Erro ao carregar avaliações por competências</div>';
+            }
+        }
+
+        function filterCompetencias() {
+            var term = (document.getElementById('compSearchInput').value || '').toLowerCase();
+            var cards = document.querySelectorAll('#compList .promo-card');
+            cards.forEach(function(card) {
+                card.style.display = card.getAttribute('data-nome').indexOf(term) >= 0 ? '' : 'none';
+            });
+        }
+
+        async function viewCompetencia(docId) {
+            try {
+                var docSnap = await db.collection('avaliacoes_competencias').doc(docId).get();
+                if (!docSnap.exists) { showToast('error', 'Erro', 'Avaliação não encontrada.'); return; }
+                var c = docSnap.data();
+                var criterios = c.criterios || {};
+
+                var html = '<h3 style="margin-bottom:16px;">' + (c.colaborador_nome || 'Colaborador') + '</h3>';
+
+                html += '<table class="comp-table">';
+                html += '<thead><tr><th style="width:35%;">Critério</th><th class="comp-score-cell">Gestor</th><th class="comp-score-cell">RH</th><th>Evidências</th></tr></thead>';
+                html += '<tbody>';
+
+                var gTotal = 0, gCount = 0, rTotal = 0, rCount = 0;
+                CRITERIOS_COMPETENCIA.forEach(function(cr) {
+                    var v = criterios[cr] || {};
+                    var gScore = v.gestor || '';
+                    var rScore = v.rh || '';
+                    var evidencias = v.evidencias || '';
+                    if (gScore) { gTotal += gScore; gCount++; }
+                    if (rScore) { rTotal += rScore; rCount++; }
+
+                    html += '<tr>';
+                    html += '<td>' + cr + '</td>';
+                    html += '<td class="comp-score-cell">' + (gScore ? '<span class="comp-score s' + gScore + '">' + gScore + '</span>' : '<span style="color:#ccc;">-</span>') + '</td>';
+                    html += '<td class="comp-score-cell">' + (rScore ? '<span class="comp-score s' + rScore + '">' + rScore + '</span>' : '<span style="color:#ccc;">-</span>') + '</td>';
+                    html += '<td class="comp-evidencia">' + (evidencias || '<span style="color:#ccc;">—</span>') + '</td>';
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+
+                var mediaG = gCount > 0 ? (gTotal / gCount).toFixed(1) : '-';
+                var mediaR = rCount > 0 ? (rTotal / rCount).toFixed(1) : '-';
+                var mediaGeral = (gCount > 0 && rCount > 0) ? ((parseFloat(mediaG) + parseFloat(mediaR)) / 2).toFixed(1) : '-';
+
+                html += '<div class="comp-media">';
+                html += '<div class="comp-media-item"><div class="comp-media-valor">' + mediaG + '</div><div class="comp-media-label">Média Gestor</div></div>';
+                html += '<div class="comp-media-item"><div class="comp-media-valor">' + mediaR + '</div><div class="comp-media-label">Média RH</div></div>';
+                html += '<div class="comp-media-item"><div class="comp-media-valor">' + mediaGeral + '</div><div class="comp-media-label">Média Geral</div></div>';
+                html += '</div>';
+
+                html += '<div class="comp-legend">';
+                html += '<span><span class="comp-legend-dot" style="background:#ffebee;"></span> 1 - Insuficiente</span>';
+                html += '<span><span class="comp-legend-dot" style="background:#fff3e0;"></span> 2 - Abaixo</span>';
+                html += '<span><span class="comp-legend-dot" style="background:#fff8e1;"></span> 3 - Regular</span>';
+                html += '<span><span class="comp-legend-dot" style="background:#e8f5e9;"></span> 4 - Bom</span>';
+                html += '<span><span class="comp-legend-dot" style="background:#e3f2fd;"></span> 5 - Excelente</span>';
+                html += '</div>';
+
+                openModal('Avaliação por Competências', html, [
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: 'Editar', onclick: 'closeModal();openCompetenciaForm(\'' + c.ficha_id + '\',\'' + (c.colaborador_nome || '').replace(/'/g, "\\'") + '\',\'' + docId + '\')', class: 'btn-primary' }
+                ]);
+            } catch (error) {
+                console.error('Erro ao visualizar competência:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        async function openCompetenciaForm(fichaId, colaboradorNome, compDocId) {
+            var html = '';
+            var existingCriterios = {};
+
+            if (compDocId) {
+                var docSnap = await db.collection('avaliacoes_competencias').doc(compDocId).get();
+                if (docSnap.exists) existingCriterios = docSnap.data().criterios || {};
+            }
+
+            if (!fichaId) {
+                var fichasSnap = await cachedGet('fichas:all', function() { return db.collection('fichas').get(); });
+                html += '<div class="form-section"><label>Colaborador: *</label>';
+                html += '<select id="compFichaSelect"><option value="">-- Selecione --</option>';
+                fichasSnap.forEach(function(doc) {
+                    var f = doc.data();
+                    if (currentUser.perfil === 'admin' || f.gestor_responsavel_id === currentUser.id) {
+                        html += '<option value="' + doc.id + '" data-nome="' + (f.nome || '').replace(/"/g, '&quot;') + '">' + f.nome + ' (' + (f.cargo || '') + ')</option>';
+                    }
+                });
+                html += '</select></div>';
+            } else {
+                html += '<p style="margin-bottom:12px;font-size:13px;color:#636E72;">Colaborador: <strong>' + (colaboradorNome || '') + '</strong></p>';
+                html += '<input type="hidden" id="compFichaSelect" value="' + fichaId + '" data-nome="' + (colaboradorNome || '').replace(/"/g, '&quot;') + '">';
+            }
+
+            var isAdmin = currentUser.perfil === 'admin';
+            var isGestor = currentUser.perfil === 'gestor' || currentUser.perfil === 'analista';
+
+            html += '<div style="overflow-x:auto;">';
+            html += '<table class="comp-table">';
+            html += '<thead><tr><th style="width:35%;">Critério</th><th class="comp-score-cell">Gestor (1-5)</th><th class="comp-score-cell">RH (1-5)</th><th>Evidências</th></tr></thead>';
+            html += '<tbody>';
+
+            CRITERIOS_COMPETENCIA.forEach(function(cr, idx) {
+                var v = existingCriterios[cr] || {};
+                html += '<tr>';
+                html += '<td style="font-size:12px;">' + cr + '</td>';
+                html += '<td class="comp-score-cell"><input type="number" class="comp-score-input" id="comp_g_' + idx + '" min="1" max="5" value="' + (v.gestor || '') + '" ' + (isAdmin && !isGestor ? 'readonly style="opacity:0.6;"' : '') + '></td>';
+                html += '<td class="comp-score-cell"><input type="number" class="comp-score-input" id="comp_r_' + idx + '" min="1" max="5" value="' + (v.rh || '') + '" ' + (!isAdmin ? 'readonly style="opacity:0.6;"' : '') + '></td>';
+                html += '<td><textarea class="comp-evidencia-input" id="comp_e_' + idx + '" rows="1" placeholder="Evidências...">' + (v.evidencias || '') + '</textarea></td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div>';
+
+            html += '<div class="comp-legend" style="margin-top:12px;">';
+            html += '<span>1 = Insuficiente</span><span>2 = Abaixo</span><span>3 = Regular</span><span>4 = Bom</span><span>5 = Excelente</span>';
+            html += '</div>';
+
+            openModal('Avaliação por Competências', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar', onclick: 'saveCompetencia(' + (compDocId ? '"' + compDocId + '"' : 'null') + ')', class: 'btn-primary' }
+            ]);
+        }
+
+        async function saveCompetencia(compDocId) {
+            var fichaSelect = document.getElementById('compFichaSelect');
+            var fichaId = fichaSelect.value || fichaSelect.getAttribute('value');
+            var fichaName = '';
+            if (fichaSelect.tagName === 'SELECT' && fichaSelect.selectedOptions[0]) {
+                fichaName = fichaSelect.selectedOptions[0].getAttribute('data-nome') || '';
+            } else {
+                fichaName = fichaSelect.getAttribute('data-nome') || '';
+            }
+
+            if (!fichaId) { showToast('warn', 'Atenção', 'Selecione um colaborador.'); return; }
+
+            var criterios = {};
+            var hasAny = false;
+            CRITERIOS_COMPETENCIA.forEach(function(cr, idx) {
+                var gVal = parseInt(document.getElementById('comp_g_' + idx).value) || 0;
+                var rVal = parseInt(document.getElementById('comp_r_' + idx).value) || 0;
+                var eVal = document.getElementById('comp_e_' + idx).value.trim();
+                if (gVal > 5) gVal = 5; if (gVal < 0) gVal = 0;
+                if (rVal > 5) rVal = 5; if (rVal < 0) rVal = 0;
+
+                if (gVal || rVal || eVal) {
+                    hasAny = true;
+                    criterios[cr] = {};
+                    if (gVal) criterios[cr].gestor = gVal;
+                    if (rVal) criterios[cr].rh = rVal;
+                    if (eVal) criterios[cr].evidencias = eVal;
+                }
+            });
+
+            if (!hasAny) { showToast('warn', 'Atenção', 'Preencha pelo menos um critério.'); return; }
+
+            try {
+                var payload = {
+                    ficha_id: fichaId,
+                    colaborador_nome: fichaName,
+                    criterios: criterios,
+                    data_atualizacao: new Date(),
+                    atualizado_por: currentUser.nome
+                };
+
+                if (compDocId) {
+                    await db.collection('avaliacoes_competencias').doc(compDocId).update(payload);
+                } else {
+                    payload.criado_por = currentUser.id;
+                    payload.data_criacao = new Date();
+                    await db.collection('avaliacoes_competencias').add(payload);
+                }
+
+                invalidateCache('avaliacoes_competencias:');
+                showToast('success', 'Avaliação salva!', '');
+                closeModal();
+                loadCompetencias();
+            } catch (error) {
+                console.error('Erro ao salvar competência:', error);
+                showToast('error', 'Erro', error.message);
+            }
+        }
+
+        function deleteCompetencia(docId) {
+            showConfirm('⚠️', 'Excluir Avaliação', 'Tem certeza que deseja excluir esta avaliação por competências?', 'Excluir', async function() {
+                try {
+                    await db.collection('avaliacoes_competencias').doc(docId).delete();
+                    invalidateCache('avaliacoes_competencias:');
+                    showToast('success', 'Avaliação excluída', '');
+                    loadCompetencias();
+                } catch (error) {
+                    showToast('error', 'Erro', error.message);
+                }
+            });
+        }
 
         function openModal(title, body, buttons) {
             document.getElementById('modalTitle').textContent = title;
