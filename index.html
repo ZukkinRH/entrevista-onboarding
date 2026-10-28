@@ -3895,6 +3895,7 @@
                         html += '</div>';
                         html += '<div class="ficha-actions">';
                         html += '<button class="btn btn-secondary btn-small" onclick="viewFicha(\'' + f.id + '\')">Ver Ficha</button>';
+                        html += '<button class="btn btn-secondary btn-small" onclick="gerarRelatorio(\'' + f.id + '\')" style="font-size:11px;">🖨 Relatório</button>';
                         if (currentUser.perfil === 'admin' || currentUser.perfil === 'gestor' || currentUser.perfil === 'analista') {
                             html += '<button class="btn btn-primary btn-small" onclick="editFicha(\'' + f.id + '\')">Editar</button>';
                         }
@@ -4081,7 +4082,8 @@
                 html += '</div>';
 
                 openModal('Ficha do Colaborador', html, [
-                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' }
+                    { text: 'Fechar', onclick: 'closeModal()', class: 'btn-secondary' },
+                    { text: '🖨 Relatório', onclick: 'gerarRelatorio("' + docId + '")', class: 'btn-primary' }
                 ]);
             } catch (error) {
                 console.error('Erro ao visualizar ficha:', error);
@@ -4105,6 +4107,209 @@
                     showToast('error', 'Erro', error.message);
                 }
             });
+        }
+
+        // ══════════════════════════════════════════════════════
+        // ══  RELATÓRIO INDIVIDUAL
+        // ══════════════════════════════════════════════════════
+
+        async function gerarRelatorio(fichaId) {
+            try {
+                showToast('info', 'Gerando...', 'Preparando relatório para impressão.');
+
+                // Buscar dados
+                var [fichaSnap, compSnap, promoSnap] = await Promise.all([
+                    db.collection('fichas').doc(fichaId).get(),
+                    db.collection('avaliacoes_competencias').where('ficha_id', '==', fichaId).get(),
+                    db.collection('avaliacoes_promocao').where('ficha_id', '==', fichaId).get()
+                ]);
+
+                if (!fichaSnap.exists) { showToast('error', 'Erro', 'Ficha não encontrada.'); return; }
+                var f = fichaSnap.data();
+
+                // Competências
+                var compData = null;
+                compSnap.forEach(function(doc) { compData = doc.data(); });
+
+                // Registros promoção
+                var promoData = null;
+                promoSnap.forEach(function(doc) { promoData = doc.data(); });
+
+                // Gerar HTML do relatório
+                var r = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">';
+                r += '<title>Relatório - ' + (f.nome || 'Colaborador') + '</title>';
+                r += '<style>';
+                r += 'body { font-family: Arial, Helvetica, sans-serif; color: #333; padding: 30px; max-width: 900px; margin: 0 auto; font-size: 13px; }';
+                r += '.header { display: flex; gap: 20px; align-items: center; border-bottom: 3px solid #D42027; padding-bottom: 20px; margin-bottom: 24px; }';
+                r += '.header-avatar { width: 70px; height: 70px; border-radius: 50%; background: #D42027; color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; flex-shrink: 0; overflow: hidden; }';
+                r += '.header-avatar img { width: 100%; height: 100%; object-fit: cover; }';
+                r += '.header-info h1 { font-size: 20px; margin: 0 0 4px; color: #D42027; }';
+                r += '.header-info p { margin: 0; color: #666; font-size: 13px; }';
+                r += '.logo { margin-left: auto; font-size: 18px; font-weight: bold; color: #D42027; }';
+                r += 'h2 { font-size: 15px; color: #D42027; border-bottom: 1px solid #eee; padding-bottom: 6px; margin: 24px 0 12px; }';
+                r += '.dados-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }';
+                r += '.dados-item { background: #f9f9f9; padding: 8px 10px; border-radius: 4px; }';
+                r += '.dados-item label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #999; display: block; margin-bottom: 2px; }';
+                r += '.dados-item span { font-size: 13px; color: #333; }';
+                r += '.dados-full { grid-column: 1 / -1; }';
+                r += 'table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 12px; }';
+                r += 'th { background: #f5f5f5; padding: 8px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #666; border-bottom: 2px solid #ddd; }';
+                r += 'td { padding: 7px 8px; border-bottom: 1px solid #eee; }';
+                r += '.score { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center; border-radius: 6px; font-weight: bold; font-size: 13px; }';
+                r += '.s1 { background: #ffebee; color: #c62828; } .s2 { background: #fff3e0; color: #e65100; }';
+                r += '.s3 { background: #fff8e1; color: #f57f17; } .s4 { background: #e8f5e9; color: #2e7d32; }';
+                r += '.s5 { background: #e3f2fd; color: #1565c0; }';
+                r += '.medias { display: flex; gap: 20px; margin: 12px 0; padding: 12px; background: #f9f9f9; border-radius: 6px; }';
+                r += '.medias div { text-align: center; flex: 1; }';
+                r += '.medias .valor { font-size: 24px; font-weight: bold; color: #D42027; }';
+                r += '.medias .label { font-size: 10px; color: #999; text-transform: uppercase; }';
+                r += '.registro { padding: 8px 10px; margin-bottom: 6px; border-radius: 4px; border-left: 4px solid #ccc; }';
+                r += '.registro.tp { border-left-color: #2e7d32; background: #f9fdf9; }';
+                r += '.registro.tn { border-left-color: #c62828; background: #fff9f9; }';
+                r += '.registro.ti { border-left-color: #f57f17; background: #fffdf5; }';
+                r += '.registro.tf { border-left-color: #7b1fa2; background: #fdf5ff; }';
+                r += '.registro .tipo { font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2px; }';
+                r += '.registro .texto { font-size: 12px; line-height: 1.5; }';
+                r += '.registro .meta { font-size: 10px; color: #999; margin-top: 3px; }';
+                r += '.footer { text-align: center; color: #aaa; font-size: 10px; margin-top: 30px; padding-top: 10px; border-top: 1px solid #eee; }';
+                r += '.no-print { margin-bottom: 20px; text-align: center; }';
+                r += '.no-print button { padding: 10px 30px; background: #D42027; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin: 0 5px; }';
+                r += '.no-print button:hover { background: #B01A20; }';
+                r += '.no-print button.secondary { background: #666; }';
+                r += '@media print { .no-print { display: none !important; } body { padding: 10px; } }';
+                r += '.legend { display: flex; gap: 10px; justify-content: center; font-size: 10px; margin-top: 6px; }';
+                r += '.legend span { display: flex; align-items: center; gap: 3px; }';
+                r += '.ldot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }';
+                r += '</style></head><body>';
+
+                // Botões
+                r += '<div class="no-print">';
+                r += '<button onclick="window.print()">🖨 Imprimir / Salvar PDF</button>';
+                r += '<button class="secondary" onclick="window.close()">Fechar</button>';
+                r += '</div>';
+
+                // Header
+                var initials = (f.nome || '').split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+                r += '<div class="header">';
+                if (f.foto_url) {
+                    r += '<div class="header-avatar"><img src="' + f.foto_url + '"></div>';
+                } else {
+                    r += '<div class="header-avatar">' + initials + '</div>';
+                }
+                r += '<div class="header-info"><h1>' + (f.nome || '') + '</h1>';
+                r += '<p>' + (f.cargo || '') + (f.departamento ? ' — ' + f.departamento : '') + '</p>';
+                if (f.data_admissao) r += '<p>Admissão: ' + formatDate(f.data_admissao) + ' (' + fichaTempoEmpresa(f.data_admissao) + ')</p>';
+                r += '</div>';
+                r += '<div class="logo">Zukkin RH</div>';
+                r += '</div>';
+
+                // Dados pessoais
+                r += '<h2>Dados do Colaborador</h2>';
+                r += '<div class="dados-grid">';
+                r += '<div class="dados-item"><label>CPF</label><span>' + (f.cpf || 'N/A') + '</span></div>';
+                r += '<div class="dados-item"><label>Telefone</label><span>' + (f.telefone || 'N/A') + '</span></div>';
+                r += '<div class="dados-item"><label>Email Pessoal</label><span>' + (f.email_pessoal || 'N/A') + '</span></div>';
+                r += '<div class="dados-item"><label>Data de Nascimento</label><span>' + formatDate(f.data_nascimento) + '</span></div>';
+                r += '<div class="dados-item"><label>Gestor Responsável</label><span>' + (f.gestor_responsavel_nome || 'N/A') + '</span></div>';
+                r += '<div class="dados-item"><label>Departamento</label><span>' + (f.departamento || 'N/A') + '</span></div>';
+                r += '<div class="dados-item dados-full"><label>Endereço</label><span>' + (f.endereco || 'N/A') + '</span></div>';
+                r += '</div>';
+
+                // Competências
+                if (compData && compData.criterios) {
+                    r += '<h2>Avaliação por Competências</h2>';
+                    r += '<table><thead><tr><th>Critério</th><th style="text-align:center;width:70px;">Gestor</th><th style="text-align:center;width:70px;">RH</th><th>Evidências</th></tr></thead><tbody>';
+
+                    var gTotal = 0, gCount = 0, rTotal = 0, rCount = 0;
+                    CRITERIOS_COMPETENCIA.forEach(function(cr) {
+                        var v = compData.criterios[cr] || {};
+                        var gs = v.gestor || '';
+                        var rs = v.rh || '';
+                        if (gs) { gTotal += gs; gCount++; }
+                        if (rs) { rTotal += rs; rCount++; }
+                        r += '<tr><td>' + cr + '</td>';
+                        r += '<td style="text-align:center;">' + (gs ? '<span class="score s' + gs + '">' + gs + '</span>' : '-') + '</td>';
+                        r += '<td style="text-align:center;">' + (rs ? '<span class="score s' + rs + '">' + rs + '</span>' : '-') + '</td>';
+                        r += '<td style="font-size:11px;color:#666;">' + (v.evidencias || '—') + '</td></tr>';
+                    });
+                    r += '</tbody></table>';
+
+                    var mG = gCount > 0 ? (gTotal / gCount).toFixed(1) : '-';
+                    var mR = rCount > 0 ? (rTotal / rCount).toFixed(1) : '-';
+                    var mGeral = (gCount > 0 && rCount > 0) ? ((parseFloat(mG) + parseFloat(mR)) / 2).toFixed(1) : '-';
+
+                    r += '<div class="medias">';
+                    r += '<div><div class="valor">' + mG + '</div><div class="label">Média Gestor</div></div>';
+                    r += '<div><div class="valor">' + mR + '</div><div class="label">Média RH</div></div>';
+                    r += '<div><div class="valor">' + mGeral + '</div><div class="label">Média Geral</div></div>';
+                    r += '</div>';
+                    r += '<div class="legend">';
+                    r += '<span><span class="ldot" style="background:#ffebee;"></span> 1-Insuficiente</span>';
+                    r += '<span><span class="ldot" style="background:#fff3e0;"></span> 2-Abaixo</span>';
+                    r += '<span><span class="ldot" style="background:#fff8e1;"></span> 3-Regular</span>';
+                    r += '<span><span class="ldot" style="background:#e8f5e9;"></span> 4-Bom</span>';
+                    r += '<span><span class="ldot" style="background:#e3f2fd;"></span> 5-Excelente</span>';
+                    r += '</div>';
+
+                    if (compData.atualizado_por) {
+                        r += '<p style="font-size:10px;color:#999;margin-top:6px;">Última atualização por: ' + compData.atualizado_por + '</p>';
+                    }
+                }
+
+                // Registros promoção
+                if (promoData && promoData.registros && promoData.registros.length > 0) {
+                    r += '<h2>Registros de Avaliação para Promoção</h2>';
+
+                    var tipoMap = { ponto_positivo: 'Ponto Positivo', ponto_negativo: 'Ponto Negativo', inconsistencia_ponto: 'Inconsistência de Ponto', feedback: 'Feedback' };
+                    var classMap = { ponto_positivo: 'tp', ponto_negativo: 'tn', inconsistencia_ponto: 'ti', feedback: 'tf' };
+
+                    // Contadores
+                    var counts = { ponto_positivo: 0, ponto_negativo: 0, inconsistencia_ponto: 0, feedback: 0 };
+                    promoData.registros.forEach(function(reg) { if (counts.hasOwnProperty(reg.tipo)) counts[reg.tipo]++; });
+
+                    r += '<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">';
+                    if (counts.ponto_positivo > 0) r += '<span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">👍 ' + counts.ponto_positivo + ' Positivo(s)</span>';
+                    if (counts.ponto_negativo > 0) r += '<span style="background:#ffebee;color:#c62828;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">👎 ' + counts.ponto_negativo + ' Negativo(s)</span>';
+                    if (counts.inconsistencia_ponto > 0) r += '<span style="background:#fff8e1;color:#f57f17;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">⚠ ' + counts.inconsistencia_ponto + ' Inconsistência(s)</span>';
+                    if (counts.feedback > 0) r += '<span style="background:#f3e5f5;color:#7b1fa2;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">💬 ' + counts.feedback + ' Feedback(s)</span>';
+                    r += '</div>';
+
+                    // Ordenar por data desc
+                    var regs = promoData.registros.slice().sort(function(a, b) {
+                        var da = a.data ? (a.data.toDate ? a.data.toDate() : new Date(a.data)) : new Date(0);
+                        var db2 = b.data ? (b.data.toDate ? b.data.toDate() : new Date(b.data)) : new Date(0);
+                        return db2 - da;
+                    });
+
+                    regs.forEach(function(reg) {
+                        var dt = reg.data ? (reg.data.toDate ? reg.data.toDate() : new Date(reg.data)) : null;
+                        var cls = classMap[reg.tipo] || '';
+                        r += '<div class="registro ' + cls + '">';
+                        r += '<div class="tipo">' + (tipoMap[reg.tipo] || reg.tipo) + '</div>';
+                        r += '<div class="texto">' + (reg.texto || '') + '</div>';
+                        r += '<div class="meta">' + (reg.autor || '') + (dt ? ' — ' + formatDate(dt) : '') + '</div>';
+                        r += '</div>';
+                    });
+                }
+
+                // Sem nenhum dado extra
+                if (!compData && !promoData) {
+                    r += '<h2>Avaliações</h2>';
+                    r += '<p style="color:#999;">Nenhuma avaliação registrada para este colaborador.</p>';
+                }
+
+                // Footer
+                r += '<div class="footer">Relatório gerado em ' + new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) + ' — Zukkin RH</div>';
+                r += '</body></html>';
+
+                // Abrir em nova janela
+                var win = window.open('', '_blank');
+                win.document.write(r);
+                win.document.close();
+            } catch (error) {
+                console.error('Erro ao gerar relatório:', error);
+                showToast('error', 'Erro', 'Não foi possível gerar o relatório: ' + error.message);
+            }
         }
 
         // ══════════════════════════════════════════════════════
