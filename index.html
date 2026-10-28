@@ -2623,6 +2623,11 @@
                 }
 
                 var userData = users.docs[0].data();
+                if (userData.perfil === 'admin') {
+                    showToast('error', 'Bloqueado', 'A conta master não permite redefinição de senha por email.');
+                    btns.forEach(function(b) { b.disabled = false; b.textContent = 'Enviar Código'; });
+                    return;
+                }
                 var code = String(Math.floor(100000 + Math.random() * 900000));
                 _resetState.code = code;
                 _resetState.email = email;
