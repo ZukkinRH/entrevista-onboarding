@@ -2584,53 +2584,416 @@
             }
         }
 
+        // ══  RESET DE SENHA COM CÓDIGO DE VERIFICAÇÃO
+        var _resetState = { code: null, email: null, userId: null, nome: null, expiresAt: null, attempts: 0 };
+
         function showForgotPassword() {
-            const html = `
-                <div class="form-group">
-                    <label for="forgotEmail">Email</label>
-                    <input type="email" id="forgotEmail" placeholder="seu@email.com" required>
-                </div>
-            `;
+            _resetState = { code: null, email: null, userId: null, nome: null, expiresAt: null, attempts: 0 };
+            var html = '';
+            html += '<div style="text-align:center;margin-bottom:20px;">';
+            html += '<div style="width:56px;height:56px;background:var(--primary-gradient,var(--primary));border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:white;box-shadow:0 4px 14px rgba(212,32,39,0.25);">🔐</div>';
+            html += '<p style="color:var(--gray-500,#636E72);font-size:13px;line-height:1.5;">Informe seu email cadastrado. Enviaremos um código de verificação de 6 dígitos para redefinir sua senha.</p>';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label for="forgotEmail">Email cadastrado</label>';
+            html += '<input type="email" id="forgotEmail" placeholder="seu@email.com" required autocomplete="email">';
+            html += '</div>';
             openModal('Recuperar Senha', html, [
                 { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
-                { text: 'Enviar', onclick: 'enviarEmailSenha()', class: 'btn-primary' }
+                { text: 'Enviar Código', onclick: 'enviarCodigoVerificacao()', class: 'btn-primary' }
             ]);
         }
 
-        async function enviarEmailSenha() {
-            const email = document.getElementById('forgotEmail').value;
+        async function enviarCodigoVerificacao() {
+            var email = (document.getElementById('forgotEmail').value || '').trim().toLowerCase();
+            if (!email) { showToast('warn', 'Atenção', 'Informe seu email.'); return; }
+
+            // Desabilitar botão durante envio
+            var btns = document.querySelectorAll('.modal-buttons .btn-primary');
+            btns.forEach(function(b) { b.disabled = true; b.textContent = 'Enviando...'; });
+
             try {
-                const users = await withTimeout(
-                    db.collection('usuarios').where('email', '==', email).get(), 6000
+                var users = await withTimeout(
+                    db.collection('usuarios').where('email', '==', email).get(), 8000
                 );
                 if (users.empty) {
-                    showToast('error', 'Não encontrado', 'Nenhum usuário com este email.');
+                    showToast('error', 'Não encontrado', 'Nenhum usuário cadastrado com este email.');
+                    btns.forEach(function(b) { b.disabled = false; b.textContent = 'Enviar Código'; });
                     return;
                 }
-                const userData = users.docs[0].data();
-                const newPassword = generatePassword();
-                await withTimeout(users.docs[0].ref.update({
-                    senha: hashSenha(newPassword),
-                    provisoria: true
-                }), 6000);
-                invalidateCache('usuarios:');
 
+                var userData = users.docs[0].data();
+                var code = String(Math.floor(100000 + Math.random() * 900000));
+                _resetState.code = code;
+                _resetState.email = email;
+                _resetState.userId = users.docs[0].id;
+                _resetState.nome = userData.nome || email;
+                _resetState.expiresAt = Date.now() + (10 * 60 * 1000); // 10 min
+                _resetState.attempts = 0;
+
+                // Salvar código no Firestore (para validação extra)
+                await withTimeout(users.docs[0].ref.update({
+                    reset_code: hashSenha(code),
+                    reset_expires: new Date(Date.now() + 10 * 60 * 1000)
+                }), 6000);
+
+                // Enviar email via EmailJS
                 try {
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                         to_email: email,
                         to_name: userData.nome || email,
-                        subject: 'Zukkin RH - Recuperação de Senha',
-                        nova_senha: newPassword
+                        subject: 'Zukkin RH - Código de Verificação',
+                        nova_senha: 'Seu código de verificação é: ' + code + '\n\nEste código expira em 10 minutos. Se você não solicitou a redefinição de senha, ignore este email.'
                     });
-                    showToast('success', 'Email enviado!', 'Nova senha enviada para ' + email + '. Verifique sua caixa de entrada.');
                 } catch(emailErr) {
-                    console.warn('Erro ao enviar email:', emailErr);
-                    showToast('warn', 'Senha redefinida', 'Nova senha provisória: ' + newPassword + ' (não foi possível enviar por email)');
+                    console.warn('EmailJS falhou:', emailErr);
                 }
-                closeModal();
+
+                // Mostrar tela de código
+                mostrarTelaCodigoVerificacao(email);
             } catch (error) {
-                console.error('Erro ao recuperar senha:', error);
-                showToast('error', 'Erro', error.message);
+                console.error('Erro ao enviar código:', error);
+                showToast('error', 'Erro', 'Não foi possível processar. Tente novamente.');
+                btns.forEach(function(b) { b.disabled = false; b.textContent = 'Enviar Código'; });
+            }
+        }
+
+        function mostrarTelaCodigoVerificacao(email) {
+            var emailMasked = email.replace(/(.{2})(.*)(@.*)/, function(m, a, b, c) {
+                return a + b.replace(/./g, '*') + c;
+            });
+
+            var html = '';
+            html += '<div style="text-align:center;margin-bottom:24px;">';
+            html += '<div style="width:56px;height:56px;background:linear-gradient(135deg,#10B981,#34D399);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:white;box-shadow:0 4px 14px rgba(16,185,129,0.25);">✉️</div>';
+            html += '<p style="font-size:14px;font-weight:600;color:var(--dark,#333);margin-bottom:4px;">Código enviado!</p>';
+            html += '<p style="color:var(--gray-500,#636E72);font-size:13px;line-height:1.5;">Enviamos um código de 6 dígitos para<br><strong>' + emailMasked + '</strong></p>';
+            html += '</div>';
+
+            // Inputs de código - 6 campos individuais
+            html += '<div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px;" id="codeInputsWrap">';
+            for (var i = 0; i < 6; i++) {
+                html += '<input type="text" maxlength="1" class="reset-code-input" id="codeInput' + i + '" ';
+                html += 'style="width:48px;height:56px;text-align:center;font-size:24px;font-weight:700;border:2px solid var(--gray-200,#E2E8F0);border-radius:12px;outline:none;transition:all 0.2s;background:var(--gray-50,#F8FAFC);" ';
+                html += 'oninput="onCodeInput(this,' + i + ')" onkeydown="onCodeKeydown(event,' + i + ')" onfocus="this.select()">';
+            }
+            html += '</div>';
+
+            html += '<div style="text-align:center;margin-bottom:8px;">';
+            html += '<p id="resetTimer" style="font-size:12px;color:var(--gray-400,#94A3B8);">Código expira em <span id="resetCountdown">10:00</span></p>';
+            html += '</div>';
+
+            html += '<div style="text-align:center;">';
+            html += '<a onclick="reenviarCodigo()" style="color:var(--primary);font-size:13px;cursor:pointer;font-weight:600;text-decoration:none;" id="resendLink">Reenviar código</a>';
+            html += '</div>';
+
+            openModal('Verificação', html, [
+                { text: 'Voltar', onclick: 'showForgotPassword()', class: 'btn-secondary' },
+                { text: 'Verificar', onclick: 'verificarCodigo()', class: 'btn-primary' }
+            ]);
+
+            // Focus no primeiro input
+            setTimeout(function() {
+                var first = document.getElementById('codeInput0');
+                if (first) first.focus();
+            }, 300);
+
+            // Iniciar countdown
+            iniciarCountdown();
+        }
+
+        function onCodeInput(input, idx) {
+            // Só números
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value && idx < 5) {
+                var next = document.getElementById('codeInput' + (idx + 1));
+                if (next) next.focus();
+            }
+            // Highlight
+            input.style.borderColor = input.value ? 'var(--primary)' : 'var(--gray-200,#E2E8F0)';
+            input.style.background = input.value ? 'white' : 'var(--gray-50,#F8FAFC)';
+
+            // Auto-verificar quando todos preenchidos
+            var full = '';
+            for (var i = 0; i < 6; i++) {
+                var v = document.getElementById('codeInput' + i).value;
+                if (v) full += v;
+            }
+            if (full.length === 6) {
+                setTimeout(function() { verificarCodigo(); }, 200);
+            }
+        }
+
+        function onCodeKeydown(e, idx) {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                var prev = document.getElementById('codeInput' + (idx - 1));
+                if (prev) { prev.focus(); prev.select(); }
+            }
+            // Suportar colar código completo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+                setTimeout(function() {
+                    var pasted = document.getElementById('codeInput' + idx).value;
+                    if (pasted.length > 1) {
+                        var digits = pasted.replace(/[^0-9]/g, '').split('');
+                        for (var i = 0; i < 6 && i < digits.length; i++) {
+                            var inp = document.getElementById('codeInput' + i);
+                            if (inp) {
+                                inp.value = digits[i];
+                                inp.style.borderColor = 'var(--primary)';
+                                inp.style.background = 'white';
+                            }
+                        }
+                        if (digits.length >= 6) {
+                            setTimeout(function() { verificarCodigo(); }, 200);
+                        }
+                    }
+                }, 50);
+            }
+        }
+
+        var _countdownInterval = null;
+        function iniciarCountdown() {
+            if (_countdownInterval) clearInterval(_countdownInterval);
+            var remaining = Math.max(0, Math.floor((_resetState.expiresAt - Date.now()) / 1000));
+            _countdownInterval = setInterval(function() {
+                remaining--;
+                if (remaining <= 0) {
+                    clearInterval(_countdownInterval);
+                    var el = document.getElementById('resetCountdown');
+                    if (el) el.textContent = 'Expirado';
+                    var timer = document.getElementById('resetTimer');
+                    if (timer) { timer.style.color = 'var(--danger,#EF4444)'; timer.innerHTML = '⏰ Código expirado. <a onclick="reenviarCodigo()" style="color:var(--primary);cursor:pointer;font-weight:600;">Reenviar</a>'; }
+                    return;
+                }
+                var min = Math.floor(remaining / 60);
+                var sec = remaining % 60;
+                var el = document.getElementById('resetCountdown');
+                if (el) el.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+            }, 1000);
+        }
+
+        async function reenviarCodigo() {
+            if (!_resetState.email || !_resetState.userId) { showForgotPassword(); return; }
+
+            var code = String(Math.floor(100000 + Math.random() * 900000));
+            _resetState.code = code;
+            _resetState.expiresAt = Date.now() + (10 * 60 * 1000);
+            _resetState.attempts = 0;
+
+            try {
+                await withTimeout(db.collection('usuarios').doc(_resetState.userId).update({
+                    reset_code: hashSenha(code),
+                    reset_expires: new Date(Date.now() + 10 * 60 * 1000)
+                }), 6000);
+
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                        to_email: _resetState.email,
+                        to_name: _resetState.nome,
+                        subject: 'Zukkin RH - Novo Código de Verificação',
+                        nova_senha: 'Seu novo código de verificação é: ' + code + '\n\nEste código expira em 10 minutos.'
+                    });
+                } catch(e) { console.warn('EmailJS:', e); }
+
+                showToast('success', 'Reenviado!', 'Novo código enviado para seu email.');
+                mostrarTelaCodigoVerificacao(_resetState.email);
+            } catch(e) {
+                showToast('error', 'Erro', 'Não foi possível reenviar. Tente novamente.');
+            }
+        }
+
+        async function verificarCodigo() {
+            var code = '';
+            for (var i = 0; i < 6; i++) {
+                var v = (document.getElementById('codeInput' + i).value || '').trim();
+                code += v;
+            }
+
+            if (code.length !== 6) {
+                showToast('warn', 'Atenção', 'Informe o código completo de 6 dígitos.');
+                return;
+            }
+
+            // Verificar expiração
+            if (Date.now() > _resetState.expiresAt) {
+                showToast('error', 'Expirado', 'O código expirou. Solicite um novo.');
+                return;
+            }
+
+            // Verificar tentativas
+            _resetState.attempts++;
+            if (_resetState.attempts > 5) {
+                showToast('error', 'Bloqueado', 'Muitas tentativas incorretas. Solicite um novo código.');
+                showForgotPassword();
+                return;
+            }
+
+            // Verificar código
+            if (code !== _resetState.code) {
+                showToast('error', 'Código incorreto', 'O código informado não confere. Tentativa ' + _resetState.attempts + '/5.');
+                // Limpar inputs e marcar erro
+                for (var i = 0; i < 6; i++) {
+                    var inp = document.getElementById('codeInput' + i);
+                    if (inp) {
+                        inp.value = '';
+                        inp.style.borderColor = 'var(--danger,#EF4444)';
+                        inp.style.background = '#FEF2F2';
+                    }
+                }
+                setTimeout(function() {
+                    for (var i = 0; i < 6; i++) {
+                        var inp = document.getElementById('codeInput' + i);
+                        if (inp) { inp.style.borderColor = 'var(--gray-200,#E2E8F0)'; inp.style.background = 'var(--gray-50,#F8FAFC)'; }
+                    }
+                    var first = document.getElementById('codeInput0');
+                    if (first) first.focus();
+                }, 800);
+                return;
+            }
+
+            // Código correto — mostrar tela de nova senha
+            if (_countdownInterval) clearInterval(_countdownInterval);
+            mostrarTelaNewPassword();
+        }
+
+        function mostrarTelaNewPassword() {
+            var html = '';
+            html += '<div style="text-align:center;margin-bottom:24px;">';
+            html += '<div style="width:56px;height:56px;background:linear-gradient(135deg,#3B82F6,#60A5FA);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:white;box-shadow:0 4px 14px rgba(59,130,246,0.25);">🔑</div>';
+            html += '<p style="font-size:14px;font-weight:600;color:var(--dark,#333);margin-bottom:4px;">Código verificado!</p>';
+            html += '<p style="color:var(--gray-500,#636E72);font-size:13px;">Defina sua nova senha abaixo.</p>';
+            html += '</div>';
+
+            html += '<div class="form-group">';
+            html += '<label for="newPass1">Nova senha</label>';
+            html += '<div style="position:relative;">';
+            html += '<input type="password" id="newPass1" placeholder="Mínimo 6 caracteres" style="padding-right:44px;">';
+            html += '<button type="button" onclick="togglePassVisibility(\'newPass1\',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--gray-400,#94A3B8);">👁</button>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="form-group">';
+            html += '<label for="newPass2">Confirmar nova senha</label>';
+            html += '<div style="position:relative;">';
+            html += '<input type="password" id="newPass2" placeholder="Repita a nova senha" style="padding-right:44px;">';
+            html += '<button type="button" onclick="togglePassVisibility(\'newPass2\',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--gray-400,#94A3B8);">👁</button>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div id="passStrength" style="margin-bottom:16px;"></div>';
+
+            html += '<div style="background:var(--gray-50,#F8FAFC);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--gray-500,#636E72);">';
+            html += '<strong style="display:block;margin-bottom:4px;">Requisitos da senha:</strong>';
+            html += '<span id="req_len" style="display:block;">❌ Mínimo 6 caracteres</span>';
+            html += '<span id="req_match" style="display:block;">❌ Senhas coincidem</span>';
+            html += '</div>';
+
+            openModal('Nova Senha', html, [
+                { text: 'Cancelar', onclick: 'closeModal()', class: 'btn-secondary' },
+                { text: 'Salvar Nova Senha', onclick: 'salvarNovaSenha()', class: 'btn-primary' }
+            ]);
+
+            // Validação em tempo real
+            setTimeout(function() {
+                var p1 = document.getElementById('newPass1');
+                var p2 = document.getElementById('newPass2');
+                if (p1) p1.addEventListener('input', validarRequisitos);
+                if (p2) p2.addEventListener('input', validarRequisitos);
+            }, 300);
+        }
+
+        function togglePassVisibility(inputId, btn) {
+            var inp = document.getElementById(inputId);
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                inp.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
+
+        function validarRequisitos() {
+            var p1 = document.getElementById('newPass1').value;
+            var p2 = document.getElementById('newPass2').value;
+
+            var lenOk = p1.length >= 6;
+            var matchOk = p1 && p2 && p1 === p2;
+
+            var rLen = document.getElementById('req_len');
+            var rMatch = document.getElementById('req_match');
+            if (rLen) rLen.innerHTML = (lenOk ? '✅' : '❌') + ' Mínimo 6 caracteres';
+            if (rMatch) rMatch.innerHTML = (matchOk ? '✅' : '❌') + ' Senhas coincidem';
+
+            // Barra de força
+            var strength = 0;
+            if (p1.length >= 6) strength++;
+            if (p1.length >= 8) strength++;
+            if (/[A-Z]/.test(p1)) strength++;
+            if (/[0-9]/.test(p1)) strength++;
+            if (/[^a-zA-Z0-9]/.test(p1)) strength++;
+
+            var labels = ['', 'Fraca', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+            var colors = ['', '#EF4444', '#F59E0B', '#F59E0B', '#10B981', '#10B981'];
+            var pct = Math.min(100, strength * 20);
+
+            var bar = document.getElementById('passStrength');
+            if (bar && p1.length > 0) {
+                bar.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+                    '<div style="flex:1;height:4px;background:var(--gray-200,#E2E8F0);border-radius:2px;overflow:hidden;">' +
+                    '<div style="height:100%;width:' + pct + '%;background:' + colors[strength] + ';border-radius:2px;transition:width 0.3s;"></div></div>' +
+                    '<span style="font-size:11px;font-weight:600;color:' + colors[strength] + ';">' + labels[strength] + '</span></div>';
+            } else if (bar) {
+                bar.innerHTML = '';
+            }
+        }
+
+        async function salvarNovaSenha() {
+            var p1 = document.getElementById('newPass1').value;
+            var p2 = document.getElementById('newPass2').value;
+
+            if (!p1 || p1.length < 6) {
+                showToast('warn', 'Atenção', 'A senha deve ter no mínimo 6 caracteres.');
+                return;
+            }
+            if (p1 !== p2) {
+                showToast('warn', 'Atenção', 'As senhas não coincidem.');
+                return;
+            }
+
+            var btns = document.querySelectorAll('.modal-buttons .btn-primary');
+            btns.forEach(function(b) { b.disabled = true; b.textContent = 'Salvando...'; });
+
+            try {
+                await withTimeout(db.collection('usuarios').doc(_resetState.userId).update({
+                    senha: hashSenha(p1),
+                    provisoria: false,
+                    reset_code: null,
+                    reset_expires: null
+                }), 6000);
+                invalidateCache('usuarios:');
+
+                closeModal();
+
+                // Tela de sucesso
+                var html = '';
+                html += '<div style="text-align:center;padding:20px 0;">';
+                html += '<div style="width:64px;height:64px;background:linear-gradient(135deg,#10B981,#34D399);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:white;box-shadow:0 4px 14px rgba(16,185,129,0.3);">✓</div>';
+                html += '<h3 style="font-size:18px;font-weight:700;color:var(--dark,#333);margin-bottom:8px;">Senha alterada com sucesso!</h3>';
+                html += '<p style="color:var(--gray-500,#636E72);font-size:13px;line-height:1.5;">Sua senha foi redefinida. Agora você pode fazer login com sua nova senha.</p>';
+                html += '</div>';
+
+                openModal('Sucesso', html, [
+                    { text: 'Ir para Login', onclick: 'closeModal()', class: 'btn-primary' }
+                ]);
+
+                // Limpar estado
+                _resetState = { code: null, email: null, userId: null, nome: null, expiresAt: null, attempts: 0 };
+                if (_countdownInterval) clearInterval(_countdownInterval);
+            } catch (error) {
+                console.error('Erro ao salvar senha:', error);
+                showToast('error', 'Erro', 'Não foi possível salvar a nova senha.');
+                btns.forEach(function(b) { b.disabled = false; b.textContent = 'Salvar Nova Senha'; });
             }
         }
 
